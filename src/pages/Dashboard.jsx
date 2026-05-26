@@ -3,10 +3,87 @@ import { useNavigate } from 'react-router-dom'
 import {
   CheckSquare, Clock, AlertTriangle, TrendingUp, Calendar,
   Users, FileText, Euro, ArrowRight, AlertCircle,
-  Sparkles, ChevronLeft, ChevronRight, Video, Circle, ClipboardList, Bell,
+  Sparkles, ChevronLeft, ChevronRight, Video, Circle, ClipboardList, Bell, CheckCircle2,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { statutBadge, assigneeBadge, prioriteBadge } from '../components/ui/Badge'
+
+// ─── Mes Tâches ───────────────────────────────────────────────────────────────
+function MesTaches({ taches, profil, moveTache, addNotification }) {
+  const mesTaches = taches
+    .filter(t => t.assignee === profil && t.statut !== 'termine')
+    .sort((a, b) => {
+      const prio = { urgente: 0, haute: 1, normale: 2, basse: 3 }
+      return (prio[a.priorite] ?? 2) - (prio[b.priorite] ?? 2)
+    })
+
+  const terminees = taches.filter(t => t.assignee === profil && t.statut === 'termine')
+
+  const handleDone = (t) => {
+    moveTache(t.id, 'termine')
+    if (profil === 'Chainez') {
+      addNotification({
+        type: 'tache',
+        titre: 'Tâche terminée par Chainez',
+        message: `"${t.titre}" a été marquée comme terminée.`,
+        lien: '/taches',
+      })
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
+      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg flex items-center justify-center" style={{ background: profil === 'Chainez' ? 'linear-gradient(135deg,#ec4899,#db2777)' : 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+            <CheckSquare size={12} className="text-white" />
+          </div>
+          <span className="text-sm font-bold text-gray-800">Mes tâches</span>
+          {mesTaches.length > 0 && (
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full text-white" style={{ background: profil === 'Chainez' ? '#ec4899' : '#6366f1' }}>
+              {mesTaches.length}
+            </span>
+          )}
+        </div>
+        <span className="text-[11px] text-gray-400">{terminees.length} terminée{terminees.length > 1 ? 's' : ''}</span>
+      </div>
+
+      <div className="divide-y divide-gray-50">
+        {mesTaches.length === 0 && (
+          <div className="flex flex-col items-center py-6 gap-2">
+            <CheckCircle2 size={24} className="text-emerald-300" />
+            <p className="text-xs text-gray-400">Toutes les tâches sont terminées 🎉</p>
+          </div>
+        )}
+        {mesTaches.map(t => (
+          <div key={t.id} className="flex items-start gap-3 px-5 py-3 hover:bg-gray-50 transition-colors group">
+            <button
+              onClick={() => handleDone(t)}
+              className="mt-0.5 w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
+              style={{ borderColor: t.priorite === 'urgente' ? '#ef4444' : t.priorite === 'haute' ? '#f59e0b' : '#d1d5db' }}
+              title="Marquer comme terminée"
+            >
+              <div className="w-2 h-2 rounded-full opacity-0 group-hover:opacity-40 transition-opacity"
+                style={{ background: t.priorite === 'urgente' ? '#ef4444' : '#6366f1' }} />
+            </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-gray-800 truncate">{t.titre}</p>
+              {t.deadline && (
+                <p className={`text-[10px] mt-0.5 ${t.deadline < new Date().toISOString().split('T')[0] ? 'text-red-500 font-semibold' : 'text-gray-400'}`}>
+                  {t.deadline < new Date().toISOString().split('T')[0] ? '⚠ En retard · ' : ''}
+                  {new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                </p>
+              )}
+            </div>
+            {t.priorite === 'urgente' && (
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-md bg-red-100 text-red-600 flex-shrink-0">URGENT</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 // ─── Mini Calendar ───────────────────────────────────────────────────────────
 function MiniCalendar({ rdvs }) {
@@ -108,7 +185,8 @@ function CircleProgress({ value, max, color, size = 44 }) {
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { taches, clients, projets, rdvs, documents, contenus, leads, formReponses } = useStore()
+  const { taches, clients, projets, rdvs, documents, contenus, leads, formReponses, moveTache, addNotification } = useStore()
+  const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
 
   const today = new Date().toISOString().split('T')[0]
   const hour = new Date().getHours()
@@ -139,9 +217,9 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col xl:flex-row gap-6">
       {/* ── Left / Main column ── */}
-      <div className="w-[55%] min-w-0">
+      <div className="w-full xl:w-[55%] min-w-0">
 
         {/* Welcome banner */}
         <div className="relative rounded-3xl mb-6 overflow-hidden" style={{
@@ -159,7 +237,7 @@ export default function Dashboard() {
                 <Sparkles size={14} className="text-indigo-300" />
                 <span className="text-indigo-200 text-xs font-semibold tracking-wide uppercase">SC Création · CRM 360</span>
               </div>
-              <h1 className="text-[1.6rem] font-bold text-white leading-tight mb-1">{greeting}, Sheryn ! 👋</h1>
+              <h1 className="text-[1.6rem] font-bold text-white leading-tight mb-1">{greeting}, {localStorage.getItem('sc-crm-profil') || 'Sheryn'} ! 👋</h1>
               <p className="text-indigo-200 text-sm">
                 {tachesUrgentes > 0
                   ? `Vous avez ${tachesUrgentes} tâche${tachesUrgentes > 1 ? 's' : ''} urgente${tachesUrgentes > 1 ? 's' : ''} en attente.`
@@ -257,7 +335,7 @@ export default function Dashboard() {
               Voir tout <ArrowRight size={12} />
             </button>
           </div>
-          <table className="w-full">
+          <div className="overflow-x-auto"><table className="w-full min-w-[500px]">
             <thead>
               <tr>
                 <th className="table-header">Tâche</th>
@@ -294,13 +372,16 @@ export default function Dashboard() {
                 )
               })}
             </tbody>
-          </table>
+          </table></div>
         </div>
 
       </div>
 
       {/* ── Right column ── */}
-      <div className="flex-1 min-w-0 space-y-5">
+      <div className="w-full xl:flex-1 min-w-0 space-y-5">
+
+        {/* Mes tâches */}
+        <MesTaches taches={taches} profil={profil} moveTache={moveTache} addNotification={addNotification} />
 
         {/* Calendar */}
         <div className="bg-white rounded-2xl p-5" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>

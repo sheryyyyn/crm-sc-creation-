@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Search, Bell, AlertTriangle, Calendar, FileText, TrendingUp, X } from 'lucide-react'
+import { Search, Bell, AlertTriangle, Calendar, FileText, TrendingUp, X, Menu } from 'lucide-react'
 import useStore from '../../store/useStore'
 import QuickCreate from '../ui/QuickCreate'
 
@@ -14,7 +14,7 @@ function NotifIcon({ type }) {
   return map[type] || <Bell size={13} className="text-gray-500" />
 }
 
-export default function Topbar() {
+export default function Topbar({ onMenuToggle }) {
   const navigate = useNavigate()
   const { notifications, clients, projets, taches, markNotifRead, markAllNotifRead, getUnreadCount } = useStore()
   const [searchQ, setSearchQ] = useState('')
@@ -44,16 +44,24 @@ export default function Topbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-60 right-0 h-14 bg-white/80 backdrop-blur-md flex items-center px-7 gap-4 z-20" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+      <header className="fixed top-0 left-0 lg:left-60 right-0 h-14 bg-white/80 backdrop-blur-md flex items-center px-4 lg:px-7 gap-3 lg:gap-4 z-20" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        {/* Hamburger — mobile uniquement */}
+        <button
+          onClick={onMenuToggle}
+          className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors flex-shrink-0"
+        >
+          <Menu size={20} />
+        </button>
+
         {/* Search */}
         <button
           onClick={() => { setSearchOpen(true); setTimeout(() => searchRef.current?.focus(), 50) }}
-          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm text-gray-400 transition-colors"
-          style={{ background: '#f4f5f7', minWidth: '220px' }}
+          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm text-gray-400 transition-colors flex-1 lg:flex-none"
+          style={{ background: '#f4f5f7', minWidth: '0', maxWidth: '320px' }}
         >
           <Search size={14} className="text-gray-400" />
           <span className="flex-1 text-left">Recherche globale...</span>
-          <span className="text-xs bg-white text-gray-400 px-1.5 py-0.5 rounded-lg border border-gray-200">⌘K</span>
+          <span className="hidden sm:inline text-xs bg-white text-gray-400 px-1.5 py-0.5 rounded-lg border border-gray-200">⌘K</span>
         </button>
 
         <div className="flex-1" />
