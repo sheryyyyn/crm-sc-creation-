@@ -275,23 +275,25 @@ export default function Dashboard() {
           <div className="mb-6 rounded-2xl overflow-hidden cursor-pointer group"
             onClick={() => navigate('/formulaires')}
             style={{ boxShadow: '0 4px 20px rgba(245,158,11,0.25)' }}>
-            <div className="flex items-center gap-4 px-6 py-4"
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 px-6 py-4"
               style={{ background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)', borderLeft: '4px solid #f59e0b' }}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', boxShadow: '0 4px 12px rgba(245,158,11,0.4)' }}>
-                <Bell size={18} className="text-white" />
+              <div className="flex items-start gap-3 sm:contents">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)', boxShadow: '0 4px 12px rgba(245,158,11,0.4)' }}>
+                  <Bell size={18} className="text-white" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-bold text-amber-900">
+                    {newFormCount === 1
+                      ? '1 nouvelle demande de projet reçue !'
+                      : `${newFormCount} nouvelles demandes de projet reçues !`}
+                  </p>
+                  <p className="text-xs text-amber-700 mt-0.5">
+                    {newFormReponses.map(r => r.nomEntreprise).join(', ')} · Ne faites pas attendre votre client — répondez rapidement !
+                  </p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-amber-900">
-                  {newFormCount === 1
-                    ? '1 nouvelle demande de projet reçue !'
-                    : `${newFormCount} nouvelles demandes de projet reçues !`}
-                </p>
-                <p className="text-xs text-amber-700 mt-0.5">
-                  {newFormReponses.map(r => r.nomEntreprise).join(', ')} · Ne faites pas attendre votre client — répondez rapidement !
-                </p>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white group-hover:opacity-90 transition-opacity whitespace-nowrap flex-shrink-0"
+              <div className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-white group-hover:opacity-90 transition-opacity sm:whitespace-nowrap sm:flex-shrink-0 self-stretch sm:self-auto justify-center"
                 style={{ background: 'linear-gradient(135deg,#f59e0b,#d97706)' }}>
                 <ClipboardList size={13} />
                 Voir les demandes
