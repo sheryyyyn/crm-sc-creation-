@@ -1,0 +1,46 @@
+import { Routes, Route } from 'react-router-dom'
+import Layout from './components/layout/Layout'
+import Dashboard from './pages/Dashboard'
+import Clients from './pages/Clients'
+import ClientDetail from './pages/ClientDetail'
+import Projets from './pages/Projets'
+import Taches from './pages/Taches'
+import RDV from './pages/RDV'
+import Documents from './pages/Documents'
+import Finances from './pages/Finances'
+import Depenses from './pages/Depenses'
+import Parametres from './pages/Parametres'
+import Formulaires from './pages/Formulaires'
+import FormulairePublic from './pages/FormulairePublic'
+import CalendrierEditorial from './pages/CalendrierEditorial'
+import MotDePasse from './pages/MotDePasse'
+
+export default function App() {
+  return (
+    <Routes>
+      {/* Page publique — sans sidebar */}
+      <Route path="/formulaire" element={<FormulairePublic />} />
+
+      {/* CRM — avec sidebar */}
+      <Route path="*" element={
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/clients" element={<Clients />} />
+            <Route path="/clients/:id" element={<ClientDetail />} />
+            <Route path="/projets" element={<Projets />} />
+            <Route path="/taches" element={<Taches />} />
+            <Route path="/rdv" element={<RDV />} />
+            <Route path="/documents" element={<Documents />} />
+            <Route path="/finances" element={<Finances />} />
+            <Route path="/depenses" element={<Depenses />} />
+            <Route path="/formulaires" element={<Formulaires />} />
+            <Route path="/calendrier-editorial" element={<CalendrierEditorial />} />
+            <Route path="/mots-de-passe" element={<MotDePasse />} />
+            <Route path="/parametres" element={<Parametres />} />
+          </Routes>
+        </Layout>
+      } />
+    </Routes>
+  )
+}

@@ -1,0 +1,101 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #f0f2f8;
+    color: #0f172a;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #c7d2fe;
+    border-radius: 99px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #a5b4fc;
+  }
+}
+
+@layer components {
+  .sidebar-link {
+    @apply flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-gray-500 hover:bg-indigo-50 hover:text-indigo-700 transition-all duration-150 cursor-pointer;
+  }
+  .sidebar-link.active {
+    @apply bg-indigo-600 text-white font-semibold shadow-sm;
+  }
+  .sidebar-link.active svg {
+    @apply text-white;
+  }
+  .btn-primary {
+    @apply flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 active:scale-95 transition-all duration-150 shadow-sm;
+  }
+  .btn-secondary {
+    @apply flex items-center gap-2 px-4 py-2 bg-white text-gray-700 text-sm font-semibold rounded-xl border border-gray-200 hover:bg-gray-50 active:scale-95 transition-all duration-150;
+  }
+  .btn-danger {
+    @apply flex items-center gap-2 px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-xl hover:bg-red-600 active:scale-95 transition-all duration-150;
+  }
+  .card {
+    @apply bg-white rounded-2xl border-0 shadow-card;
+  }
+  .input {
+    @apply w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white placeholder-gray-400 transition-all;
+  }
+  .label {
+    @apply block text-xs font-semibold text-gray-500 mb-1.5 uppercase tracking-wide;
+  }
+  .select {
+    @apply w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all;
+  }
+  .table-header {
+    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider px-5 py-3.5 text-left bg-gray-50/50;
+  }
+  .table-row {
+    @apply border-t border-gray-100 hover:bg-indigo-50/30 transition-colors;
+  }
+  .table-cell {
+    @apply px-5 py-3.5 text-sm text-gray-700;
+  }
+  .stat-card {
+    @apply bg-white rounded-2xl p-5 shadow-card hover:shadow-card-hover transition-all duration-200;
+  }
+  .kanban-col {
+    @apply bg-gray-100/70 rounded-2xl min-h-[400px] flex flex-col;
+  }
+  .kanban-card {
+    @apply bg-white rounded-xl p-3.5 shadow-card hover:shadow-card-hover transition-all cursor-grab active:cursor-grabbing;
+  }
+  .tab {
+    @apply px-4 py-2 text-sm font-medium rounded-xl cursor-pointer transition-all;
+  }
+  .tab.active {
+    @apply bg-indigo-600 text-white shadow-sm;
+  }
+  .tab:not(.active) {
+    @apply text-gray-500 hover:text-gray-900 hover:bg-white;
+  }
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold;
+  }
+  .page-header {
+    @apply flex items-center justify-between mb-6;
+  }
+  .page-title {
+    @apply text-xl font-bold text-gray-900;
+  }
+  .section-title {
+    @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3;
+  }
+}
