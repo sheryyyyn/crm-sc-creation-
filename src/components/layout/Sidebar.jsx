@@ -2,9 +2,10 @@ import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Users, FolderOpen, CheckSquare, Calendar,
   FileText, CreditCard, Wallet, Settings, Hexagon, ClipboardList,
-  CalendarDays, Lock, X,
+  CalendarDays, Lock, X, LogOut,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
+import { logout } from './LoginGate'
 
 const navCategories = [
   {
@@ -133,6 +134,13 @@ export default function Sidebar({ isOpen, onClose }) {
           </div>
           <div className="w-2 h-2 bg-emerald-400 rounded-full shadow shadow-emerald-200" />
         </div>
+        <button
+          onClick={logout}
+          className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+        >
+          <LogOut size={13} />
+          Se déconnecter
+        </button>
       </div>
     </aside>
   )
