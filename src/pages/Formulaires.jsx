@@ -2,9 +2,10 @@ import { useState } from 'react'
 import {
   ClipboardList, Eye, EyeOff, Copy, Check, ChevronDown, ChevronUp,
   Mail, Phone, Globe, Calendar, Euro, Target, Users, Star, MessageSquare,
-  Building2, Inbox, ExternalLink, CheckCircle2, Clock,
+  Building2, Inbox, ExternalLink, CheckCircle2, Clock, Send, X, CalendarPlus,
 } from 'lucide-react'
 import useStore from '../store/useStore'
+import { getCalendlyUrl } from './Parametres'
 
 // ─── Champs du formulaire (structure pour l'aperçu) ─────────────────────────
 const FORM_FIELDS = [
@@ -43,6 +44,226 @@ const FORM_FIELDS = [
 
 const FORM_URL = typeof window !== 'undefined' ? `${window.location.origin}/formulaire` : '/formulaire'
 
+// ─── Modal mail d'intérêt ─────────────────────────────────────────────────────
+function MailInteretModal({ rep, onClose }) {
+  const [copied, setCopied] = useState(false)
+  const calendlyUrl = getCalendlyUrl()
+
+  const sujet = encodeURIComponent(`SC Création — Votre projet nous intéresse ! 🎉`)
+  const corps = `Bonjour ${rep.nomEntreprise || 'cher(e) client(e)'},
+
+Merci d'avoir pris le temps de remplir notre formulaire — votre projet retient vraiment notre attention !
+
+Nous serions ravis d'en discuter avec vous lors d'un appel découverte (30 min) afin de mieux cerner vos besoins et vous proposer la solution la plus adaptée.
+
+👉 Réservez votre créneau directement ici :
+${calendlyUrl || '[Ajoutez votre lien Calendly dans les Paramètres]'}
+
+N'hésitez pas à nous contacter si vous avez la moindre question.
+
+À très vite,
+L'équipe SC Création`
+
+  const corpsEncode = encodeURIComponent(corps)
+  const mailtoLink = `mailto:${rep.email}?subject=${sujet}&body=${corpsEncode}`
+
+  function copier() {
+    navigator.clipboard.writeText(corps).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.45)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+          style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+              <Send size={15} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-gray-900">Mail d'intérêt</p>
+              <p className="text-[11px] text-gray-400">{rep.email}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+            <X size={14} className="text-gray-500" />
+          </button>
+        </div>
+
+        {/* Corps */}
+        <div className="px-6 py-5">
+          {!calendlyUrl && (
+            <div className="mb-4 px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl">
+              <p className="text-xs text-amber-700 font-medium">⚠️ Aucun lien de réservation configuré — ajoutez votre lien Calendly dans <strong>Paramètres → Agence</strong>.</p>
+            </div>
+          )}
+          <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200" style={{ fontSize: '12px', maxHeight: '280px', overflowY: 'auto' }}>
+            {corps}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 px-6 pb-6">
+          <a href={mailtoLink}
+            className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl text-white transition-colors"
+            style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}
+            onClick={onClose}>
+            <Mail size={14} />
+            Ouvrir dans la messagerie
+          </a>
+          <button onClick={copier}
+            className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            {copied ? <><Check size={14} className="text-emerald-600" />Copié !</> : <><Copy size={14} />Copier</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Modal calendrier de réservation ─────────────────────────────────────────
+function CalendrierModal({ rep, onClose, onRdvAjoute }) {
+  const { clients, addRDV } = useStore()
+  const calendlyUrl = getCalendlyUrl()
+  const [showForm, setShowForm] = useState(false)
+  const [form, setForm] = useState({
+    clientId: '',
+    date: '',
+    heure: '',
+    lienMeet: '',
+    sujet: `Appel découverte — ${rep.nomEntreprise}`,
+    objectif: 'Présentation du projet et besoins',
+    notes: `Budget client : ${rep.budget || '—'}`,
+  })
+  const [saved, setSaved] = useState(false)
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    addRDV(form)
+    setSaved(true)
+    setTimeout(() => { setSaved(false); onRdvAjoute(); onClose() }, 1500)
+  }
+
+  const embedUrl = calendlyUrl
+    ? `${calendlyUrl}?embed_type=Inline&hide_event_type_details=1&hide_gdpr_banner=1&name=${encodeURIComponent(rep.nomEntreprise || '')}&email=${encodeURIComponent(rep.email || '')}`
+    : null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.45)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden" style={{ maxHeight: '90vh' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+          style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+              <CalendarPlus size={15} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-gray-900">Calendrier de réservation</p>
+              <p className="text-[11px] text-gray-400">{rep.nomEntreprise}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button onClick={() => setShowForm(f => !f)}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors flex items-center gap-1.5">
+              <CalendarPlus size={12} />
+              {showForm ? 'Voir le calendrier' : 'Ajouter au planning'}
+            </button>
+            <button onClick={onClose} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+              <X size={14} className="text-gray-500" />
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-y-auto" style={{ maxHeight: 'calc(90vh - 70px)' }}>
+          {!showForm ? (
+            <div>
+              {embedUrl ? (
+                <iframe
+                  src={embedUrl}
+                  width="100%"
+                  height="600"
+                  frameBorder="0"
+                  title="Calendrier de réservation"
+                />
+              ) : (
+                <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
+                  <div className="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center mb-4">
+                    <Calendar size={28} className="text-indigo-400" />
+                  </div>
+                  <p className="text-gray-700 font-semibold mb-2">Aucun lien de réservation configuré</p>
+                  <p className="text-sm text-gray-400 mb-4">Ajoutez votre lien Calendly dans <strong>Paramètres → Agence</strong> pour afficher le calendrier ici.</p>
+                  <p className="text-xs text-gray-400">En attendant, utilisez le bouton ci-dessous pour ajouter manuellement le RDV.</p>
+                </div>
+              )}
+              <div className="px-6 py-4 border-t border-gray-100 bg-gray-50">
+                <p className="text-xs text-gray-500">Une fois le créneau réservé par le client, ajoutez-le manuellement à votre planning :</p>
+                <button onClick={() => setShowForm(true)}
+                  className="mt-3 flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl text-white w-full justify-center"
+                  style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+                  <CalendarPlus size={14} />
+                  Confirmer le RDV dans le planning
+                </button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+              <p className="text-sm text-gray-500">Remplissez les détails du RDV pour l'ajouter directement dans votre planning.</p>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Client (optionnel)</label>
+                  <select className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })}>
+                    <option value="">— Aucun client lié —</option>
+                    {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Date *</label>
+                  <input required type="date" className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Heure *</label>
+                  <input required type="time" className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    value={form.heure} onChange={e => setForm({ ...form, heure: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Lien Google Meet</label>
+                  <input type="url" placeholder="https://meet.google.com/..." className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    value={form.lienMeet} onChange={e => setForm({ ...form, lienMeet: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Sujet</label>
+                  <input type="text" className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
+                    value={form.sujet} onChange={e => setForm({ ...form, sujet: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <label className="block text-xs font-semibold text-gray-600 mb-1.5">Notes</label>
+                  <textarea rows={3} className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"
+                    value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+                </div>
+              </div>
+
+              <button type="submit"
+                className="w-full py-3 rounded-xl text-sm font-bold text-white flex items-center justify-center gap-2 transition-opacity"
+                style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', opacity: saved ? 0.7 : 1 }}
+                disabled={saved}>
+                {saved ? '✓ RDV ajouté au planning !' : <><CalendarPlus size={15} />Ajouter au planning</>}
+              </button>
+            </form>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── Badge lu/non-lu ──────────────────────────────────────────────────────────
 function LuBadge({ lu }) {
   if (lu) return <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-400"><CheckCircle2 size={10} />Lu</span>
@@ -52,6 +273,9 @@ function LuBadge({ lu }) {
 // ─── Carte réponse ─────────────────────────────────────────────────────────────
 function CarteReponse({ rep, onToggle, open }) {
   const { markFormReponseRead } = useStore()
+  const [mailModal, setMailModal] = useState(false)
+  const [calModal, setCalModal] = useState(false)
+  const [rdvAdded, setRdvAdded] = useState(false)
 
   const handleOpen = () => {
     if (!rep.lu) markFormReponseRead(rep.id)
@@ -84,6 +308,9 @@ function CarteReponse({ rep, onToggle, open }) {
   ]
 
   return (
+    <>
+    {mailModal && <MailInteretModal rep={rep} onClose={() => setMailModal(false)} />}
+    {calModal && <CalendrierModal rep={rep} onClose={() => setCalModal(false)} onRdvAjoute={() => setRdvAdded(true)} />}
     <div className={`bg-white rounded-2xl overflow-hidden transition-all duration-200 ${!rep.lu ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
       style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       {/* Header */}
@@ -127,12 +354,22 @@ function CarteReponse({ rep, onToggle, open }) {
           </div>
 
           {/* Actions rapides */}
-          <div className="flex gap-3 mt-5 pt-4 border-t border-gray-100">
-            <a href={`mailto:${rep.email}`}
+          <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-gray-100">
+            <button onClick={() => setMailModal(true)}
               className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl text-white transition-colors"
               style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+              <Send size={13} />
+              Envoyer mail d'intérêt
+            </button>
+            <button onClick={() => setCalModal(true)}
+              className={`flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl transition-colors ${rdvAdded ? 'bg-emerald-50 text-emerald-700' : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}>
+              <CalendarPlus size={13} />
+              {rdvAdded ? 'RDV ajouté ✓' : 'Réserver un créneau'}
+            </button>
+            <a href={`mailto:${rep.email}`}
+              className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
               <Mail size={13} />
-              Contacter par email
+              Email direct
             </a>
             <a href={`tel:${rep.telephone}`}
               className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors">
@@ -143,6 +380,7 @@ function CarteReponse({ rep, onToggle, open }) {
         </div>
       )}
     </div>
+    </>
   )
 }
 

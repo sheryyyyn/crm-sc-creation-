@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Settings, Users, Palette, Globe, Link2, Save } from 'lucide-react'
+
+export const getCalendlyUrl = () => localStorage.getItem('sc_calendly_url') || 'https://cal.eu/sc.creation/45min'
+export const setCalendlyUrl = (url) => localStorage.setItem('sc_calendly_url', url)
 
 const INTEGRATIONS = [
   { name: 'Google Calendar', icon: '📅', statut: 'Bientôt disponible', color: 'bg-blue-50 border-blue-100' },
@@ -25,8 +28,10 @@ export default function Parametres() {
     tva: '20',
   })
   const [saved, setSaved] = useState(false)
+  const [calendlyUrl, setCalendlyUrlState] = useState(() => getCalendlyUrl() || 'https://cal.eu/sc.creation/45min')
 
   function handleSave() {
+    setCalendlyUrl(calendlyUrl)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }
@@ -73,6 +78,11 @@ export default function Parametres() {
                 <div className="col-span-2">
                   <label className="label">Adresse</label>
                   <textarea className="input resize-none" rows={2} value={agence.adresse} onChange={e => setAgence({ ...agence, adresse: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <label className="label">Lien de réservation (Calendly)</label>
+                  <input type="url" className="input" placeholder="https://calendly.com/sc-creation/30min" value={calendlyUrl} onChange={e => setCalendlyUrlState(e.target.value)} />
+                  <p className="text-[11px] text-gray-400 mt-1">Ce lien sera intégré automatiquement dans les mails d'intérêt envoyés depuis les formulaires.</p>
                 </div>
               </div>
               <div className="mt-5 flex items-center gap-3">
