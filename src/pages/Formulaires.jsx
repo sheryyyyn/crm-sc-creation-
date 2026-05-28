@@ -12,6 +12,7 @@ const FORM_FIELDS = [
     { label: 'Nom de votre entreprise / marque *', name: 'nomEntreprise', type: 'text', placeholder: 'Ex : SC Création' },
     { label: 'Adresse e-mail *', name: 'email', type: 'email', placeholder: 'contact@votreentreprise.fr' },
     { label: 'Numéro de téléphone *', name: 'telephone', type: 'tel', placeholder: '06 00 00 00 00' },
+    { label: "Quel est votre secteur d'activité ? *", name: 'secteurActivite', type: 'select', options: ['Mode & Vêtements', 'Beauté & Cosmétiques', 'Alimentation & Restauration', 'Sport & Bien-être', 'Maison & Décoration', 'Art & Artisanat', 'High-Tech & Informatique', 'Services aux entreprises (B2B)', 'Santé & Médical', 'Éducation & Formation', 'Immobilier', 'Événementiel', 'Conseil & Coaching', 'Autre'] },
     { label: 'Avez-vous déjà un site web ?', name: 'siteActuel', type: 'text', placeholder: 'https://... (laisser vide si non)' },
   ]},
   { section: 'Votre projet', fields: [
@@ -27,6 +28,10 @@ const FORM_FIELDS = [
     { label: 'Avez-vous déjà un nom de domaine ?', name: 'nomDomaine', type: 'select', options: ['Oui', 'Non', 'Je ne sais pas'] },
     { label: 'Avez-vous déjà un logo / charte graphique ?', name: 'logoCharte', type: 'select', options: ['Oui', 'Non, j\'ai besoin d\'aide', 'En cours'] },
     { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
+  ]},
+  { section: 'Comment nous avez-vous trouvés ?', fields: [
+    { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'select', options: ['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Pinterest', 'Bouche à oreille', 'Google', 'Autre'] },
+    { label: 'Votre pseudo sur ce réseau *', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
   ]},
   { section: 'Budget & délais', fields: [
     { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'select', options: ['Moins de 300€', '300€ – 500€', '500€ – 800€', '800€ – 1200€', 'Plus de 1200€', 'À définir'] },
