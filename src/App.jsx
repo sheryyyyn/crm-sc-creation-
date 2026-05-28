@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import LoginGate from './components/layout/LoginGate'
 import useStore from './store/useStore'
+import { signIn } from './firebase'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import ClientDetail from './pages/ClientDetail'
@@ -23,7 +24,9 @@ export default function App() {
 
   useEffect(() => {
     let cleanup
-    initListeners().then((unsub) => { cleanup = unsub })
+    signIn().then(() => {
+      initListeners().then((unsub) => { cleanup = unsub })
+    })
     return () => cleanup?.()
   }, [])
 
