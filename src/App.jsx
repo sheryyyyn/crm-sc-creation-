@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import LoginGate from './components/layout/LoginGate'
+import useStore from './store/useStore'
 import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import ClientDetail from './pages/ClientDetail'
@@ -17,6 +19,14 @@ import CalendrierEditorial from './pages/CalendrierEditorial'
 import MotDePasse from './pages/MotDePasse'
 
 export default function App() {
+  const initListeners = useStore((s) => s.initListeners)
+
+  useEffect(() => {
+    let cleanup
+    initListeners().then((unsub) => { cleanup = unsub })
+    return () => cleanup?.()
+  }, [])
+
   return (
     <Routes>
       {/* Page publique — sans sidebar */}
