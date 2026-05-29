@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { registerFCMToken, setupForegroundMessages } from '../../utils/fcm'
+import { requestNotificationPermission } from '../../utils/notify'
 
 const STORAGE_KEY = 'sc-crm-auth'
 const PROFIL_KEY = 'sc-crm-profil'
@@ -24,6 +26,15 @@ export function logout() {
 
 export default function LoginGate({ children }) {
   const [auth, setAuth] = useState(isAuthenticated)
+
+  useEffect(() => {
+    if (!auth) return
+    const profil = getProfil()
+    requestNotificationPermission().then(granted => {
+      if (granted) registerFCMToken(profil)
+    })
+    setupForegroundMessages()
+  }, [auth])
 
   function choisirProfil(p) {
     localStorage.setItem(STORAGE_KEY, 'ok')

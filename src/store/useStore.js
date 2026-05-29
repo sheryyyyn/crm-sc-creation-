@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { notify } from '../utils/notify'
+import { sendPushNotification } from '../utils/fcm'
 import {
   collection, doc, setDoc, deleteDoc, getDocs, writeBatch, onSnapshot
 } from 'firebase/firestore'
@@ -122,6 +123,9 @@ const useStore = create((set, get) => ({
       if (data.assignee === profil || data.assignee === 'Les deux') {
         notify('📌 Tâche assignée', `"${prev?.titre}" t'a été assignée.`)
       }
+      const title = '📌 Nouvelle tâche assignée'
+      const body = `"${prev?.titre}" a été assignée à ${data.assignee}.`
+      sendPushNotification(title, body, '/taches')
     }
   },
   deleteTache: (id) => fsDel('taches', id),
@@ -135,7 +139,10 @@ const useStore = create((set, get) => ({
     const item = { ...data, id: generateId('r'), compteRendu: '', prochainesActions: [], createdAt: new Date().toISOString() }
     fsSet('rdvs', item.id, item)
     const dateStr = data.date ? new Date(data.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
-    notify('📅 Nouveau RDV planifié', `${data.sujet || 'Rendez-vous'}${dateStr ? ` · ${dateStr}` : ''}${data.heure ? ` à ${data.heure}` : ''}`)
+    const title = '📅 Nouveau RDV planifié'
+    const body = `${data.sujet || 'Rendez-vous'}${dateStr ? ` · ${dateStr}` : ''}${data.heure ? ` à ${data.heure}` : ''}`
+    notify(title, body)
+    sendPushNotification(title, body, '/rdv')
   },
   updateRDV: (id, data) => {
     const updated = { ...get().rdvs.find((r) => r.id === id), ...data }
@@ -202,10 +209,10 @@ const useStore = create((set, get) => ({
   addFormReponse: (data) => {
     const item = { ...data, id: generateId('fr'), lu: false, horodateur: new Date().toISOString() }
     fsSet('formReponses', item.id, item)
-    notify(
-      '📋 Nouveau formulaire reçu !',
-      `${data.nomEntreprise || 'Un prospect'} vient de remplir le formulaire de contact.`
-    )
+    const title = '📋 Nouveau formulaire reçu !'
+    const body = `${data.nomEntreprise || 'Un prospect'} vient de remplir le formulaire de contact.`
+    notify(title, body)
+    sendPushNotification(title, body, '/formulaires')
     const tache = {
       id: generateId('t'),
       titre: `Répondre au formulaire de ${data.nomEntreprise || 'nouveau prospect'}`,

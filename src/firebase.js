@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 import { getAuth, signInAnonymously } from 'firebase/auth'
+import { getMessaging, isSupported } from 'firebase/messaging'
 
 const firebaseConfig = {
   apiKey: "AIzaSyB0EZsUfj2rAw4UZm9wv_0m09lYwc2F_X0",
@@ -16,3 +17,9 @@ const app = initializeApp(firebaseConfig)
 export const db = getFirestore(app)
 export const auth = getAuth(app)
 export const signIn = () => signInAnonymously(auth)
+
+export const getMessagingInstance = async () => {
+  const supported = await isSupported()
+  if (!supported) return null
+  return getMessaging(app)
+}
