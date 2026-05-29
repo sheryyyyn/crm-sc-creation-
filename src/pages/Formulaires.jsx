@@ -520,7 +520,7 @@ export default function Formulaires() {
             <div className="flex gap-2">
               {[
                 { key: 'tous', label: `Toutes (${formReponses.length})` },
-                { key: 'nouveau', label: `Non lues (${nonLus})` },
+                { key: 'nouveau', label: `Nouveaux (${nonLus})` },
                 { key: 'mail_envoye', label: `Mail envoyé (${mailEnvoyes})` },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setFiltre(key)}
