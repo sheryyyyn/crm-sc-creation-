@@ -51,28 +51,28 @@ export default function ClientDetail() {
   return (
     <div>
       {/* Header */}
-      <div className="flex items-center gap-4 mb-6">
-        <button onClick={() => navigate('/clients')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500">
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <button onClick={() => navigate('/clients')} className="p-2 rounded-lg hover:bg-gray-100 text-gray-500 flex-shrink-0">
           <ArrowLeft size={18} />
         </button>
-        <div className="flex items-center gap-3 flex-1">
-          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center flex-shrink-0">
             <span className="text-sm font-bold text-indigo-700">{client.nom[0]}</span>
           </div>
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">{client.nom}</h1>
-            {client.contact && <p className="text-sm text-gray-500">{client.contact}</p>}
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">{client.nom}</h1>
+            {client.contact && <p className="text-sm text-gray-500 truncate">{client.contact}</p>}
           </div>
-          <div className="ml-2">{statutBadge(client.statut)}</div>
+          <div className="flex-shrink-0">{statutBadge(client.statut)}</div>
         </div>
-        <div className="flex items-center gap-2">
-          <button className="btn-secondary" onClick={openEdit}><Edit size={15} />Modifier</button>
-          <button className="btn-danger" onClick={handleDelete}><Trash2 size={15} />Supprimer</button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button className="btn-secondary" onClick={openEdit}><Edit size={15} /><span className="hidden sm:inline">Modifier</span></button>
+          <button className="btn-danger" onClick={handleDelete}><Trash2 size={15} /><span className="hidden sm:inline">Supprimer</span></button>
         </div>
       </div>
 
       {/* Quick contact */}
-      <div className="flex items-center gap-4 mb-6">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-6">
         {client.email && (
           <a href={`mailto:${client.email}`} className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-indigo-600 transition-colors">
             <Mail size={14} />{client.email}
@@ -96,9 +96,9 @@ export default function ClientDetail() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 mb-5 bg-gray-100/70 rounded-xl p-1 w-fit">
+      <div className="flex items-center gap-1 mb-5 bg-gray-100/70 rounded-xl p-1 overflow-x-auto">
         {TABS.map(t => (
-          <button key={t} onClick={() => setTab(t)} className={`tab ${tab === t ? 'active' : ''}`}>{t}</button>
+          <button key={t} onClick={() => setTab(t)} className={`tab flex-shrink-0 ${tab === t ? 'active' : ''}`}>{t}</button>
         ))}
       </div>
 
@@ -175,7 +175,8 @@ export default function ClientDetail() {
       {/* Tâches */}
       {tab === 'Tâches' && (
         <div className="card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[500px]">
             <thead>
               <tr>
                 <th className="table-header">Tâche</th>
@@ -204,6 +205,7 @@ export default function ClientDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -234,7 +236,8 @@ export default function ClientDetail() {
       {/* Documents */}
       {tab === 'Documents' && (
         <div className="card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[420px]">
             <thead>
               <tr>
                 <th className="table-header">Numéro</th>
@@ -257,6 +260,7 @@ export default function ClientDetail() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

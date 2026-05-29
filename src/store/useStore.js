@@ -1,7 +1,10 @@
 import { create } from 'zustand'
+import { notify } from '../utils/notify'
 import {
   collection, doc, setDoc, deleteDoc, getDocs, writeBatch, onSnapshot
 } from 'firebase/firestore'
+
+const DEMO_COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'notifications']
 import { db } from '../firebase'
 import {
   mockClients,
@@ -104,8 +107,12 @@ const useStore = create((set, get) => ({
     fsSet('taches', item.id, item)
   },
   updateTache: (id, data) => {
-    const updated = { ...get().taches.find((t) => t.id === id), ...data }
+    const prev = get().taches.find((t) => t.id === id)
+    const updated = { ...prev, ...data }
     fsSet('taches', id, updated)
+    if (data.priorite === 'urgente' && prev?.priorite !== 'urgente') {
+      notify('🔴 Tâche urgente !', `"${prev?.titre}" est passée en priorité urgente.`)
+    }
   },
   deleteTache: (id) => fsDel('taches', id),
   moveTache: (id, newStatut) => {
@@ -183,6 +190,26 @@ const useStore = create((set, get) => ({
   addFormReponse: (data) => {
     const item = { ...data, id: generateId('fr'), lu: false, horodateur: new Date().toISOString() }
     fsSet('formReponses', item.id, item)
+    notify(
+      '📋 Nouveau formulaire reçu !',
+      `${data.nomEntreprise || 'Un prospect'} vient de remplir le formulaire de contact.`
+    )
+    const tache = {
+      id: generateId('t'),
+      titre: `Répondre au formulaire de ${data.nomEntreprise || 'nouveau prospect'}`,
+      description: `Formulaire reçu le ${new Date().toLocaleDateString('fr-FR')} — Budget : ${data.budget || '—'}`,
+      assignee: 'Les deux',
+      priorite: 'haute',
+      statut: 'a_faire',
+      clientId: '',
+      projetId: '',
+      deadline: '',
+      notes: '',
+      checklist: [],
+      createdAt: new Date().toISOString(),
+      formReponseId: item.id,
+    }
+    fsSet('taches', tache.id, tache)
   },
   markFormReponseRead: (id) => {
     const updated = { ...get().formReponses.find((r) => r.id === id), lu: true }
@@ -190,6 +217,15 @@ const useStore = create((set, get) => ({
   },
   markFormReponseMailEnvoye: (id) => {
     const updated = { ...get().formReponses.find((r) => r.id === id), lu: true, mailEnvoye: true }
+    fsSet('formReponses', id, updated)
+  },
+  markFormReponseRdvBooke: (id) => {
+    const updated = { ...get().formReponses.find((r) => r.id === id), rdvBooke: true }
+    fsSet('formReponses', id, updated)
+  },
+  deleteFormReponse: (id) => fsDel('formReponses', id),
+  updateFormReponse: (id, data) => {
+    const updated = { ...get().formReponses.find((r) => r.id === id), ...data }
     fsSet('formReponses', id, updated)
   },
   markAllFormReponsesRead: () => {
@@ -208,6 +244,16 @@ const useStore = create((set, get) => ({
   addNotification: (data) => {
     const item = { ...data, id: generateId('n'), lu: false, createdAt: new Date().toISOString() }
     fsSet('notifications', item.id, item)
+  },
+
+  // ─── Purge données de démo ──────────────────────────────────────────────
+  purgeDemoData: async () => {
+    for (const col of DEMO_COLLECTIONS) {
+      const snap = await getDocs(collection(db, col))
+      const batch = writeBatch(db)
+      snap.docs.forEach((d) => batch.delete(d.ref))
+      if (!snap.empty) await batch.commit()
+    }
   },
 
   // ─── Computed helpers ───────────────────────────────────────────────────

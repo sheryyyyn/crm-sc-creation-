@@ -81,7 +81,7 @@ export default function Topbar({ onMenuToggle }) {
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 top-12 w-96 bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.06)' }}>
+            <div className="absolute right-0 top-12 w-screen max-w-sm sm:max-w-md bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.15)', border: '1px solid rgba(0,0,0,0.06)' }}>
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
                 <p className="text-sm font-semibold text-gray-900">Notifications</p>
                 {unread > 0 && <button onClick={markAllNotifRead} className="text-xs text-indigo-600 hover:underline font-medium">Tout marquer lu</button>}

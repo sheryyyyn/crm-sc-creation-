@@ -74,7 +74,8 @@ export default function Finances() {
               ))}
             </select>
           </div>
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[540px]">
             <thead>
               <tr>
                 <th className="table-header">Numéro</th>
@@ -103,6 +104,7 @@ export default function Finances() {
               })}
             </tbody>
           </table>
+          </div>
           {filteredFactures.length > 0 && (
             <div className="flex justify-end px-5 py-3 border-t border-gray-100 bg-gray-50">
               <div className="text-sm text-gray-600">

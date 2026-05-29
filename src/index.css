@@ -90,7 +90,7 @@
     @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold;
   }
   .page-header {
-    @apply flex items-center justify-between mb-6;
+    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6;
   }
   .page-title {
     @apply text-xl font-bold text-gray-900;

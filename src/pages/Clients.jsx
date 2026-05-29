@@ -13,7 +13,7 @@ const emptyClient = { nom: '', contact: '', email: '', telephone: '', instagram:
 
 export default function Clients() {
   const navigate = useNavigate()
-  const { clients, addClient } = useStore()
+  const { clients, addClient, rdvs } = useStore()
   const [search, setSearch] = useState('')
   const [statut, setStatut] = useState('tous')
   const [modal, setModal] = useState(false)
@@ -54,12 +54,12 @@ export default function Clients() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3 mb-5">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-5">
+        <div className="relative w-full sm:max-w-sm">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input value={search} onChange={e => setSearch(e.target.value)} className="input pl-9" placeholder="Rechercher..." />
         </div>
-        <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1">
+        <div className="flex items-center gap-1.5 bg-white border border-gray-200 rounded-lg p-1 flex-wrap">
           {STATUTS.map(s => (
             <button
               key={s}
@@ -72,14 +72,60 @@ export default function Clients() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="card overflow-hidden">
-        <table className="w-full">
+      {/* Cards (mobile) */}
+      <div className="sm:hidden space-y-2">
+        {filtered.length === 0 && (
+          <div className="card p-8 text-center text-gray-400 text-sm">Aucun client trouvé</div>
+        )}
+        {filtered.map(c => {
+          const clientRdvs = rdvs.filter(r => r.clientId === c.id)
+          const today = new Date().toISOString().split('T')[0]
+          const aDocumentDemande = clientRdvs.some(r => r.documentDemande)
+          const aRdvPasse = clientRdvs.some(r => r.date && r.date < today)
+          return (
+            <div key={c.id} className="card p-4 cursor-pointer" onClick={() => navigate(`/clients/${c.id}`)}>
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-xs font-bold text-indigo-700">{c.nom[0]}</span>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 text-sm">{c.nom}</p>
+                    {c.contact && <p className="text-xs text-gray-500">{c.contact}</p>}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {statutBadge(c.statut)}
+                  <ChevronRight size={14} className="text-gray-400" />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
+                {c.email && <span className="flex items-center gap-1"><Mail size={10} />{c.email}</span>}
+                {c.budget && <span className="font-semibold text-gray-700">{Number(c.budget).toLocaleString('fr-FR')} €</span>}
+                {c.typeProjet && <span className="text-gray-500 truncate max-w-[140px]">{c.typeProjet}</span>}
+              </div>
+              {(aDocumentDemande || aRdvPasse) && (
+                <div className="mt-2">
+                  {aDocumentDemande
+                    ? <span className="inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✓ Document demandé</span>
+                    : <span className="inline-flex items-center text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-600">Document à fournir</span>
+                  }
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Table (desktop) */}
+      <div className="hidden sm:block card overflow-hidden">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[640px]">
           <thead>
             <tr>
               <th className="table-header">Client</th>
               <th className="table-header">Contact</th>
-              <th className="table-header">Secteur</th>
+              <th className="table-header">Documents</th>
               <th className="table-header">Statut</th>
               <th className="table-header">Budget</th>
               <th className="table-header">Projet</th>
@@ -90,7 +136,12 @@ export default function Clients() {
             {filtered.length === 0 && (
               <tr><td colSpan={7} className="text-center py-12 text-gray-400 text-sm">Aucun client trouvé</td></tr>
             )}
-            {filtered.map(c => (
+            {filtered.map(c => {
+              const clientRdvs = rdvs.filter(r => r.clientId === c.id)
+              const today = new Date().toISOString().split('T')[0]
+              const aDocumentDemande = clientRdvs.some(r => r.documentDemande)
+              const aRdvPasse = clientRdvs.some(r => r.date && r.date < today)
+              return (
               <tr key={c.id} className="table-row cursor-pointer" onClick={() => navigate(`/clients/${c.id}`)}>
                 <td className="table-cell">
                   <div className="flex items-center gap-3">
@@ -111,8 +162,12 @@ export default function Clients() {
                   </div>
                 </td>
                 <td className="table-cell">
-                  <p className="text-sm text-gray-600">{c.secteur || '—'}</p>
-                  {c.source && <p className="text-xs text-gray-400">via {c.source}</p>}
+                  {aDocumentDemande
+                    ? <span className="inline-flex items-center text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">✓ Document demandé</span>
+                    : aRdvPasse
+                      ? <span className="inline-flex items-center text-[11px] font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-600">Document à fournir</span>
+                      : <span className="text-xs text-gray-300">—</span>
+                  }
                 </td>
                 <td className="table-cell">{statutBadge(c.statut)}</td>
                 <td className="table-cell">
@@ -125,9 +180,10 @@ export default function Clients() {
                   <ChevronRight size={16} className="text-gray-400" />
                 </td>
               </tr>
-            ))}
+            )})}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Modal */}

@@ -12,37 +12,25 @@ const STATUTS_KANBAN = [
   { id: 'publie', label: 'Publié', color: 'bg-emerald-500' },
   { id: 'archive', label: 'Archivé', color: 'bg-gray-300' },
 ]
-const PLATEFORMES = ['Instagram', 'LinkedIn', 'TikTok', 'YouTube', 'Facebook', 'Pinterest', 'Blog', 'Newsletter']
+const PLATEFORMES = ['TikTok', 'Instagram']
 const TYPES = ['Reel', 'Carrousel', 'Story', 'Post', 'Article', 'Vidéo', 'Newsletter', 'Infographie', 'Podcast']
 const PRIORITES = ['basse', 'normale', 'haute', 'urgente']
 const THEMES = ['Promotion', 'Éducatif', 'Divertissement', 'Témoignage', 'Coulisses', 'Conseil', 'Annonce', 'Saisonnier']
 
 const empty = {
-  titre: '', plateforme: 'Instagram', type: 'Post', statut: 'idee',
+  titre: '', plateforme: 'TikTok', type: 'Post', statut: 'idee',
   datePublication: '', heurePublication: '',
   hook: '', script: '', description: '', hashtags: '', cta: '',
   priorite: 'normale', theme: 'Éducatif', visuel: '', notes: '', client: '',
 }
 
 const PLAT_COLORS = {
-  Instagram: 'bg-pink-100 text-pink-700',
-  LinkedIn: 'bg-blue-100 text-blue-700',
   TikTok: 'bg-gray-100 text-gray-700',
-  YouTube: 'bg-red-100 text-red-700',
-  Facebook: 'bg-sky-100 text-sky-700',
-  Pinterest: 'bg-rose-100 text-rose-700',
-  Blog: 'bg-green-100 text-green-700',
-  Newsletter: 'bg-amber-100 text-amber-700',
+  Instagram: 'bg-pink-100 text-pink-700',
 }
 const PLAT_DOT = {
-  Instagram: 'bg-pink-500',
-  LinkedIn: 'bg-blue-500',
   TikTok: 'bg-gray-600',
-  YouTube: 'bg-red-500',
-  Facebook: 'bg-sky-500',
-  Pinterest: 'bg-rose-500',
-  Blog: 'bg-green-500',
-  Newsletter: 'bg-amber-500',
+  Instagram: 'bg-pink-500',
 }
 const STATUT_COLORS = {
   idee: 'bg-gray-100 text-gray-600',
@@ -325,7 +313,7 @@ export default function CalendrierEditorial() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4 mb-5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
         {[
           { label: 'Total', val: stats.total, color: 'text-gray-800', bg: 'bg-gray-50' },
           { label: 'En cours', val: stats.enCours, color: 'text-indigo-700', bg: 'bg-indigo-50' },
@@ -408,7 +396,8 @@ export default function CalendrierEditorial() {
       {/* ── LISTE ── */}
       {view === 'liste' && (
         <div className="card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[700px]">
             <thead>
               <tr>
                 <th className="table-header">Contenu</th>
@@ -462,6 +451,7 @@ export default function CalendrierEditorial() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -471,7 +461,7 @@ export default function CalendrierEditorial() {
           {STATUTS_KANBAN.map(statut => {
             const col = filtered.filter(c => c.statut === statut.id)
             return (
-              <div key={statut.id} className="kanban-col w-64 flex-shrink-0"
+              <div key={statut.id} className="kanban-col w-72 sm:w-64 flex-shrink-0"
                 onDragOver={e => e.preventDefault()}
                 onDrop={e => handleDrop(e, statut.id)}>
                 <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200">

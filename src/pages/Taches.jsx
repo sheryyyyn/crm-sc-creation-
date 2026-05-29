@@ -136,11 +136,12 @@ export default function Taches() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex flex-wrap items-center gap-3 mb-5">
         <select className="select w-auto text-xs" value={filterAssignee} onChange={e => setFilterAssignee(e.target.value)}>
           <option value="tous">Toutes assignées</option>
           <option value="Sheryn">Sheryn</option>
           <option value="Chainez">Chainez</option>
+          <option value="Les deux">Les deux</option>
         </select>
         <select className="select w-auto text-xs" value={filterPriorite} onChange={e => setFilterPriorite(e.target.value)}>
           <option value="tous">Toutes priorités</option>
@@ -149,7 +150,7 @@ export default function Taches() {
           <option value="moyenne">Moyenne</option>
           <option value="basse">Basse</option>
         </select>
-        <div className="flex items-center gap-3 ml-2 text-xs text-gray-500">
+        <div className="hidden sm:flex items-center gap-3 ml-2 text-xs text-gray-500">
           {COLUMNS.map(col => (
             <span key={col.id} className="flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${col.color}`} />
@@ -167,7 +168,7 @@ export default function Taches() {
             return (
               <div
                 key={col.id}
-                className="kanban-col w-64 flex-shrink-0"
+                className="kanban-col w-72 sm:w-64 flex-shrink-0"
                 onDragOver={handleDragOver}
                 onDrop={e => handleDrop(e, col.id)}
               >
@@ -196,7 +197,8 @@ export default function Taches() {
       {/* Liste view */}
       {view === 'liste' && (
         <div className="card overflow-hidden">
-          <table className="w-full">
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[600px]">
             <thead>
               <tr>
                 <th className="table-header">Tâche</th>
@@ -239,6 +241,7 @@ export default function Taches() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 
@@ -270,6 +273,7 @@ export default function Taches() {
               <select className="select" value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
                 <option value="Sheryn">Sheryn</option>
                 <option value="Chainez">Chainez</option>
+                <option value="Les deux">Les deux</option>
               </select>
             </FormField>
             <FormField label="Priorité">
@@ -313,6 +317,7 @@ export default function Taches() {
                 <select className="select" value={editForm.assignee} onChange={e => setEditForm({ ...editForm, assignee: e.target.value })}>
                   <option value="Sheryn">Sheryn</option>
                   <option value="Chainez">Chainez</option>
+                  <option value="Les deux">Les deux</option>
                 </select>
               </FormField>
               <FormField label="Priorité">

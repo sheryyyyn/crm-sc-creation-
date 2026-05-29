@@ -37,7 +37,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
 }
 
 export function FormRow({ children, cols = 1 }) {
-  const gridCols = { 1: 'grid-cols-1', 2: 'grid-cols-2', 3: 'grid-cols-3' }
+  const gridCols = { 1: 'grid-cols-1', 2: 'grid-cols-1 sm:grid-cols-2', 3: 'grid-cols-1 sm:grid-cols-3' }
   return <div className={`grid ${gridCols[cols]} gap-4 mb-4`}>{children}</div>
 }
 

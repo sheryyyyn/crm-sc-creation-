@@ -72,6 +72,6 @@ export function prioriteBadge(p) {
 }
 
 export function assigneeBadge(name) {
-  const colors = { Sheryn: 'indigo', Chainez: 'pink' }
+  const colors = { Sheryn: 'indigo', Chainez: 'pink', 'Les deux': 'violet' }
   return <Badge color={colors[name] || 'gray'}>{name}</Badge>
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Settings, Users, Palette, Globe, Link2, Save } from 'lucide-react'
+import { Settings, Users, Palette, Globe, Link2, Save, Trash2 } from 'lucide-react'
+import useStore from '../store/useStore'
 
 export const getCalendlyUrl = () => localStorage.getItem('sc_calendly_url') || 'https://cal.eu/sc.creation/45min'
 export const setCalendlyUrl = (url) => localStorage.setItem('sc_calendly_url', url)
@@ -13,7 +14,7 @@ const INTEGRATIONS = [
   { name: 'Shopify', icon: '🛒', statut: 'Bientôt disponible', color: 'bg-green-50 border-green-100' },
 ]
 
-const TABS = ['Agence', 'Utilisateurs', 'Apparence', 'Intégrations']
+const TABS = ['Agence', 'Utilisateurs', 'Apparence', 'Données', 'Intégrations']
 
 export default function Parametres() {
   const [tab, setTab] = useState('Agence')
@@ -29,6 +30,19 @@ export default function Parametres() {
   })
   const [saved, setSaved] = useState(false)
   const [calendlyUrl, setCalendlyUrlState] = useState(() => getCalendlyUrl() || 'https://cal.eu/sc.creation/45min')
+  const [purging, setPurging] = useState(false)
+  const [purged, setPurged] = useState(false)
+  const [confirmPurge, setConfirmPurge] = useState(false)
+  const { purgeDemoData } = useStore()
+
+  async function handlePurge() {
+    setPurging(true)
+    await purgeDemoData()
+    setPurging(false)
+    setPurged(true)
+    setConfirmPurge(false)
+    setTimeout(() => setPurged(false), 3000)
+  }
 
   function handleSave() {
     setCalendlyUrl(calendlyUrl)
@@ -142,6 +156,39 @@ export default function Parametres() {
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {tab === 'Données' && (
+            <div className="card p-6">
+              <h2 className="text-base font-semibold text-gray-900 mb-2">Données</h2>
+              <p className="text-sm text-gray-500 mb-6">Supprime toutes les données de démonstration (clients, projets, tâches, RDVs, documents, leads, contenus, dépenses). Les formulaires clients ne seront pas supprimés.</p>
+              {purged ? (
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                  <p className="text-sm font-semibold text-emerald-700">✓ Données de démo supprimées avec succès.</p>
+                </div>
+              ) : confirmPurge ? (
+                <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <p className="text-sm font-semibold text-red-700 mb-3">Cette action est irréversible. Toutes les fausses données seront supprimées de Firebase.</p>
+                  <div className="flex gap-3">
+                    <button onClick={handlePurge} disabled={purging}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors disabled:opacity-60">
+                      <Trash2 size={14} />
+                      {purging ? 'Suppression...' : 'Confirmer la suppression'}
+                    </button>
+                    <button onClick={() => setConfirmPurge(false)}
+                      className="px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => setConfirmPurge(true)}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-colors">
+                  <Trash2 size={15} />
+                  Supprimer les données de démo
+                </button>
+              )}
             </div>
           )}
 

@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ClipboardList, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react'
 import useStore from '../store/useStore'
+import { buildClientFromForm } from '../utils/buildClientFromForm'
+
 
 const FORM_FIELDS = [
   { section: 'Votre entreprise', fields: [
@@ -41,7 +43,7 @@ const initialValues = Object.fromEntries(
 )
 
 export default function FormulairePublic() {
-  const { addFormReponse } = useStore()
+  const { addFormReponse, addClient } = useStore()
   const [values, setValues] = useState(initialValues)
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
@@ -70,6 +72,7 @@ export default function FormulairePublic() {
     setLoading(true)
     await new Promise(r => setTimeout(r, 600))
     addFormReponse(values)
+    addClient(buildClientFromForm(values))
     setSubmitted(true)
     setLoading(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })

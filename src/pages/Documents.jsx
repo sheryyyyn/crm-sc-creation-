@@ -126,7 +126,7 @@ export default function Documents() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 mb-5">
+      <div className="flex flex-wrap gap-3 mb-5">
         <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
           {['tous', 'devis', 'facture', 'contrat'].map(t => (
             <button key={t} onClick={() => setFilterType(t)}
@@ -146,7 +146,8 @@ export default function Documents() {
 
       {/* Table */}
       <div className="card overflow-hidden mb-6">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[680px]">
           <thead>
             <tr>
               <th className="table-header">Numéro</th>
@@ -201,6 +202,7 @@ export default function Documents() {
             })}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Create Modal */}

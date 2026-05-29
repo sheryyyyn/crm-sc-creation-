@@ -65,7 +65,7 @@ export default function Depenses() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
         <div className="stat-card">
           <div className="flex items-center gap-2 mb-3"><Wallet size={16} className="text-red-500" /></div>
           <p className="text-2xl font-bold text-gray-900">{total.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</p>
@@ -99,7 +99,8 @@ export default function Depenses() {
 
       {/* Table */}
       <div className="card overflow-hidden">
-        <table className="w-full">
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-[680px]">
           <thead>
             <tr>
               <th className="table-header">Dépense</th>
@@ -144,6 +145,7 @@ export default function Depenses() {
             ))}
           </tbody>
         </table>
+        </div>
         {filtered.length > 0 && (
           <div className="flex justify-end px-5 py-3 border-t border-gray-100 bg-gray-50">
             <p className="text-sm text-gray-600">Total : <strong className="text-red-600">-{total.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} €</strong></p>

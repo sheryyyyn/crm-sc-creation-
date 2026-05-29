@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   ClipboardList, Eye, EyeOff, Copy, Check, ChevronDown, ChevronUp,
   Mail, Phone, Globe, Calendar, Euro, Target, Users, Star, MessageSquare,
-  Building2, Inbox, ExternalLink, CheckCircle2, Clock, Send, X, CalendarPlus,
+  Building2, Inbox, ExternalLink, CheckCircle2, Clock, Send, X, CalendarPlus, Trash2, UserPlus, PackageOpen,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { getCalendlyUrl } from './Parametres'
+import { buildClientFromForm } from '../utils/buildClientFromForm'
 
 // ─── Champs du formulaire (structure pour l'aperçu) ─────────────────────────
 const FORM_FIELDS = [
@@ -112,6 +113,86 @@ L'équipe SC Création`
             className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl text-white transition-colors"
             style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}
             onClick={() => { onMailEnvoye(); onClose() }}>
+            <Mail size={14} />
+            Ouvrir dans la messagerie
+          </a>
+          <button onClick={copier}
+            className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+            {copied ? <><Check size={14} className="text-emerald-600" />Copié !</> : <><Copy size={14} />Copier</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── Modal demande de documents ──────────────────────────────────────────────
+const TAGS_DEMANDE = [
+  { id: 'charte', label: 'Charte graphique' },
+  { id: 'moodboard', label: 'Mood board' },
+  { id: 'photos', label: 'Photos' },
+  { id: 'textes', label: 'Textes' },
+  { id: 'logo', label: 'Logo' },
+  { id: 'couleurs', label: 'Palette de couleurs' },
+  { id: 'police', label: 'Police / typo' },
+  { id: 'autre', label: 'Autre' },
+]
+
+function MailDemandeModal({ rep, tags, onClose }) {
+  const [copied, setCopied] = useState(false)
+  const liste = tags.map(t => `• ${t}`).join('\n')
+  const sujet = encodeURIComponent(`SC Création — Éléments à nous transmettre pour votre projet`)
+  const corps = `Bonjour ${rep.nomEntreprise},
+
+Merci encore pour votre formulaire ! Afin de démarrer votre projet dans les meilleures conditions, nous avons besoin que vous nous transmettiez les éléments suivants :
+
+${liste}
+
+Vous pouvez nous les envoyer par réponse à ce mail ou via WeTransfer / Google Drive si les fichiers sont volumineux.
+
+N'hésitez pas à nous contacter si vous avez des questions.
+
+À très vite,
+L'équipe SC Création`
+
+  const corpsEncode = encodeURIComponent(corps)
+  const mailtoLink = `mailto:${rep.email}?subject=${sujet}&body=${corpsEncode}`
+
+  function copier() {
+    navigator.clipboard.writeText(corps).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.45)' }}>
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
+          style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+              <PackageOpen size={15} className="text-white" />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-gray-900">Demande d'éléments</p>
+              <p className="text-[11px] text-gray-400">{rep.email}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
+            <X size={14} className="text-gray-500" />
+          </button>
+        </div>
+        <div className="px-6 py-5">
+          <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-700 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200" style={{ fontSize: '12px', maxHeight: '300px', overflowY: 'auto' }}>
+            {corps}
+          </div>
+        </div>
+        <div className="flex gap-3 px-6 pb-6">
+          <a href={mailtoLink}
+            className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl text-white transition-colors"
+            style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}
+            onClick={onClose}>
             <Mail size={14} />
             Ouvrir dans la messagerie
           </a>
@@ -272,10 +353,27 @@ function LuBadge({ lu }) {
 
 // ─── Carte réponse ─────────────────────────────────────────────────────────────
 function CarteReponse({ rep, onToggle, open }) {
-  const { markFormReponseRead, markFormReponseMailEnvoye } = useStore()
+  const { markFormReponseRead, markFormReponseMailEnvoye, markFormReponseRdvBooke, updateFormReponse, deleteFormReponse, addClient, clients } = useStore()
   const [mailModal, setMailModal] = useState(false)
   const [calModal, setCalModal] = useState(false)
+  const [demandeModal, setDemandeModal] = useState(false)
+  const [selectedTags, setSelectedTags] = useState([])
   const [rdvAdded, setRdvAdded] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [clientCree, setClientCree] = useState(false)
+  const [editingNote, setEditingNote] = useState(false)
+  const [noteValue, setNoteValue] = useState(rep.noteInterne || '')
+
+  function toggleTag(label) {
+    setSelectedTags(prev => prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label])
+  }
+
+  const clientExiste = clients.some(c => c.email === rep.email)
+
+  function handleCreerClient() {
+    addClient(buildClientFromForm(rep))
+    setClientCree(true)
+  }
 
   const handleOpen = () => {
     if (!rep.lu) markFormReponseRead(rep.id)
@@ -310,12 +408,13 @@ function CarteReponse({ rep, onToggle, open }) {
   return (
     <>
     {mailModal && <MailInteretModal rep={rep} onClose={() => setMailModal(false)} onMailEnvoye={() => markFormReponseMailEnvoye(rep.id)} />}
-    {calModal && <CalendrierModal rep={rep} onClose={() => setCalModal(false)} onRdvAjoute={() => setRdvAdded(true)} />}
+    {calModal && <CalendrierModal rep={rep} onClose={() => setCalModal(false)} onRdvAjoute={() => { setRdvAdded(true); markFormReponseRdvBooke(rep.id) }} />}
+    {demandeModal && <MailDemandeModal rep={rep} tags={selectedTags} onClose={() => setDemandeModal(false)} />}
     <div className={`bg-white rounded-2xl overflow-hidden transition-all duration-200 ${!rep.lu ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
       style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       {/* Header */}
-      <button className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors text-left" onClick={handleOpen}>
-        <div className="flex items-center gap-4">
+      <div className="flex items-center px-6 py-4 gap-3">
+        <button className="flex items-center gap-4 flex-1 text-left" onClick={handleOpen}>
           <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
             style={{ background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)', color: '#4f46e5' }}>
             {rep.nomEntreprise?.[0] || '?'}
@@ -327,14 +426,90 @@ function CarteReponse({ rep, onToggle, open }) {
             </div>
             <p className="text-[11px] text-gray-400 mt-0.5">{date} · {rep.email}</p>
           </div>
-        </div>
-        <div className="flex items-center gap-3">
+        </button>
+        <div className="flex items-center gap-2">
           <span className="text-xs font-semibold px-3 py-1 rounded-lg" style={{ background: '#eef2ff', color: '#4f46e5' }}>
             {rep.budget}
           </span>
-          {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+          {(rep.rdvBooke || rdvAdded) ? (
+            <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700">
+              <CalendarPlus size={11} />Rendez-vous bookté
+            </span>
+          ) : rep.mailEnvoye ? (
+            <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
+              <Send size={11} />Mail envoyé
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-gray-100 text-gray-400">
+              <Clock size={11} />Pas de réservation
+            </span>
+          )}
+          {confirmDelete ? (
+            <div className="flex items-center gap-1.5">
+              <button onClick={() => deleteFormReponse(rep.id)}
+                className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
+                Confirmer
+              </button>
+              <button onClick={() => setConfirmDelete(false)}
+                className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                Annuler
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => setConfirmDelete(true)}
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors">
+              <Trash2 size={14} />
+            </button>
+          )}
+          <button onClick={handleOpen} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+            {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+          </button>
         </div>
-      </button>
+      </div>
+
+      {/* Note interne */}
+      <div className="px-6 pb-3 -mt-1">
+        {editingNote ? (
+          <div className="flex items-center gap-2">
+            <input
+              autoFocus
+              type="text"
+              value={noteValue}
+              onChange={e => setNoteValue(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') {
+                  updateFormReponse(rep.id, { noteInterne: noteValue })
+                  setEditingNote(false)
+                }
+                if (e.key === 'Escape') setEditingNote(false)
+              }}
+              placeholder="Ajouter une note interne…"
+              className="flex-1 text-xs px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-300"
+            />
+            <button onClick={() => { updateFormReponse(rep.id, { noteInterne: noteValue }); setEditingNote(false) }}
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition-colors">
+              OK
+            </button>
+            <button onClick={() => setEditingNote(false)}
+              className="text-xs px-2 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-colors">
+              <X size={12} />
+            </button>
+          </div>
+        ) : (
+          <button onClick={() => setEditingNote(true)}
+            className="flex items-center gap-1.5 text-[11px] text-left w-full group">
+            {rep.noteInterne || noteValue ? (
+              <span className="text-gray-500 group-hover:text-indigo-600 transition-colors">
+                📝 {rep.noteInterne || noteValue}
+              </span>
+            ) : (
+              <span className="text-gray-300 group-hover:text-indigo-400 transition-colors italic">
+                + Ajouter une note interne…
+              </span>
+            )}
+          </button>
+        )}
+      </div>
 
       {/* Détail */}
       {open && (
@@ -371,6 +546,18 @@ function CarteReponse({ rep, onToggle, open }) {
               <Mail size={13} />
               Email direct
             </a>
+            {clientExiste || clientCree ? (
+              <span className="flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700">
+                <CheckCircle2 size={13} />
+                Fiche client créée
+              </span>
+            ) : (
+              <button onClick={handleCreerClient}
+                className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl bg-violet-50 text-violet-700 hover:bg-violet-100 transition-colors">
+                <UserPlus size={13} />
+                Créer la fiche client
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -466,7 +653,21 @@ function ApercuFormulaire() {
 
 // ─── Page principale ──────────────────────────────────────────────────────────
 export default function Formulaires() {
-  const { formReponses } = useStore()
+  const { formReponses, taches, updateTache } = useStore()
+
+  // Escalade en urgente si +24h sans mail envoyé
+  useEffect(() => {
+    const now = Date.now()
+    taches.forEach(t => {
+      if (!t.formReponseId || t.priorite === 'urgente') return
+      const rep = formReponses.find(r => r.id === t.formReponseId)
+      if (!rep || rep.mailEnvoye) return
+      const age = now - new Date(rep.horodateur).getTime()
+      if (age > 24 * 60 * 60 * 1000) {
+        updateTache(t.id, { priorite: 'urgente' })
+      }
+    })
+  }, [formReponses, taches])
   const [tab, setTab] = useState('reponses')
   const [openId, setOpenId] = useState(null)
   const [filtre, setFiltre] = useState('tous')
@@ -519,9 +720,9 @@ export default function Formulaires() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex gap-2">
               {[
-                { key: 'tous', label: `Toutes (${formReponses.length})` },
                 { key: 'nouveau', label: `Nouveaux (${nonLus})` },
                 { key: 'mail_envoye', label: `Mail envoyé (${mailEnvoyes})` },
+                { key: 'tous', label: `Toutes (${formReponses.length})` },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setFiltre(key)}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${filtre === key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
