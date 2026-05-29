@@ -188,6 +188,10 @@ const useStore = create((set, get) => ({
     const updated = { ...get().formReponses.find((r) => r.id === id), lu: true }
     fsSet('formReponses', id, updated)
   },
+  markFormReponseMailEnvoye: (id) => {
+    const updated = { ...get().formReponses.find((r) => r.id === id), lu: true, mailEnvoye: true }
+    fsSet('formReponses', id, updated)
+  },
   markAllFormReponsesRead: () => {
     get().formReponses.forEach((r) => fsSet('formReponses', r.id, { ...r, lu: true }))
   },

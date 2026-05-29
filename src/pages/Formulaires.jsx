@@ -45,7 +45,7 @@ const FORM_FIELDS = [
 const FORM_URL = typeof window !== 'undefined' ? `${window.location.origin}/formulaire` : '/formulaire'
 
 // ─── Modal mail d'intérêt ─────────────────────────────────────────────────────
-function MailInteretModal({ rep, onClose }) {
+function MailInteretModal({ rep, onClose, onMailEnvoye }) {
   const [copied, setCopied] = useState(false)
   const calendlyUrl = getCalendlyUrl()
 
@@ -111,7 +111,7 @@ L'équipe SC Création`
           <a href={mailtoLink}
             className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl text-white transition-colors"
             style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}
-            onClick={onClose}>
+            onClick={() => { onMailEnvoye(); onClose() }}>
             <Mail size={14} />
             Ouvrir dans la messagerie
           </a>
@@ -272,7 +272,7 @@ function LuBadge({ lu }) {
 
 // ─── Carte réponse ─────────────────────────────────────────────────────────────
 function CarteReponse({ rep, onToggle, open }) {
-  const { markFormReponseRead } = useStore()
+  const { markFormReponseRead, markFormReponseMailEnvoye } = useStore()
   const [mailModal, setMailModal] = useState(false)
   const [calModal, setCalModal] = useState(false)
   const [rdvAdded, setRdvAdded] = useState(false)
@@ -309,7 +309,7 @@ function CarteReponse({ rep, onToggle, open }) {
 
   return (
     <>
-    {mailModal && <MailInteretModal rep={rep} onClose={() => setMailModal(false)} />}
+    {mailModal && <MailInteretModal rep={rep} onClose={() => setMailModal(false)} onMailEnvoye={() => markFormReponseMailEnvoye(rep.id)} />}
     {calModal && <CalendrierModal rep={rep} onClose={() => setCalModal(false)} onRdvAjoute={() => setRdvAdded(true)} />}
     <div className={`bg-white rounded-2xl overflow-hidden transition-all duration-200 ${!rep.lu ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
       style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
@@ -472,7 +472,12 @@ export default function Formulaires() {
   const [filtre, setFiltre] = useState('tous')
 
   const nonLus = formReponses.filter(r => !r.lu).length
-  const filtered = filtre === 'nouveau' ? formReponses.filter(r => !r.lu) : formReponses
+  const mailEnvoyes = formReponses.filter(r => r.mailEnvoye).length
+  const filtered = filtre === 'nouveau'
+    ? formReponses.filter(r => !r.lu)
+    : filtre === 'mail_envoye'
+      ? formReponses.filter(r => r.mailEnvoye)
+      : formReponses
   const sorted = [...filtered].sort((a, b) => b.horodateur.localeCompare(a.horodateur))
 
   const toggle = (id) => setOpenId(prev => prev === id ? null : id)
@@ -516,6 +521,7 @@ export default function Formulaires() {
               {[
                 { key: 'tous', label: `Toutes (${formReponses.length})` },
                 { key: 'nouveau', label: `Non lues (${nonLus})` },
+                { key: 'mail_envoye', label: `Mail envoyé (${mailEnvoyes})` },
               ].map(({ key, label }) => (
                 <button key={key} onClick={() => setFiltre(key)}
                   className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${filtre === key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
