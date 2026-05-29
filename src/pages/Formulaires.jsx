@@ -50,13 +50,13 @@ function MailInteretModal({ rep, onClose }) {
   const calendlyUrl = getCalendlyUrl()
 
   const sujet = encodeURIComponent(`SC Création — Votre projet nous intéresse ! 🎉`)
-  const corps = `Bonjour ${rep.nomEntreprise || 'cher(e) client(e)'},
+  const corps = `Bonjour,
 
-Merci d'avoir pris le temps de remplir notre formulaire — votre projet retient vraiment notre attention !
+Merci d'avoir pris le temps de remplir notre formulaire !
 
-Nous serions ravis d'en discuter avec vous lors d'un appel découverte (30 min) afin de mieux cerner vos besoins et vous proposer la solution la plus adaptée.
+Nous serions ravis de discuter de votre projet lors d'un appel découverte (45 min) afin de mieux cerner vos besoins et vous proposer la solution la plus adaptée.
 
-👉 Réservez votre créneau directement ici :
+Réservez votre créneau directement ici :
 ${calendlyUrl || '[Ajoutez votre lien Calendly dans les Paramètres]'}
 
 N'hésitez pas à nous contacter si vous avez la moindre question.
