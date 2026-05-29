@@ -2,9 +2,11 @@ const admin = require('firebase-admin')
 
 function initAdmin() {
   if (admin.apps.length) return
+  const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_B64
   const raw = process.env.FIREBASE_SERVICE_ACCOUNT
-  if (!raw) throw new Error('FIREBASE_SERVICE_ACCOUNT env var missing')
-  admin.initializeApp({ credential: admin.credential.cert(JSON.parse(raw)) })
+  if (!b64 && !raw) throw new Error('FIREBASE_SERVICE_ACCOUNT env var missing')
+  const json = b64 ? Buffer.from(b64, 'base64').toString('utf8') : raw
+  admin.initializeApp({ credential: admin.credential.cert(JSON.parse(json)) })
 }
 
 module.exports = async (req, res) => {
