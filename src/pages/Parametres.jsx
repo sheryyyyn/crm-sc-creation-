@@ -56,13 +56,13 @@ export default function Parametres() {
         <h1 className="page-title">Paramètres</h1>
       </div>
 
-      <div className="flex gap-5">
+      <div className="flex flex-col sm:flex-row gap-5">
         {/* Sidebar tabs */}
-        <div className="w-48 flex-shrink-0">
-          <nav className="space-y-1">
+        <div className="sm:w-48 sm:flex-shrink-0">
+          <nav className="flex sm:flex-col gap-1 overflow-x-auto pb-1 sm:pb-0">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${tab === t ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}>
+                className={`flex-shrink-0 sm:w-full text-left px-3 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${tab === t ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}>
                 {t}
               </button>
             ))}
@@ -74,7 +74,7 @@ export default function Parametres() {
           {tab === 'Agence' && (
             <div className="card p-6">
               <h2 className="text-base font-semibold text-gray-900 mb-5">Informations de l'agence</h2>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { label: "Nom de l'agence", key: 'nom' },
                   { label: 'Email', key: 'email', type: 'email' },
@@ -89,11 +89,11 @@ export default function Parametres() {
                     <input type={type} className="input" value={agence[key]} onChange={e => setAgence({ ...agence, [key]: e.target.value })} />
                   </div>
                 ))}
-                <div className="col-span-2">
+                <div className="col-span-1 sm:col-span-2">
                   <label className="label">Adresse</label>
                   <textarea className="input resize-none" rows={2} value={agence.adresse} onChange={e => setAgence({ ...agence, adresse: e.target.value })} />
                 </div>
-                <div className="col-span-2">
+                <div className="col-span-1 sm:col-span-2">
                   <label className="label">Lien de réservation (Calendly)</label>
                   <input type="url" className="input" placeholder="https://calendly.com/sc-creation/30min" value={calendlyUrl} onChange={e => setCalendlyUrlState(e.target.value)} />
                   <p className="text-[11px] text-gray-400 mt-1">Ce lien sera intégré automatiquement dans les mails d'intérêt envoyés depuis les formulaires.</p>

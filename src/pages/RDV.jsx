@@ -615,7 +615,7 @@ export default function RDV() {
           <h1 className="page-title">Rendez-vous</h1>
           <p className="text-sm text-gray-500 mt-1">{aVenir.length} à venir · {passes.length} passé{passes.length > 1 ? 's' : ''}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <div className="flex gap-1 p-1 bg-white border border-gray-200 rounded-lg">
             <button onClick={() => setVue('liste')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${vue === 'liste' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}>
@@ -627,7 +627,7 @@ export default function RDV() {
             </button>
           </div>
           <button className="btn-primary" onClick={() => setModal(true)}>
-            <Plus size={16} /> Nouveau RDV
+            <Plus size={16} /><span className="hidden sm:inline">Nouveau RDV</span><span className="sm:hidden">RDV</span>
           </button>
         </div>
       </div>
@@ -666,7 +666,7 @@ export default function RDV() {
               const isToday = r.date === today
               return (
                 <div key={r.id} className={`card p-5 ${isToday ? 'border-indigo-300 bg-indigo-50/30' : ''}`}>
-                  <div className="flex items-start justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="flex gap-4">
                       <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isToday ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}>
                         <span className={`text-lg font-bold leading-none ${isToday ? 'text-white' : 'text-gray-800'}`}>
@@ -693,7 +693,7 @@ export default function RDV() {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                       {r.questionsPreparees && (
                         <button onClick={() => setPanneauRDV(r)}
                           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors border border-indigo-100">

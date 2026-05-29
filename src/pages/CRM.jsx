@@ -80,7 +80,7 @@ export default function CRM() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
         <div className="stat-card">
           <p className="text-xs text-gray-500 mb-1">Budget pipeline</p>
           <p className="text-xl font-bold text-gray-900">{totalBudget.toLocaleString('fr-FR')} €</p>

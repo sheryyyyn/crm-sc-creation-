@@ -295,7 +295,7 @@ function CalendrierModal({ rep, onClose, onRdvAjoute }) {
             <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
               <p className="text-sm text-gray-500">Remplissez les détails du RDV pour l'ajouter directement dans votre planning.</p>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1.5">Client (optionnel)</label>
                   <select className="w-full px-3 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-300"
@@ -580,7 +580,7 @@ function ApercuFormulaire() {
   return (
     <div className="max-w-2xl mx-auto">
       {/* Bannière lien */}
-      <div className="rounded-2xl p-5 mb-6 flex items-center justify-between gap-4"
+      <div className="rounded-2xl p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         style={{ background: 'linear-gradient(135deg,#4338ca,#6366f1)', boxShadow: '0 8px 24px rgba(99,102,241,0.28)' }}>
         <div>
           <p className="text-white font-bold text-sm mb-1">Lien du formulaire client</p>

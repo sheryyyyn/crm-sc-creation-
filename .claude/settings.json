@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd \"/Users/sheryn/Desktop/CRM SC Creation\" && git add -A && git diff --cached --quiet || git commit -m \"Auto-deploy $(date +%F_%H%M)\" && git push 2>&1 || true",
+            "statusMessage": "Déploiement en cours...",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}
