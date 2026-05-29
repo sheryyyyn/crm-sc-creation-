@@ -289,23 +289,40 @@ export default function Dashboard() {
     if (granted) notify('🔔 Notifications activées !', 'Vous recevrez des alertes pour vos RDV, formulaires et tâches urgentes.')
   }
 
-  // Rappel RDV — vérifie toutes les minutes si un RDV commence dans 30 min
+  // Rappels RDV : veille, 1h avant, 30 min avant
   const notifiedRdvs = useRef(new Set())
   useEffect(() => {
     function checkRdvs() {
       const now = new Date()
+      const todayStr = now.toISOString().split('T')[0]
+      const tomorrowStr = new Date(now.getTime() + 86400000).toISOString().split('T')[0]
+
       rdvs.forEach(r => {
         if (!r.date || !r.heure) return
-        if (notifiedRdvs.current.has(r.id)) return
         const rdvTime = new Date(`${r.date}T${r.heure}`)
         const diffMin = (rdvTime - now) / 60000
-        if (diffMin > 0 && diffMin <= 30) {
-          const client = getClient(r.clientId)
-          notify(
-            `📅 RDV dans ${Math.round(diffMin)} min`,
-            `${r.sujet || 'Rendez-vous'}${client ? ` · ${client.nom}` : ''} à ${r.heure}`
-          )
-          notifiedRdvs.current.add(r.id)
+        const client = getClient(r.clientId)
+        const label = `${r.sujet || 'Rendez-vous'}${client ? ` · ${client.nom}` : ''}`
+
+        // Rappel veille (entre 18h et 19h la veille)
+        const veilleKey = `${r.id}_veille`
+        if (r.date === tomorrowStr && now.getHours() === 18 && !notifiedRdvs.current.has(veilleKey)) {
+          notify('📅 RDV demain', `${label} à ${r.heure}`)
+          notifiedRdvs.current.add(veilleKey)
+        }
+
+        // Rappel 1h avant
+        const h1Key = `${r.id}_1h`
+        if (diffMin > 55 && diffMin <= 65 && !notifiedRdvs.current.has(h1Key)) {
+          notify('⏰ RDV dans 1 heure', `${label} à ${r.heure}`)
+          notifiedRdvs.current.add(h1Key)
+        }
+
+        // Rappel 30 min avant
+        const m30Key = `${r.id}_30m`
+        if (diffMin > 25 && diffMin <= 35 && !notifiedRdvs.current.has(m30Key)) {
+          notify(`📅 RDV dans 30 min`, `${label} à ${r.heure}`)
+          notifiedRdvs.current.add(m30Key)
         }
       })
     }

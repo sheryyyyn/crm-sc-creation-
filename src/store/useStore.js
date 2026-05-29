@@ -105,6 +105,10 @@ const useStore = create((set, get) => ({
   addTache: (data) => {
     const item = { ...data, id: generateId('t'), checklist: [], createdAt: new Date().toISOString() }
     fsSet('taches', item.id, item)
+    const profil = typeof localStorage !== 'undefined' ? localStorage.getItem('sc-crm-profil') || 'Sheryn' : 'Sheryn'
+    if (data.assignee && data.assignee !== 'Les deux' && data.assignee === profil) {
+      notify('📌 Nouvelle tâche assignée', `"${data.titre}" t'a été assignée.`)
+    }
   },
   updateTache: (id, data) => {
     const prev = get().taches.find((t) => t.id === id)
@@ -112,6 +116,12 @@ const useStore = create((set, get) => ({
     fsSet('taches', id, updated)
     if (data.priorite === 'urgente' && prev?.priorite !== 'urgente') {
       notify('🔴 Tâche urgente !', `"${prev?.titre}" est passée en priorité urgente.`)
+    }
+    if (data.assignee && data.assignee !== prev?.assignee) {
+      const profil = typeof localStorage !== 'undefined' ? localStorage.getItem('sc-crm-profil') || 'Sheryn' : 'Sheryn'
+      if (data.assignee === profil || data.assignee === 'Les deux') {
+        notify('📌 Tâche assignée', `"${prev?.titre}" t'a été assignée.`)
+      }
     }
   },
   deleteTache: (id) => fsDel('taches', id),
@@ -124,6 +134,8 @@ const useStore = create((set, get) => ({
   addRDV: (data) => {
     const item = { ...data, id: generateId('r'), compteRendu: '', prochainesActions: [], createdAt: new Date().toISOString() }
     fsSet('rdvs', item.id, item)
+    const dateStr = data.date ? new Date(data.date).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) : ''
+    notify('📅 Nouveau RDV planifié', `${data.sujet || 'Rendez-vous'}${dateStr ? ` · ${dateStr}` : ''}${data.heure ? ` à ${data.heure}` : ''}`)
   },
   updateRDV: (id, data) => {
     const updated = { ...get().rdvs.find((r) => r.id === id), ...data }
