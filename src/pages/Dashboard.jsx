@@ -7,6 +7,7 @@ import {
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify, requestNotificationPermission } from '../utils/notify'
+import { registerFCMToken } from '../utils/fcm'
 import { statutBadge, assigneeBadge, prioriteBadge } from '../components/ui/Badge'
 
 // ─── Mes Tâches ───────────────────────────────────────────────────────────────
@@ -286,7 +287,11 @@ export default function Dashboard() {
   async function handleActiverNotifs() {
     const granted = await requestNotificationPermission()
     setNotifPermission(granted ? 'granted' : 'denied')
-    if (granted) notify('🔔 Notifications activées !', 'Vous recevrez des alertes pour vos RDV, formulaires et tâches urgentes.')
+    if (granted) {
+      const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
+      await registerFCMToken(profil)
+      notify('🔔 Notifications activées !', 'Vous recevrez des alertes pour vos RDV, formulaires et tâches urgentes.')
+    }
   }
 
   // Rappels RDV : veille, 1h avant, 30 min avant

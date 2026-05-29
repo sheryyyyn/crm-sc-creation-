@@ -6,25 +6,31 @@ const VAPID_KEY = import.meta.env.VITE_FIREBASE_VAPID_KEY
 
 export async function registerFCMToken(profil) {
   try {
-    if (!('Notification' in window) || Notification.permission !== 'granted') return null
+    if (!('Notification' in window)) { console.warn('FCM: Notifications not supported'); return null }
+    if (Notification.permission !== 'granted') { console.warn('FCM: Permission not granted:', Notification.permission); return null }
+
     const messaging = await getMessagingInstance()
-    if (!messaging) return null
+    if (!messaging) { console.warn('FCM: Messaging not supported'); return null }
 
-    if ('serviceWorker' in navigator) {
-      await navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    }
+    const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
+    await navigator.serviceWorker.ready
 
-    const token = await getToken(messaging, { vapidKey: VAPID_KEY })
+    if (!VAPID_KEY) { console.error('FCM: VITE_FIREBASE_VAPID_KEY manquante !'); return null }
+
+    const token = await getToken(messaging, { vapidKey: VAPID_KEY, serviceWorkerRegistration: swReg })
     if (token) {
       await setDoc(doc(db, 'fcmTokens', `${profil}_${token.slice(-8)}`), {
         token,
         profil,
         updatedAt: new Date().toISOString(),
       })
+      console.log('FCM token enregistré ✅')
+    } else {
+      console.warn('FCM: token vide')
     }
     return token
   } catch (err) {
-    console.warn('FCM token:', err.message)
+    console.error('FCM token erreur:', err.message)
     return null
   }
 }
