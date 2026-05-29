@@ -1,32 +1,29 @@
 import { initializeApp, getApps, cert } from 'firebase-admin/app'
 import { getFirestore } from 'firebase-admin/firestore'
 
-// Init Firebase Admin (singleton)
-if (!getApps().length) {
-  const serviceAccount = JSON.parse(
-    Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_B64, 'base64').toString('utf8')
-  )
-  initializeApp({ credential: cert(serviceAccount) })
-}
-
-const db = getFirestore()
-
 function generateId(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 }
 
 export default async function handler(req, res) {
-  // Sécurité : seul Cal.com peut appeler ce endpoint
-  const secret = req.headers['x-cal-signature-256'] || req.headers['x-webhook-secret']
-  if (process.env.CAL_WEBHOOK_SECRET && secret !== process.env.CAL_WEBHOOK_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' })
-  }
-
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { triggerEvent, payload } = req.body
+  // Init Firebase Admin (singleton avec gestion d'erreur)
+  try {
+    if (!getApps().length) {
+      const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_B64
+      if (!b64) return res.status(500).json({ error: 'Missing FIREBASE_SERVICE_ACCOUNT_B64' })
+      const serviceAccount = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'))
+      initializeApp({ credential: cert(serviceAccount) })
+    }
+  } catch (err) {
+    return res.status(500).json({ error: 'Firebase init failed', detail: err.message })
+  }
+
+  const db = getFirestore()
+  const { triggerEvent, payload } = req.body || {}
 
   // On traite uniquement les nouvelles réservations
   if (triggerEvent !== 'BOOKING_CREATED') {
