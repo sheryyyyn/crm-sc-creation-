@@ -371,11 +371,6 @@ function CarteReponse({ rep, onToggle, open }) {
               <Mail size={13} />
               Email direct
             </a>
-            <a href={`tel:${rep.telephone}`}
-              className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors">
-              <Phone size={13} />
-              Appeler
-            </a>
           </div>
         </div>
       )}
