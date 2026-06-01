@@ -14,7 +14,7 @@ const FORM_FIELDS = [
   { section: 'Votre projet', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
-    { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'select', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
+    { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'tags', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
     { label: 'Qui sont vos concurrents (sites que vous connaissez) ?', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
   { section: 'Votre contenu & identité', fields: [
