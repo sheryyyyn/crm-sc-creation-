@@ -41,6 +41,37 @@ const initialValues = Object.fromEntries(
   FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])
 )
 
+function TagSelect({ options, value, onChange, hasError }) {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+      {options.map(o => {
+        const selected = value === o
+        return (
+          <button
+            key={o}
+            type="button"
+            onClick={() => onChange(selected ? '' : o)}
+            style={{
+              padding: '7px 14px',
+              borderRadius: '2px',
+              border: selected ? '1.5px solid #1b0b09' : `1.5px solid ${hasError ? '#b8a508' : '#d4c9b0'}`,
+              background: selected ? '#1b0b09' : '#fdfbf4',
+              color: selected ? '#fcf7cf' : '#1b0b09',
+              fontSize: '13px',
+              fontFamily: '"DM Sans", sans-serif',
+              cursor: 'pointer',
+              transition: 'all .15s ease',
+              fontWeight: selected ? 600 : 400,
+            }}
+          >
+            {o}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 const inputBase = {
   width: '100%',
   padding: '12px 16px',
