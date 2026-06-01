@@ -26,7 +26,7 @@ const FORM_FIELDS = [
     { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
   ]},
   { section: 'Comment nous avez-vous trouvés ?', fields: [
-    { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'select', required: true, options: ['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Pinterest', 'Bouche à oreille', 'Google', 'Autre'] },
+    { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Pinterest', 'Bouche à oreille', 'Google', 'Autre'] },
     { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
   ]},
   { section: 'Budget & délais', fields: [
