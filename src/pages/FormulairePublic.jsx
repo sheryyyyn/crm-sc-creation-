@@ -144,7 +144,7 @@ export default function FormulairePublic() {
           </p>
           <div style={{ marginTop: '32px', padding: '16px', background: '#fcf7cf', borderRadius: '2px' }}>
             <p style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.08em', color: '#1b0b09', marginBottom: '2px' }}>SC CRÉATION</p>
-            <p style={{ fontSize: '12px', color: '#7e7e7e' }}>Création de sites web & identité visuelle</p>
+            <p style={{ fontSize: '12px', color: '#7e7e7e' }}>Création de sites web</p>
           </div>
         </div>
       </div>
