@@ -190,7 +190,14 @@ export default function FormulairePublic() {
                         {label}
                         {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
                       </label>
-                      {type === 'textarea' ? (
+                      {type === 'tags' ? (
+                        <TagSelect
+                          options={options}
+                          value={values[name]}
+                          onChange={v => set(name, v)}
+                          hasError={!!errors[name]}
+                        />
+                      ) : type === 'textarea' ? (
                         <textarea
                           rows={3}
                           placeholder={placeholder}
