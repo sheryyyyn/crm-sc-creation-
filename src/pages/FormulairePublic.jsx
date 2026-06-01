@@ -1,8 +1,7 @@
 import { useState } from 'react'
-import { ClipboardList, CheckCircle2, ChevronRight, Loader2 } from 'lucide-react'
+import { CheckCircle2, ChevronRight, Loader2 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
-
 
 const FORM_FIELDS = [
   { section: 'Votre entreprise', fields: [
@@ -42,6 +41,25 @@ const initialValues = Object.fromEntries(
   FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])
 )
 
+const inputBase = {
+  width: '100%',
+  padding: '12px 16px',
+  borderRadius: '4px',
+  border: '1px solid #d4c9b0',
+  background: '#fdfbf4',
+  color: '#1b0b09',
+  fontSize: '14px',
+  fontFamily: '"DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
+  outline: 'none',
+  transition: 'border-color .2s ease',
+}
+
+const inputError = {
+  ...inputBase,
+  border: '1px solid #b8a508',
+  background: '#fefce8',
+}
+
 export default function FormulairePublic() {
   const { addFormReponse, addClient } = useStore()
   const [values, setValues] = useState(initialValues)
@@ -80,19 +98,21 @@ export default function FormulairePublic() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'linear-gradient(135deg,#f8f9ff 0%,#eef2ff 100%)' }}>
-        <div className="max-w-md w-full bg-white rounded-3xl p-10 text-center" style={{ boxShadow: '0 8px 40px rgba(99,102,241,0.15)' }}>
-          <div className="w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-6" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
-            <CheckCircle2 size={36} className="text-white" />
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: '#fdfbf4', fontFamily: '"DM Sans", sans-serif' }}>
+        <div style={{ maxWidth: '440px', width: '100%', background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '48px 40px', textAlign: 'center', boxShadow: '0 4px 32px rgba(27,11,9,.06)' }}>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#1b0b09', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
+            <CheckCircle2 size={26} color="#fcf7cf" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-3">Merci pour votre demande !</h2>
-          <p className="text-gray-500 text-sm leading-relaxed">
+          <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', marginBottom: '12px' }}>
+            Merci pour votre demande
+          </h2>
+          <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.7 }}>
             Nous avons bien reçu votre formulaire. L'équipe SC Création vous recontactera
             dans les <strong>24 heures</strong> pour discuter de votre projet.
           </p>
-          <div className="mt-8 p-4 rounded-2xl bg-indigo-50">
-            <p className="text-xs text-indigo-600 font-semibold">SC Création</p>
-            <p className="text-xs text-indigo-400 mt-0.5">Création de sites web & identité visuelle</p>
+          <div style={{ marginTop: '32px', padding: '16px', background: '#fcf7cf', borderRadius: '2px' }}>
+            <p style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.08em', color: '#1b0b09', marginBottom: '2px' }}>SC CRÉATION</p>
+            <p style={{ fontSize: '12px', color: '#7e7e7e' }}>Création de sites web & identité visuelle</p>
           </div>
         </div>
       </div>
@@ -100,37 +120,44 @@ export default function FormulairePublic() {
   }
 
   return (
-    <div className="min-h-screen" style={{ background: 'linear-gradient(135deg,#f8f9ff 0%,#eef2ff 100%)' }}>
+    <div style={{ minHeight: '100vh', background: '#fdfbf4', fontFamily: '"DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif' }}>
+      {/* Google Fonts */}
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet" />
+
       {/* Header */}
-      <div className="px-4 py-8 text-center">
-        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-4" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
-          <ClipboardList size={24} className="text-white" />
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900">Formulaire de prise en charge</h1>
-        <p className="text-sm text-gray-500 mt-1">SC Création · Création de site web</p>
+      <div style={{ padding: '48px 16px 32px', textAlign: 'center', borderBottom: '1px solid rgba(27,11,9,.07)' }}>
+        <p style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.14em', color: '#b8a508', marginBottom: '12px' }}>SC CRÉATION</p>
+        <h1 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: 'clamp(26px, 5vw, 36px)', fontWeight: 700, color: '#1b0b09', lineHeight: 1.2, marginBottom: '10px' }}>
+          Formulaire de prise en charge
+        </h1>
+        <p style={{ fontSize: '14px', color: '#7e7e7e' }}>Création de site web sur mesure</p>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 pb-16">
-        {/* Intro card */}
-        <div className="bg-white rounded-2xl px-6 py-5 mb-6" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-          <p className="text-sm text-gray-600 leading-relaxed">
+      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 16px 80px' }}>
+        {/* Intro */}
+        <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '24px 28px', marginBottom: '32px' }}>
+          <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.8, margin: 0 }}>
             Bienvenue ! Pour mieux comprendre votre projet et vous proposer un accompagnement personnalisé,
-            merci de remplir ce formulaire. Les champs marqués d'un <strong>*</strong> sont obligatoires.
-            Nous vous recontacterons sous <strong>24h</strong>.
+            merci de remplir ce formulaire. Les champs marqués d'un <strong style={{ color: '#1b0b09' }}>*</strong> sont obligatoires.
+            Nous vous recontacterons sous <strong style={{ color: '#1b0b09' }}>24h</strong>.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} noValidate>
-          <div className="space-y-6">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             {FORM_FIELDS.map(({ section, fields }) => (
-              <div key={section} className="bg-white rounded-2xl px-6 py-6" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-                <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-5">{section}</h3>
-                <div className="space-y-5">
+              <div key={section} style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '28px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
+                <h3 style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.12em', color: '#b8a508', marginBottom: '24px', textTransform: 'uppercase' }}>
+                  {section}
+                </h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   {fields.map(({ label, name, type, placeholder, options, required }) => (
                     <div key={name} data-error={errors[name] ? 'true' : 'false'}>
-                      <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '6px' }}>
                         {label}
-                        {errors[name] && <span className="ml-2 text-xs font-normal text-red-500">Champ requis</span>}
+                        {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
                       </label>
                       {type === 'textarea' ? (
                         <textarea
@@ -138,13 +165,17 @@ export default function FormulairePublic() {
                           placeholder={placeholder}
                           value={values[name]}
                           onChange={e => set(name, e.target.value)}
-                          className={`w-full px-4 py-3 rounded-xl border text-sm resize-none transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300 ${errors[name] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white'}`}
+                          style={{ ...(errors[name] ? inputError : inputBase), resize: 'vertical' }}
+                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
                         />
                       ) : type === 'select' ? (
                         <select
                           value={values[name]}
                           onChange={e => set(name, e.target.value)}
-                          className={`w-full px-4 py-3 rounded-xl border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300 ${errors[name] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white'}`}
+                          style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
+                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
                         >
                           <option value="">— Choisir —</option>
                           {options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -155,7 +186,9 @@ export default function FormulairePublic() {
                           placeholder={placeholder}
                           value={values[name]}
                           onChange={e => set(name, e.target.value)}
-                          className={`w-full px-4 py-3 rounded-xl border text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-300 ${errors[name] ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50 focus:bg-white'}`}
+                          style={errors[name] ? inputError : inputBase}
+                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
                         />
                       )}
                     </div>
@@ -166,20 +199,38 @@ export default function FormulairePublic() {
           </div>
 
           {/* Submit */}
-          <div className="mt-6">
+          <div style={{ marginTop: '32px' }}>
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-4 rounded-2xl font-bold text-sm text-white flex items-center justify-center gap-2 transition-opacity disabled:opacity-70"
-              style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', boxShadow: '0 8px 24px rgba(99,102,241,0.35)' }}
+              style={{
+                width: '100%',
+                padding: '16px',
+                background: '#1b0b09',
+                color: '#fcf7cf',
+                border: 'none',
+                borderRadius: '2px',
+                fontFamily: '"Anton", sans-serif',
+                fontSize: '13px',
+                letterSpacing: '.1em',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'background .2s ease',
+              }}
+              onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
+              onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
             >
               {loading ? (
-                <><Loader2 size={16} className="animate-spin" />Envoi en cours…</>
+                <><Loader2 size={15} className="animate-spin" />ENVOI EN COURS…</>
               ) : (
-                <>Envoyer ma demande <ChevronRight size={16} /></>
+                <>ENVOYER MA DEMANDE <ChevronRight size={15} /></>
               )}
             </button>
-            <p className="text-center text-[11px] text-gray-400 mt-3">
+            <p style={{ textAlign: 'center', fontSize: '11px', color: '#7e7e7e', marginTop: '12px' }}>
               Vos données sont confidentielles et utilisées uniquement pour votre projet.
             </p>
           </div>
