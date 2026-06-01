@@ -27,7 +27,7 @@ const FORM_FIELDS = [
   ]},
   { section: 'Comment nous avez-vous trouvés ?', fields: [
     { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'select', required: true, options: ['Instagram', 'TikTok', 'Facebook', 'LinkedIn', 'Pinterest', 'Bouche à oreille', 'Google', 'Autre'] },
-    { label: 'Votre pseudo sur ce réseau *', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo', required: true },
+    { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
   ]},
   { section: 'Budget & délais', fields: [
     { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'select', required: true, options: ['Moins de 300€', '300€ – 500€', '500€ – 800€', '800€ – 1200€', 'Plus de 1200€', 'À définir'] },
