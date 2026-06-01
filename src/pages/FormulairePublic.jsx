@@ -30,7 +30,7 @@ const FORM_FIELDS = [
     { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
   ]},
   { section: 'Budget & délais', fields: [
-    { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'select', required: true, options: ['Moins de 300€', '300€ – 500€', '500€ – 800€', '800€ – 1200€', 'Plus de 1200€', 'À définir'] },
+    { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'text', placeholder: 'Ex : 500€, entre 300 et 600€…', required: true },
     { label: 'Avez-vous une date butoir ?', name: 'dateButoir', type: 'text', placeholder: 'Ex : fin juillet 2026, ou "pas de contrainte"' },
     { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
     { label: 'Remarques libres', name: 'remarques', type: 'textarea', placeholder: 'Tout ce que vous souhaitez nous dire…' },
