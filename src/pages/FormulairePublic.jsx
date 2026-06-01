@@ -62,6 +62,7 @@ function TagSelect({ options, value, onChange, hasError }) {
               cursor: 'pointer',
               transition: 'all .15s ease',
               fontWeight: selected ? 600 : 400,
+              borderRadius: '999px',
             }}
           >
             {o}
