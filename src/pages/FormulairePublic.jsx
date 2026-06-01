@@ -131,9 +131,29 @@ export default function FormulairePublic() {
   if (submitted) {
     return (
       <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', background: '#fdfbf4', fontFamily: '"DM Sans", sans-serif' }}>
-        <div style={{ maxWidth: '440px', width: '100%', background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '48px 40px', textAlign: 'center', boxShadow: '0 4px 32px rgba(27,11,9,.06)' }}>
-          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: '#1b0b09', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px' }}>
-            <CheckCircle2 size={26} color="#fcf7cf" />
+        <style>{`
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes popIn {
+            0%   { opacity: 0; transform: scale(0.5); }
+            70%  { transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+          }
+          @keyframes drawCheck {
+            from { stroke-dashoffset: 40; }
+            to   { stroke-dashoffset: 0; }
+          }
+          .sc-success-card { animation: fadeUp .55s cubic-bezier(.22,1,.36,1) both; }
+          .sc-success-icon { animation: popIn .5s cubic-bezier(.22,1,.36,1) .15s both; }
+          .sc-check-path   { stroke-dasharray: 40; animation: drawCheck .4s ease .55s both; }
+        `}</style>
+        <div className="sc-success-card" style={{ maxWidth: '440px', width: '100%', background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '48px 40px', textAlign: 'center', boxShadow: '0 4px 32px rgba(27,11,9,.06)' }}>
+          <div className="sc-success-icon" style={{ width: '72px', height: '72px', borderRadius: '50%', background: '#1b0b09', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 28px' }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path className="sc-check-path" d="M8 16.5l6 6 10-11" stroke="#fcf7cf" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </div>
           <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', marginBottom: '12px' }}>
             Merci pour votre demande
