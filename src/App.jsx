@@ -52,6 +52,7 @@ export default function App() {
               <Route path="/depenses" element={<Depenses />} />
               <Route path="/formulaires" element={<Formulaires />} />
               <Route path="/calendrier-editorial" element={<CalendrierEditorial />} />
+              <Route path="/mediatheque" element={<Mediatheque />} />
               <Route path="/mots-de-passe" element={<MotDePasse />} />
               <Route path="/parametres" element={<Parametres />} />
             </Routes>
