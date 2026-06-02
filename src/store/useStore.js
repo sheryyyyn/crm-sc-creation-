@@ -39,6 +39,7 @@ const SEED_MAP = {
   motsDePasse: [],
   formReponses: mockFormReponses,
   notifications: mockNotifications,
+  medias: [],
 }
 
 async function seedIfEmpty() {
