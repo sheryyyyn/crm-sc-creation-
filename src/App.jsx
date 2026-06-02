@@ -17,6 +17,7 @@ import Parametres from './pages/Parametres'
 import Formulaires from './pages/Formulaires'
 import FormulairePublic from './pages/FormulairePublic'
 import CalendrierEditorial from './pages/CalendrierEditorial'
+import Mediatheque from './pages/Mediatheque'
 import MotDePasse from './pages/MotDePasse'
 
 export default function App() {
