@@ -29,6 +29,7 @@ const navCategories = [
     items: [
       { label: 'Tâches', icon: CheckSquare, to: '/taches' },
       { label: 'Calendrier Éditorial', icon: CalendarDays, to: '/calendrier-editorial' },
+      { label: 'Médiathèque', icon: Image, to: '/mediatheque' },
     ],
   },
   {
