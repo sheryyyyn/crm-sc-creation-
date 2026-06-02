@@ -25,7 +25,7 @@ const generateId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString
 const fsSet = (col, id, data) => setDoc(doc(db, col, id), data)
 const fsDel = (col, id) => deleteDoc(doc(db, col, id))
 
-const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications']
+const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias']
 
 const SEED_MAP = {
   clients: mockClients,
