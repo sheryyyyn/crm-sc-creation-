@@ -5,7 +5,7 @@ import {
   collection, doc, setDoc, deleteDoc, getDocs, writeBatch, onSnapshot
 } from 'firebase/firestore'
 
-const DEMO_COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'notifications']
+const DEMO_COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'notifications', 'medias']
 import { db } from '../firebase'
 import {
   mockClients,
