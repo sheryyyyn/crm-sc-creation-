@@ -2,7 +2,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Users, FolderOpen, CheckSquare, Calendar,
   FileText, CreditCard, Wallet, Settings, Hexagon, ClipboardList,
-  CalendarDays, Lock, X, LogOut,
+  CalendarDays, Lock, X, LogOut, Image,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { logout } from './LoginGate'
