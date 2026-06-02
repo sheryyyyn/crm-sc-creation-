@@ -277,6 +277,17 @@ const useStore = create((set, get) => ({
     }
   },
 
+  // ─── Médias ─────────────────────────────────────────────────────────────
+  addMedia: (data) => {
+    const item = { ...data, id: generateId('med'), createdAt: new Date().toISOString() }
+    fsSet('medias', item.id, item)
+  },
+  updateMedia: (id, data) => {
+    const updated = { ...get().medias.find((m) => m.id === id), ...data }
+    fsSet('medias', id, updated)
+  },
+  deleteMedia: (id) => fsDel('medias', id),
+
   // ─── Computed helpers ───────────────────────────────────────────────────
   getClientById: (id) => get().clients.find((c) => c.id === id),
   getProjetById: (id) => get().projets.find((p) => p.id === id),
