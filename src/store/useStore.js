@@ -56,6 +56,7 @@ async function seedIfEmpty() {
 
 const useStore = create((set, get) => ({
   // ─── Data ───────────────────────────────────────────────────────────────
+  medias: [],
   motsDePasse: [],
   formReponses: [],
   clients: [],
