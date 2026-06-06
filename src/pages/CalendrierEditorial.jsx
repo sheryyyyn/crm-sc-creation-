@@ -547,7 +547,7 @@ export default function CalendrierEditorial() {
 
       {/* Create Modal */}
       <Modal isOpen={modal} onClose={() => setModal(false)} title="Nouveau contenu" size="lg">
-        <ContentForm form={form} setForm={setForm} onSubmit={handleSubmit} onCancel={() => setModal(false)} label="Créer" />
+        <ContentForm form={form} setForm={setForm} onSubmit={handleSubmit} onCancel={() => setModal(false)} label="Créer" themes={themes} onAddTheme={t => { const next = [...themes, t]; setThemes(next); saveThemes(next) }} />
       </Modal>
 
       {/* Edit Modal */}
