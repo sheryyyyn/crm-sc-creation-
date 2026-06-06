@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Plus, Video, Calendar, Clock, Edit, Trash2, List, ChevronLeft, ChevronRight, MessageSquare, X, Wifi, WifiOff, PackageOpen, Send, Mail, Copy, Check } from 'lucide-react'
-import { doc, onSnapshot, setDoc } from 'firebase/firestore'
+import { doc, onSnapshot, setDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
