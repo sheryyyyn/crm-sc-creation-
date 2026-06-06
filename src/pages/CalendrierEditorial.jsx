@@ -98,9 +98,20 @@ function ContentForm({ form, setForm, onSubmit, onCancel, label, themes, onAddTh
           </select>
         </FormField>
         <FormField label="Thème">
-          <select className="select" value={form.theme} onChange={e => setForm({ ...form, theme: e.target.value })}>
-            {THEMES.map(t => <option key={t}>{t}</option>)}
+          <select className="select mb-1.5" value={form.theme} onChange={e => setForm({ ...form, theme: e.target.value })}>
+            {themes.map(t => <option key={t}>{t}</option>)}
           </select>
+          <div className="flex gap-1">
+            <input
+              ref={inputRef}
+              className="input text-xs py-1 flex-1"
+              placeholder="Nouveau thème..."
+              value={newTheme}
+              onChange={e => setNewTheme(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTheme() } }}
+            />
+            <button type="button" onClick={handleAddTheme} className="btn-secondary text-xs px-2 py-1">+ Ajouter</button>
+          </div>
         </FormField>
       </FormRow>
       <FormRow cols={3}>
