@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { Plus, Edit, Trash2, Calendar, List, Columns, ChevronLeft, ChevronRight, Eye, BarChart2 } from 'lucide-react'
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
