@@ -380,9 +380,9 @@ export default function CalendrierEditorial() {
                               <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${c.plateforme === 'TikTok' ? 'bg-gray-800 text-white' : 'bg-pink-500 text-white'}`}>
                                 {c.plateforme}
                               </span>
-                              {c.type && (
+                              {c.theme && (
                                 <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none bg-white/70 text-gray-600">
-                                  {c.type}
+                                  {c.theme}
                                 </span>
                               )}
                             </div>
