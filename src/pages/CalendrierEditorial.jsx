@@ -224,7 +224,7 @@ function DetailModal({ c, onClose, onEdit, onDelete }) {
           )}
           {c.notes && (
             <div className="bg-amber-50 rounded-xl p-3">
-              <p className="text-xs font-bold text-amber-600 mb-1">NOTES INTERNES</p>
+              <p className="text-xs font-bold text-amber-600 mb-1">DESCRIPTION</p>
               <p className="text-sm text-gray-700">{c.notes}</p>
             </div>
           )}
