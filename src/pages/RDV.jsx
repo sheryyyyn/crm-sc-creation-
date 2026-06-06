@@ -847,6 +847,14 @@ export default function RDV() {
           {editForm && (
             <Modal isOpen={!!editModal} onClose={() => setEditModal(null)} title="Modifier le RDV" size="lg">
               <form onSubmit={handleEditSubmit}>
+                {(() => {
+                  const client = clients.find(c => c.id === editForm.clientId)
+                  const fr = client && formReponses.find(r =>
+                    r.nomEntreprise?.toLowerCase().includes(client.nom?.toLowerCase()) ||
+                    client.nom?.toLowerCase().includes(r.nomEntreprise?.toLowerCase())
+                  )
+                  return <RecapFormulaire formReponse={fr} />
+                })()}
                 <FormRow cols={2}>
                   <FormField label="Date">
                     <input type="date" className="input" value={editForm.date || ''} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
