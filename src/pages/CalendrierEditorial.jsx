@@ -374,10 +374,19 @@ export default function CalendrierEditorial() {
                       <div className="space-y-1">
                         {items.slice(0, 3).map(c => (
                           <button key={c.id} onClick={() => setDetailId(c.id)}
-                            className="w-full text-left flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold truncate hover:opacity-80 transition-opacity"
+                            className="w-full text-left flex flex-col gap-0.5 px-1.5 py-1 rounded hover:opacity-80 transition-opacity"
                             style={{ background: c.statut === 'publie' ? '#d1fae5' : c.statut === 'planifie' ? '#ede9fe' : '#e0e7ff' }}>
-                            <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${PLAT_DOT[c.plateforme] || 'bg-gray-400'}`} />
-                            <span className="truncate text-gray-700">{c.titre}</span>
+                            <div className="flex items-center gap-1 flex-wrap">
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${c.plateforme === 'TikTok' ? 'bg-gray-800 text-white' : 'bg-pink-500 text-white'}`}>
+                                {c.plateforme}
+                              </span>
+                              {c.type && (
+                                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none bg-white/70 text-gray-600">
+                                  {c.type}
+                                </span>
+                              )}
+                            </div>
+                            <span className="truncate text-[10px] font-semibold text-gray-700">{c.titre}</span>
                           </button>
                         ))}
                         {items.length > 3 && (
