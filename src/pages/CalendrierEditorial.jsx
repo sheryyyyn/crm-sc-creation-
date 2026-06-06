@@ -214,6 +214,7 @@ function DetailModal({ c, onClose, onEdit, onDelete }) {
 
 export default function CalendrierEditorial() {
   const { contenus, addContenu, updateContenu, deleteContenu } = useStore()
+  const [themes, setThemes] = useState(loadThemes)
   const [view, setView] = useState('calendrier')
   const [modal, setModal] = useState(false)
   const [editId, setEditId] = useState(null)
