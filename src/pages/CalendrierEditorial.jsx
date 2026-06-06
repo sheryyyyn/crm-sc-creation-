@@ -69,7 +69,18 @@ function getMonthDays(year, month) {
   return cells
 }
 
-function ContentForm({ form, setForm, onSubmit, onCancel, label }) {
+function ContentForm({ form, setForm, onSubmit, onCancel, label, themes, onAddTheme }) {
+  const [newTheme, setNewTheme] = useState('')
+  const inputRef = useRef(null)
+
+  function handleAddTheme() {
+    const val = newTheme.trim()
+    if (!val || themes.includes(val)) return
+    onAddTheme(val)
+    setForm(f => ({ ...f, theme: val }))
+    setNewTheme('')
+  }
+
   return (
     <form onSubmit={onSubmit}>
       <FormField label="Titre *">
