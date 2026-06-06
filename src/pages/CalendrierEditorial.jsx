@@ -553,7 +553,7 @@ export default function CalendrierEditorial() {
       {/* Edit Modal */}
       {editForm && (
         <Modal isOpen={!!editId} onClose={() => setEditId(null)} title="Modifier le contenu" size="lg">
-          <ContentForm form={editForm} setForm={setEditForm} onSubmit={handleEditSubmit} onCancel={() => setEditId(null)} label="Enregistrer" />
+          <ContentForm form={editForm} setForm={setEditForm} onSubmit={handleEditSubmit} onCancel={() => setEditId(null)} label="Enregistrer" themes={themes} onAddTheme={t => { const next = [...themes, t]; setThemes(next); saveThemes(next) }} />
         </Modal>
       )}
 
