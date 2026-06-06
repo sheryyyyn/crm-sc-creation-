@@ -105,17 +105,27 @@ L'équipe SC Création`
 
   const demandeCorps = buildCorps(tutoiement)
   const { updateRDV, addTache } = useStore()
-  const debounceRef = useRef(null)
-  const isLocalChange = useRef(false)
+  const debounceRefs = useRef({})
+  const focusedField = useRef(null)
 
-  // Écoute temps réel Firestore
+  // Écoute temps réel Firestore — mise à jour champ par champ pour éviter les écrasements
   useEffect(() => {
     const ref = doc(db, 'rdv_notes', rdv.id)
     const unsub = onSnapshot(ref, (snap) => {
       if (snap.exists()) {
         const data = snap.data()
-        if (!isLocalChange.current) {
-          setReponses(data.reponses || {})
+        // Ne pas écraser les champs que l'utilisateur est en train de taper
+        setReponses(prev => {
+          const remote = data.reponses || {}
+          const merged = { ...remote }
+          // Conserver la valeur locale pour le champ actif (ex: "rep_0")
+          if (focusedField.current?.startsWith('rep_')) {
+            const idx = focusedField.current.replace('rep_', '')
+            if (prev[idx] !== undefined) merged[idx] = prev[idx]
+          }
+          return merged
+        })
+        if (focusedField.current !== 'notes') {
           setNotesLibres(data.notesLibres || '')
         }
         setDerniereMAJ(data.updatedAt?.toDate?.() || null)
@@ -123,34 +133,44 @@ L'équipe SC Création`
       } else {
         setSynced(true)
       }
-      isLocalChange.current = false
     })
     return () => unsub()
   }, [rdv.id])
 
-  // Sauvegarde avec debounce
-  const save = useCallback((newReponses, newNotes) => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
-    debounceRef.current = setTimeout(async () => {
-      isLocalChange.current = true
-      await setDoc(doc(db, 'rdv_notes', rdv.id), {
-        reponses: newReponses,
-        notesLibres: newNotes,
-        rdvId: rdv.id,
-        updatedAt: new Date(),
-      })
+  // Sauvegarde par champ individuel pour éviter les écrasements croisés
+  function saveReponse(idx, val) {
+    if (debounceRefs.current[`rep_${idx}`]) clearTimeout(debounceRefs.current[`rep_${idx}`])
+    debounceRefs.current[`rep_${idx}`] = setTimeout(async () => {
+      const ref = doc(db, 'rdv_notes', rdv.id)
+      try {
+        await updateDoc(ref, { [`reponses.${idx}`]: val, updatedAt: new Date() })
+      } catch {
+        // Document n'existe pas encore — création initiale
+        await setDoc(ref, { reponses: { [idx]: val }, notesLibres: '', rdvId: rdv.id, updatedAt: new Date() })
+      }
     }, 400)
-  }, [rdv.id])
+  }
+
+  function saveNotes(val) {
+    if (debounceRefs.current['notes']) clearTimeout(debounceRefs.current['notes'])
+    debounceRefs.current['notes'] = setTimeout(async () => {
+      const ref = doc(db, 'rdv_notes', rdv.id)
+      try {
+        await updateDoc(ref, { notesLibres: val, updatedAt: new Date() })
+      } catch {
+        await setDoc(ref, { reponses: {}, notesLibres: val, rdvId: rdv.id, updatedAt: new Date() })
+      }
+    }, 400)
+  }
 
   function handleReponse(idx, val) {
-    const next = { ...reponses, [idx]: val }
-    setReponses(next)
-    save(next, notesLibres)
+    setReponses(prev => ({ ...prev, [idx]: val }))
+    saveReponse(idx, val)
   }
 
   function handleNotes(val) {
     setNotesLibres(val)
-    save(reponses, val)
+    saveNotes(val)
   }
 
   return (
