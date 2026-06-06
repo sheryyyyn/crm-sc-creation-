@@ -226,6 +226,8 @@ L'équipe SC Création`
                   rows={3}
                   placeholder="Réponse..."
                   value={reponses[i] || ''}
+                  onFocus={() => { focusedField.current = `rep_${i}` }}
+                  onBlur={() => { focusedField.current = null }}
                   onChange={e => handleReponse(i, e.target.value)}
                 />
               </div>
