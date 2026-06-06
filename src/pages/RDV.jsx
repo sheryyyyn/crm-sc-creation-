@@ -566,9 +566,70 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
   )
 }
 
+// ── Récap formulaire ─────────────────────────────────────────────────────────
+function RecapFormulaire({ formReponse }) {
+  const [open, setOpen] = useState(true)
+  if (!formReponse) return null
+
+  function badge(val) {
+    if (!val || val === 'Non' || val === 'Non souhaité') return { icon: '✕', cls: 'text-red-500' }
+    if (val === 'Oui' || val === 'Disponible') return { icon: '✓', cls: 'text-emerald-600' }
+    return { icon: null, cls: 'text-gray-700' }
+  }
+
+  const champs = [
+    { label: 'Site actuel', val: formReponse.siteActuel || '—' },
+    { label: 'Logo / Charte', val: formReponse.logoCharte === 'Oui' ? 'Disponible' : (formReponse.logoCharte || '—') },
+    { label: 'Contenu & Textes', val: formReponse.contenuPret === 'Oui' ? 'Prêt' : (formReponse.contenuPret === 'Non' ? 'Non produit' : (formReponse.contenuPret || '—')) },
+    { label: 'Date de lancement', val: formReponse.dateButoir || '—' },
+    { label: 'Nom de domaine', val: formReponse.nomDomaine === 'Oui' ? 'Acheté' : (formReponse.nomDomaine || '—') },
+    { label: 'Formulaire de contact', val: formReponse.formulaireContact === 'Non' ? 'Non souhaité' : (formReponse.formulaireContact || '—') },
+    { label: 'Concurrents cités', val: formReponse.concurrents || '—' },
+    { label: 'Sites inspirants', val: formReponse.sitesInspirants || '—' },
+    { label: 'Budget', val: formReponse.budget || '—' },
+    { label: 'Objectif', val: formReponse.objectif || '—' },
+    { label: 'Cible', val: formReponse.cible || '—' },
+  ]
+
+  return (
+    <div className="mb-5 rounded-2xl border border-indigo-100 overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-4 py-3 text-left"
+        style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}
+      >
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-md bg-indigo-600 flex items-center justify-center">
+            <span className="text-white text-[10px] font-bold">F</span>
+          </div>
+          <span className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Récap formulaire — {formReponse.nomEntreprise}</span>
+        </div>
+        <span className="text-indigo-400 text-xs">{open ? '▲' : '▼'}</span>
+      </button>
+
+      {open && (
+        <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 border-t border-indigo-100">
+          {champs.map(({ label, val }) => {
+            const b = badge(val)
+            return (
+              <div key={label} className="px-4 py-3 bg-white">
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
+                <p className={`text-xs font-medium leading-snug ${b.icon ? b.cls : 'text-gray-700'}`}>
+                  {b.icon && <span className="mr-1">{b.icon}</span>}{val}
+                </p>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ── Page principale ──────────────────────────────────────────────────────────
 export default function RDV() {
-  const { rdvs, clients, addRDV, updateRDV, deleteRDV } = useStore()
+  const { rdvs, clients, addRDV, updateRDV, deleteRDV, formReponses } = useStore()
   const [modal, setModal] = useState(false)
   const [editModal, setEditModal] = useState(null)
   const [form, setForm] = useState(emptyRDV)
