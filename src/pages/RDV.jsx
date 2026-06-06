@@ -242,6 +242,8 @@ L'équipe SC Création`
               rows={5}
               placeholder="Tout ce qui vient pendant l'appel..."
               value={notesLibres}
+              onFocus={() => { focusedField.current = 'notes' }}
+              onBlur={() => { focusedField.current = null }}
               onChange={e => handleNotes(e.target.value)}
             />
           </div>
