@@ -15,7 +15,7 @@ const STATUTS_KANBAN = [
 const PLATEFORMES = ['TikTok', 'Instagram']
 const TYPES = ['Reel', 'Carrousel', 'Story', 'Post', 'Article', 'Vidéo', 'Newsletter', 'Infographie', 'Podcast']
 const PRIORITES = ['basse', 'normale', 'haute', 'urgente']
-const THEMES_DEFAULT = ['Promotion', 'Éducatif', 'Divertissement', 'Témoignage', 'Coulisses', 'Conseil', 'Annonce', 'Saisonnier']
+const THEMES_DEFAULT = ['Éducatif', 'Témoignage', 'Coulisses', 'Conseil']
 
 function loadThemes() {
   try { return JSON.parse(localStorage.getItem('sc_themes') || 'null') || THEMES_DEFAULT } catch { return THEMES_DEFAULT }
