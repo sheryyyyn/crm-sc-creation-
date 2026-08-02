@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { CheckCircle2, ChevronRight, Loader2 } from 'lucide-react'
+import { CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
 
@@ -98,24 +98,44 @@ export default function FormulairePublic() {
   const [errors, setErrors] = useState({})
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [step, setStep] = useState(0)
+
+  const isLastStep = step === FORM_FIELDS.length - 1
 
   const set = (name, value) => {
     setValues(prev => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: false }))
   }
 
-  const validate = () => {
+  const validateFields = (fields) => {
     const newErrors = {}
-    FORM_FIELDS.flatMap(s => s.fields).forEach(f => {
+    fields.forEach(f => {
       if (f.required && !values[f.name]?.trim()) newErrors[f.name] = true
     })
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
+    return newErrors
+  }
+
+  const handleNext = () => {
+    const stepErrors = validateFields(FORM_FIELDS[step].fields)
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(prev => ({ ...prev, ...stepErrors }))
+      document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    setStep(s => s + 1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handlePrevious = () => {
+    setStep(s => s - 1)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!validate()) {
+    const stepErrors = validateFields(FORM_FIELDS[step].fields)
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors(prev => ({ ...prev, ...stepErrors }))
       document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
@@ -197,10 +217,30 @@ export default function FormulairePublic() {
           </p>
         </div>
 
+        {/* Progress indicator */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '32px' }}>
+          {FORM_FIELDS.map((s, i) => (
+            <div
+              key={s.section}
+              style={{
+                flex: 1,
+                height: '4px',
+                borderRadius: '999px',
+                background: i <= step ? '#1b0b09' : '#e8e0cc',
+                transition: 'background .25s ease',
+              }}
+            />
+          ))}
+        </div>
+        <p style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.1em', color: '#b8a508', marginBottom: '32px', textTransform: 'uppercase' }}>
+          Étape {step + 1} / {FORM_FIELDS.length}
+        </p>
+
         <form onSubmit={handleSubmit} noValidate>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {FORM_FIELDS.map(({ section, fields }) => (
-              <div key={section} style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '28px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
+          {(() => {
+            const { section, fields } = FORM_FIELDS[step]
+            return (
+              <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '28px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
                 <h3 style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.12em', color: '#b8a508', marginBottom: '24px', textTransform: 'uppercase' }}>
                   {section}
                 </h3>
@@ -254,45 +294,99 @@ export default function FormulairePublic() {
                   ))}
                 </div>
               </div>
-            ))}
+            )
+          })()}
+
+          {/* Navigation */}
+          <div style={{ marginTop: '32px', display: 'flex', justifyContent: step > 0 ? 'space-between' : 'flex-end', gap: '12px' }}>
+            {step > 0 && (
+              <button
+                type="button"
+                onClick={handlePrevious}
+                style={{
+                  padding: '16px 24px',
+                  background: '#fdfbf4',
+                  color: '#1b0b09',
+                  border: '1px solid #d4c9b0',
+                  borderRadius: '2px',
+                  fontFamily: '"Anton", sans-serif',
+                  fontSize: '13px',
+                  letterSpacing: '.1em',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'background .2s ease',
+                }}
+                onMouseEnter={e => { e.target.style.background = '#f2ecda' }}
+                onMouseLeave={e => { e.target.style.background = '#fdfbf4' }}
+              >
+                <ChevronLeft size={15} /> PRÉCÉDENT
+              </button>
+            )}
+
+            {isLastStep ? (
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  padding: '16px 24px',
+                  background: '#1b0b09',
+                  color: '#fcf7cf',
+                  border: 'none',
+                  borderRadius: '2px',
+                  fontFamily: '"Anton", sans-serif',
+                  fontSize: '13px',
+                  letterSpacing: '.1em',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                  opacity: loading ? 0.7 : 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  transition: 'background .2s ease',
+                }}
+                onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
+                onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
+              >
+                {loading ? (
+                  <><Loader2 size={15} className="animate-spin" />ENVOI EN COURS…</>
+                ) : (
+                  <>ENVOYER MA DEMANDE <ChevronRight size={15} /></>
+                )}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleNext}
+                style={{
+                  padding: '16px 24px',
+                  background: '#1b0b09',
+                  color: '#fcf7cf',
+                  border: 'none',
+                  borderRadius: '2px',
+                  fontFamily: '"Anton", sans-serif',
+                  fontSize: '13px',
+                  letterSpacing: '.1em',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'background .2s ease',
+                }}
+                onMouseEnter={e => { e.target.style.background = '#322624' }}
+                onMouseLeave={e => { e.target.style.background = '#1b0b09' }}
+              >
+                SUIVANT <ChevronRight size={15} />
+              </button>
+            )}
           </div>
 
-          {/* Submit */}
-          <div style={{ marginTop: '32px' }}>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: '100%',
-                padding: '16px',
-                background: '#1b0b09',
-                color: '#fcf7cf',
-                border: 'none',
-                borderRadius: '2px',
-                fontFamily: '"Anton", sans-serif',
-                fontSize: '13px',
-                letterSpacing: '.1em',
-                cursor: loading ? 'not-allowed' : 'pointer',
-                opacity: loading ? 0.7 : 1,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px',
-                transition: 'background .2s ease',
-              }}
-              onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
-              onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
-            >
-              {loading ? (
-                <><Loader2 size={15} className="animate-spin" />ENVOI EN COURS…</>
-              ) : (
-                <>ENVOYER MA DEMANDE <ChevronRight size={15} /></>
-              )}
-            </button>
+          {isLastStep && (
             <p style={{ textAlign: 'center', fontSize: '11px', color: '#7e7e7e', marginTop: '12px' }}>
               Vos données sont confidentielles et utilisées uniquement pour votre projet.
             </p>
-          </div>
+          )}
         </form>
       </div>
     </div>

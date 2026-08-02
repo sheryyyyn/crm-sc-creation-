@@ -21,11 +21,25 @@ const JOURS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
 const MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre']
 
 // ── Panneau collaboratif temps réel ─────────────────────────────────────────
+function parseQuestion(line) {
+  const match = line.match(/^\[([^\]]+)\]\s*(.+)/)
+  if (match) return { categorie: match[1].trim(), texte: match[2].trim() }
+  return { categorie: null, texte: line }
+}
+
 function PanneauQuestions({ rdv, client, onClose, onDocumentDemande }) {
-  const questions = (rdv.questionsPreparees || '')
+  const rawQuestions = (rdv.questionsPreparees || '')
     .split('\n')
     .map(l => l.trim())
     .filter(Boolean)
+
+  const questions = rawQuestions.map(parseQuestion)
+  const categories = ['Voir tout', ...Array.from(new Set(questions.map(q => q.categorie).filter(Boolean)))]
+  const [categorieActive, setCategorieActive] = useState('Voir tout')
+
+  const questionsFiltrees = categorieActive === 'Voir tout'
+    ? questions
+    : questions.filter(q => q.categorie === categorieActive)
 
   const [reponses, setReponses] = useState({})
   const [notesLibres, setNotesLibres] = useState('')
@@ -215,24 +229,128 @@ L'équipe SC Création`
             </div>
           )}
 
-          {questions.map((q, i) => (
-            <div key={i} className="rounded-2xl border border-gray-100 overflow-hidden">
-              <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
-                <p className="text-sm font-semibold text-indigo-800 leading-snug">{q}</p>
-              </div>
-              <div className="px-3 py-2">
-                <textarea
-                  className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
-                  rows={3}
-                  placeholder="Réponse..."
-                  value={reponses[i] || ''}
-                  onFocus={() => { focusedField.current = `rep_${i}` }}
-                  onBlur={() => { focusedField.current = null }}
-                  onChange={e => handleReponse(i, e.target.value)}
-                />
-              </div>
+          {/* Tags catégories */}
+          {categories.length > 1 && (
+            <div className="flex flex-wrap gap-2 pb-1">
+              {categories.map(cat => (
+                <button key={cat} onClick={() => setCategorieActive(cat)}
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${categorieActive === cat ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 bg-white text-gray-500 hover:border-indigo-300 hover:text-indigo-600'}`}>
+                  {cat}
+                  {cat !== 'Voir tout' && (
+                    <span className={`ml-1.5 text-[10px] font-semibold ${categorieActive === cat ? 'opacity-80' : 'opacity-50'}`}>
+                      {questions.filter(q => q.categorie === cat).length}
+                    </span>
+                  )}
+                </button>
+              ))}
             </div>
-          ))}
+          )}
+
+          {/* Questions groupées par catégorie */}
+          {(() => {
+            if (categorieActive !== 'Voir tout') {
+              return questionsFiltrees.map((q, idx) => {
+                const globalIdx = questions.indexOf(q)
+                return (
+                  <div key={globalIdx} className="rounded-2xl border border-gray-100 overflow-hidden">
+                    <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
+                      <p className="text-sm font-semibold text-indigo-800 leading-snug">{q.texte}</p>
+                    </div>
+                    <div className="px-3 py-2">
+                      <textarea
+                        className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                        rows={3}
+                        placeholder="Réponse..."
+                        value={reponses[globalIdx] || ''}
+                        onFocus={() => { focusedField.current = `rep_${globalIdx}` }}
+                        onBlur={() => { focusedField.current = null }}
+                        onChange={e => handleReponse(globalIdx, e.target.value)}
+                      />
+                    </div>
+                  </div>
+                )
+              })
+            }
+
+            // "Voir tout" : groupement par catégorie avec titres
+            const groupes = {}
+            const sansCat = []
+            questions.forEach((q, idx) => {
+              if (q.categorie) {
+                if (!groupes[q.categorie]) groupes[q.categorie] = []
+                groupes[q.categorie].push({ ...q, idx })
+              } else {
+                sansCat.push({ ...q, idx })
+              }
+            })
+
+            const sections = []
+            Object.entries(groupes).forEach(([cat, qs]) => {
+              sections.push(
+                <div key={`cat-${cat}`} className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
+                      {cat}
+                    </span>
+                    <div className="flex-1 h-px bg-indigo-100" />
+                  </div>
+                  {qs.map(({ texte, idx }) => (
+                    <div key={idx} className="rounded-2xl border border-gray-100 overflow-hidden">
+                      <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
+                        <p className="text-sm font-semibold text-indigo-800 leading-snug">{texte}</p>
+                      </div>
+                      <div className="px-3 py-2">
+                        <textarea
+                          className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                          rows={3}
+                          placeholder="Réponse..."
+                          value={reponses[idx] || ''}
+                          onFocus={() => { focusedField.current = `rep_${idx}` }}
+                          onBlur={() => { focusedField.current = null }}
+                          onChange={e => handleReponse(idx, e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            })
+
+            if (sansCat.length > 0) {
+              sections.push(
+                <div key="cat-autres" className="space-y-3">
+                  {Object.keys(groupes).length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+                        Autres
+                      </span>
+                      <div className="flex-1 h-px bg-gray-100" />
+                    </div>
+                  )}
+                  {sansCat.map(({ texte, idx }) => (
+                    <div key={idx} className="rounded-2xl border border-gray-100 overflow-hidden">
+                      <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
+                        <p className="text-sm font-semibold text-indigo-800 leading-snug">{texte}</p>
+                      </div>
+                      <div className="px-3 py-2">
+                        <textarea
+                          className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                          rows={3}
+                          placeholder="Réponse..."
+                          value={reponses[idx] || ''}
+                          onFocus={() => { focusedField.current = `rep_${idx}` }}
+                          onBlur={() => { focusedField.current = null }}
+                          onChange={e => handleReponse(idx, e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )
+            }
+
+            return sections
+          })()}
 
           {/* Notes libres */}
           <div>
@@ -857,8 +975,8 @@ export default function RDV() {
               </FormField>
               <FormField label="Questions préparées pour l'appel">
                 <textarea className="input resize-none" rows={5} value={form.questionsPreparees} onChange={e => setForm({ ...form, questionsPreparees: e.target.value })}
-                  placeholder={"1. Quels sont tes objectifs pour les 3 prochains mois ?\n2. Quel est ton budget ?\n3. Qu'est-ce qui t'a motivé à nous contacter ?\n..."} />
-                <p className="text-[11px] text-gray-400 mt-1">Une question par ligne — elles apparaîtront dans le panneau collaboratif pendant l'appel</p>
+                  placeholder={"[Design] Quels sont tes couleurs préférées ?\n[Design] As-tu un logo existant ?\n[Marketing] Qui est ta cible ?\n[Marketing] Quel est ton budget ?\nUne question sans catégorie..."} />
+                <p className="text-[11px] text-gray-400 mt-1">Une question par ligne · Ajoute <span className="font-mono bg-gray-100 px-1 rounded">[Catégorie]</span> au début pour grouper par onglet</p>
               </FormField>
               <div className="flex justify-end gap-2 mt-5">
                 <button type="button" className="btn-secondary" onClick={() => setModal(false)}>Annuler</button>
@@ -898,8 +1016,8 @@ export default function RDV() {
                 </FormField>
                 <FormField label="Questions préparées pour l'appel">
                   <textarea className="input resize-none mb-4" rows={5} value={editForm.questionsPreparees || ''} onChange={e => setEditForm({ ...editForm, questionsPreparees: e.target.value })}
-                    placeholder={"1. Quels sont tes objectifs ?\n2. ..."} />
-                  <p className="text-[11px] text-gray-400 -mt-3 mb-1">Une question par ligne</p>
+                    placeholder={"[Design] Quels sont tes couleurs ?\n[Marketing] Qui est ta cible ?\nUne question sans catégorie..."} />
+                  <p className="text-[11px] text-gray-400 -mt-3 mb-1">Une question par ligne · <span className="font-mono bg-gray-100 px-1 rounded">[Catégorie]</span> au début pour grouper</p>
                 </FormField>
                 <FormField label="Compte rendu">
                   <textarea className="input resize-none mb-4" rows={3} value={editForm.compteRendu || ''} onChange={e => setEditForm({ ...editForm, compteRendu: e.target.value })} />
