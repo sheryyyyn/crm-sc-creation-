@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
@@ -99,8 +99,13 @@ export default function FormulairePublic() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(0)
+  const progressRef = useRef(null)
 
   const isLastStep = step === FORM_FIELDS.length - 1
+
+  const scrollToProgress = () => {
+    progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const set = (name, value) => {
     setValues(prev => ({ ...prev, [name]: value }))
@@ -123,12 +128,12 @@ export default function FormulairePublic() {
       return
     }
     setStep(s => s + 1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToProgress()
   }
 
   const handlePrevious = () => {
     setStep(s => s - 1)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    scrollToProgress()
   }
 
   const handleSubmit = async (e) => {
@@ -213,12 +218,25 @@ export default function FormulairePublic() {
           <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.8, margin: 0 }}>
             Bienvenue ! Pour mieux comprendre votre projet et vous proposer un accompagnement personnalisé,
             merci de remplir ce formulaire. Les champs marqués d'un <strong style={{ color: '#1b0b09' }}>*</strong> sont obligatoires.
-            Nous vous recontacterons sous <strong style={{ color: '#1b0b09' }}>24h</strong>.
           </p>
         </div>
 
         {/* Progress indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '32px' }}>
+        <div
+          ref={progressRef}
+          style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 10,
+            background: '#fdfbf4',
+            padding: '12px 0',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '6px',
+            marginBottom: '20px',
+            scrollMarginTop: '0px',
+          }}
+        >
           {FORM_FIELDS.map((s, i) => (
             <div
               key={s.section}
