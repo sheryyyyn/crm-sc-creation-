@@ -9,7 +9,8 @@ const FORM_FIELDS = [
     { label: 'Adresse e-mail *', name: 'email', type: 'email', placeholder: 'contact@votreentreprise.fr', required: true },
     { label: 'Numéro de téléphone *', name: 'telephone', type: 'tel', placeholder: '06 00 00 00 00', required: true },
     { label: "Quel est votre secteur d'activité ? *", name: 'secteurActivite', type: 'select', required: true, options: ['Mode & Vêtements', 'Beauté & Cosmétiques', 'Alimentation & Restauration', 'Sport & Bien-être', 'Maison & Décoration', 'Art & Artisanat', 'High-Tech & Informatique', 'Services aux entreprises (B2B)', 'Santé & Médical', 'Éducation & Formation', 'Immobilier', 'Événementiel', 'Conseil & Coaching', 'Autre'] },
-    { label: 'Avez-vous déjà un site web ?', name: 'siteActuel', type: 'text', placeholder: 'https://... (laisser vide si non)' },
+    { label: 'Avez-vous déjà un site web ?', name: 'aSiteWeb', type: 'tags', options: ['Non, pas encore', "Oui, j'en ai un"] },
+    { label: 'Adresse de votre site actuel', name: 'siteActuel', type: 'text', placeholder: 'https://... — adresse de votre site actuel', showIf: v => v.aSiteWeb === "Oui, j'en ai un" },
   ]},
   { section: 'Votre projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
@@ -120,7 +121,7 @@ const inputBase = {
   fontSize: '14px',
   fontFamily: '"DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
   outline: 'none',
-  transition: 'border-color .2s ease',
+  transition: 'border-color .2s ease, box-shadow .2s ease',
 }
 
 const textareaBase = {
@@ -269,40 +270,7 @@ export default function FormulairePublic() {
           </p>
         </div>
 
-        {/* Mobile progress indicator */}
-        <div
-          ref={progressRef}
-          className="lg:hidden"
-          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            background: '#fdfbf4',
-            padding: '12px 0',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            marginBottom: '10px',
-          }}
-        >
-          {FORM_FIELDS.map((s, i) => (
-            <div
-              key={s.section}
-              style={{
-                flex: 1,
-                height: '4px',
-                borderRadius: '999px',
-                background: i <= step ? '#1b0b09' : '#e8e0cc',
-                transition: 'background .25s ease',
-              }}
-            />
-          ))}
-        </div>
-        <p className="lg:hidden" style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.1em', color: '#b8a508', marginBottom: '24px', textTransform: 'uppercase' }}>
-          Étape {step + 1} / {FORM_FIELDS.length}
-        </p>
-
-        <div className="lg:flex lg:items-start lg:gap-12">
+        <div ref={progressRef} className="lg:flex lg:items-start lg:gap-12" style={{ scrollMarginTop: '16px' }}>
           {/* Desktop step list */}
           <div className="hidden lg:flex" style={{ flexDirection: 'column', width: '230px', flexShrink: 0, paddingTop: '4px' }}>
             {FORM_FIELDS.map((s, i) => {
@@ -364,7 +332,7 @@ export default function FormulairePublic() {
                     <p style={{ fontSize: '14px', color: '#7e7e7e', margin: '0 0 26px' }}>{subtitle}</p>
                   )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {fields.map(({ label, name, type, placeholder, options, required }) => (
+                    {fields.filter(f => !f.showIf || f.showIf(values)).map(({ label, name, type, placeholder, options, required }) => (
                       <div key={name} data-error={errors[name] ? 'true' : 'false'}>
                         <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '8px' }}>
                           {label}
@@ -384,16 +352,16 @@ export default function FormulairePublic() {
                             value={values[name]}
                             onChange={e => set(name, e.target.value)}
                             style={{ ...(errors[name] ? textareaError : textareaBase), resize: 'vertical' }}
-                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
                           />
                         ) : type === 'select' ? (
                           <select
                             value={values[name]}
                             onChange={e => set(name, e.target.value)}
                             style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
-                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
                           >
                             <option value="">— Choisir —</option>
                             {options.map(o => <option key={o} value={o}>{o}</option>)}
@@ -405,8 +373,8 @@ export default function FormulairePublic() {
                             value={values[name]}
                             onChange={e => set(name, e.target.value)}
                             style={errors[name] ? inputError : inputBase}
-                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
                           />
                         )}
                       </div>
