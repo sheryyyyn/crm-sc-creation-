@@ -4,20 +4,20 @@ import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
 
 const FORM_FIELDS = [
-  { section: 'Votre entreprise', fields: [
+  { section: 'Votre entreprise', short: 'Qui vous êtes', subtitle: 'Quelques informations pour vous identifier et vous recontacter.', fields: [
     { label: 'Nom de votre entreprise / marque *', name: 'nomEntreprise', type: 'text', placeholder: 'Ex : SC Création', required: true },
     { label: 'Adresse e-mail *', name: 'email', type: 'email', placeholder: 'contact@votreentreprise.fr', required: true },
     { label: 'Numéro de téléphone *', name: 'telephone', type: 'tel', placeholder: '06 00 00 00 00', required: true },
     { label: "Quel est votre secteur d'activité ? *", name: 'secteurActivite', type: 'select', required: true, options: ['Mode & Vêtements', 'Beauté & Cosmétiques', 'Alimentation & Restauration', 'Sport & Bien-être', 'Maison & Décoration', 'Art & Artisanat', 'High-Tech & Informatique', 'Services aux entreprises (B2B)', 'Santé & Médical', 'Éducation & Formation', 'Immobilier', 'Événementiel', 'Conseil & Coaching', 'Autre'] },
     { label: 'Avez-vous déjà un site web ?', name: 'siteActuel', type: 'text', placeholder: 'https://... (laisser vide si non)' },
   ]},
-  { section: 'Votre projet', fields: [
+  { section: 'Votre projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'tags', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
     { label: 'Qui sont vos concurrents (sites que vous connaissez) ?', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
-  { section: 'Votre contenu & identité', fields: [
+  { section: 'Votre contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
     { label: 'Souhaitez-vous un formulaire de contact sur votre site ?', name: 'formulaireContact', type: 'tags', options: ['Oui', 'Non', 'Je ne sais pas encore'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
@@ -25,11 +25,11 @@ const FORM_FIELDS = [
     { label: 'Avez-vous déjà un logo / charte graphique ?', name: 'logoCharte', type: 'tags', options: ["Oui", 'Non, pas encore', 'En cours'] },
     { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
   ]},
-  { section: 'Comment nous avez-vous trouvés ?', fields: [
+  { section: 'Comment nous avez-vous trouvés ?', short: 'Découverte', subtitle: 'Comment vous nous avez trouvés.', fields: [
     { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
     { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
   ]},
-  { section: 'Budget & délais', fields: [
+  { section: 'Budget & délais', short: 'Pour finir', subtitle: 'Budget, délais et dernières précisions.', fields: [
     { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'text', placeholder: 'Ex : une fourchette de prix', required: true },
     { label: 'Avez-vous une date butoir ?', name: 'dateButoir', type: 'text', placeholder: 'Ex : fin juillet 2026, ou "pas de contrainte"' },
     { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
@@ -42,6 +42,44 @@ const initialValues = Object.fromEntries(
 )
 
 function TagSelect({ options, value, onChange, hasError }) {
+  if (options.length <= 2) {
+    return (
+      <div
+        style={{
+          display: 'inline-flex',
+          border: `1.5px solid ${hasError ? '#b8a508' : '#e8e0cc'}`,
+          borderRadius: '999px',
+          padding: '3px',
+          background: '#fdfbf4',
+        }}
+      >
+        {options.map(o => {
+          const selected = value === o
+          return (
+            <button
+              key={o}
+              type="button"
+              onClick={() => onChange(selected ? '' : o)}
+              style={{
+                padding: '10px 20px',
+                borderRadius: '999px',
+                border: 'none',
+                background: selected ? '#1b0b09' : 'transparent',
+                color: selected ? '#fcf7cf' : '#1b0b09',
+                fontSize: '13.5px',
+                fontFamily: '"DM Sans", sans-serif',
+                cursor: 'pointer',
+                transition: 'all .18s ease',
+                fontWeight: selected ? 600 : 500,
+              }}
+            >
+              {o}
+            </button>
+          )
+        })}
+      </div>
+    )
+  }
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
       {options.map(o => {
@@ -52,16 +90,15 @@ function TagSelect({ options, value, onChange, hasError }) {
             type="button"
             onClick={() => onChange(selected ? '' : o)}
             style={{
-              padding: '7px 14px',
-              borderRadius: '2px',
-              border: selected ? '1.5px solid #1b0b09' : `1.5px solid ${hasError ? '#b8a508' : '#d4c9b0'}`,
+              padding: '9px 16px',
+              border: selected ? '1.5px solid #1b0b09' : `1.5px solid ${hasError ? '#b8a508' : '#e8e0cc'}`,
               background: selected ? '#1b0b09' : '#fdfbf4',
               color: selected ? '#fcf7cf' : '#1b0b09',
               fontSize: '13px',
               fontFamily: '"DM Sans", sans-serif',
               cursor: 'pointer',
               transition: 'all .15s ease',
-              fontWeight: selected ? 600 : 400,
+              fontWeight: selected ? 600 : 500,
               borderRadius: '999px',
             }}
           >
@@ -75,9 +112,9 @@ function TagSelect({ options, value, onChange, hasError }) {
 
 const inputBase = {
   width: '100%',
-  padding: '12px 16px',
-  borderRadius: '4px',
-  border: '1px solid #d4c9b0',
+  padding: '13px 18px',
+  borderRadius: '999px',
+  border: '1.5px solid #e8e0cc',
   background: '#fdfbf4',
   color: '#1b0b09',
   fontSize: '14px',
@@ -86,10 +123,20 @@ const inputBase = {
   transition: 'border-color .2s ease',
 }
 
+const textareaBase = {
+  ...inputBase,
+  borderRadius: '20px',
+}
+
 const inputError = {
   ...inputBase,
-  border: '1px solid #b8a508',
+  border: '1.5px solid #b8a508',
   background: '#fefce8',
+}
+
+const textareaError = {
+  ...inputError,
+  borderRadius: '20px',
 }
 
 export default function FormulairePublic() {
@@ -212,18 +259,20 @@ export default function FormulairePublic() {
         <p style={{ fontSize: '14px', color: '#7e7e7e' }}>Création de site web sur mesure</p>
       </div>
 
-      <div style={{ maxWidth: '680px', margin: '0 auto', padding: '40px 16px 80px' }}>
+      <div style={{ maxWidth: '960px', margin: '0 auto', padding: '40px 16px 80px' }}>
         {/* Intro */}
-        <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '24px 28px', marginBottom: '32px' }}>
+        <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fff', border: '1px solid #e8e0cc', borderRadius: '14px', padding: '20px 24px', marginBottom: '32px' }}>
+          <div style={{ width: '22px', height: '22px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '13px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
           <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.8, margin: 0 }}>
             Bienvenue ! Pour mieux comprendre votre projet et vous proposer un accompagnement personnalisé,
-            merci de remplir ce formulaire. Les champs marqués d'un <strong style={{ color: '#1b0b09' }}>*</strong> sont obligatoires.
+            merci de remplir ce formulaire — <strong style={{ color: '#1b0b09' }}>ça prend environ 5 minutes</strong>. Les champs marqués d'un <strong style={{ color: '#1b0b09' }}>*</strong> sont obligatoires.
           </p>
         </div>
 
-        {/* Progress indicator */}
+        {/* Mobile progress indicator */}
         <div
           ref={progressRef}
+          className="lg:hidden"
           style={{
             position: 'sticky',
             top: 0,
@@ -233,8 +282,7 @@ export default function FormulairePublic() {
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            marginBottom: '20px',
-            scrollMarginTop: '0px',
+            marginBottom: '10px',
           }}
         >
           {FORM_FIELDS.map((s, i) => (
@@ -250,162 +298,218 @@ export default function FormulairePublic() {
             />
           ))}
         </div>
-        <p style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.1em', color: '#b8a508', marginBottom: '32px', textTransform: 'uppercase' }}>
+        <p className="lg:hidden" style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.1em', color: '#b8a508', marginBottom: '24px', textTransform: 'uppercase' }}>
           Étape {step + 1} / {FORM_FIELDS.length}
         </p>
 
-        <form onSubmit={handleSubmit} noValidate>
-          {(() => {
-            const { section, fields } = FORM_FIELDS[step]
-            return (
-              <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '2px', padding: '28px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
-                <h3 style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.12em', color: '#b8a508', marginBottom: '24px', textTransform: 'uppercase' }}>
-                  {section}
-                </h3>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                  {fields.map(({ label, name, type, placeholder, options, required }) => (
-                    <div key={name} data-error={errors[name] ? 'true' : 'false'}>
-                      <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '6px' }}>
-                        {label}
-                        {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
-                      </label>
-                      {type === 'tags' ? (
-                        <TagSelect
-                          options={options}
-                          value={values[name]}
-                          onChange={v => set(name, v)}
-                          hasError={!!errors[name]}
-                        />
-                      ) : type === 'textarea' ? (
-                        <textarea
-                          rows={3}
-                          placeholder={placeholder}
-                          value={values[name]}
-                          onChange={e => set(name, e.target.value)}
-                          style={{ ...(errors[name] ? inputError : inputBase), resize: 'vertical' }}
-                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
-                        />
-                      ) : type === 'select' ? (
-                        <select
-                          value={values[name]}
-                          onChange={e => set(name, e.target.value)}
-                          style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
-                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
-                        >
-                          <option value="">— Choisir —</option>
-                          {options.map(o => <option key={o} value={o}>{o}</option>)}
-                        </select>
-                      ) : (
-                        <input
-                          type={type}
-                          placeholder={placeholder}
-                          value={values[name]}
-                          onChange={e => set(name, e.target.value)}
-                          style={errors[name] ? inputError : inputBase}
-                          onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
-                          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#d4c9b0' }}
-                        />
-                      )}
+        <div className="lg:flex lg:items-start lg:gap-12">
+          {/* Desktop step list */}
+          <div className="hidden lg:flex" style={{ flexDirection: 'column', width: '230px', flexShrink: 0, paddingTop: '4px' }}>
+            {FORM_FIELDS.map((s, i) => {
+              const isDone = i < step
+              const isActive = i === step
+              return (
+                <div key={s.section} style={{ display: 'flex', gap: '14px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <div
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        flexShrink: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '13px',
+                        fontWeight: 700,
+                        fontFamily: '"DM Sans", sans-serif',
+                        transition: 'all .2s ease',
+                        background: isDone || isActive ? '#1b0b09' : '#fdfbf4',
+                        color: isDone || isActive ? '#fcf7cf' : '#a89b8c',
+                        border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
+                      }}
+                    >
+                      {isDone ? <CheckCircle2 size={16} /> : i + 1}
                     </div>
-                  ))}
+                    {i < FORM_FIELDS.length - 1 && (
+                      <div style={{ width: '1.5px', flex: 1, minHeight: '38px', background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
+                    )}
+                  </div>
+                  <div style={{ paddingBottom: '30px' }}>
+                    <p style={{ fontSize: '14.5px', fontWeight: 700, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, transition: 'color .2s ease' }}>
+                      {s.section}
+                    </p>
+                    <p style={{ fontSize: '12.5px', color: '#a89b8c', margin: '2px 0 0' }}>{s.short}</p>
+                  </div>
                 </div>
-              </div>
-            )
-          })()}
-
-          {/* Navigation */}
-          <div style={{ marginTop: '32px', display: 'flex', justifyContent: step > 0 ? 'space-between' : 'flex-end', gap: '12px' }}>
-            {step > 0 && (
-              <button
-                type="button"
-                onClick={handlePrevious}
-                style={{
-                  padding: '16px 24px',
-                  background: '#fdfbf4',
-                  color: '#1b0b09',
-                  border: '1px solid #d4c9b0',
-                  borderRadius: '2px',
-                  fontFamily: '"Anton", sans-serif',
-                  fontSize: '13px',
-                  letterSpacing: '.1em',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'background .2s ease',
-                }}
-                onMouseEnter={e => { e.target.style.background = '#f2ecda' }}
-                onMouseLeave={e => { e.target.style.background = '#fdfbf4' }}
-              >
-                <ChevronLeft size={15} /> PRÉCÉDENT
-              </button>
-            )}
-
-            {isLastStep ? (
-              <button
-                type="submit"
-                disabled={loading}
-                style={{
-                  padding: '16px 24px',
-                  background: '#1b0b09',
-                  color: '#fcf7cf',
-                  border: 'none',
-                  borderRadius: '2px',
-                  fontFamily: '"Anton", sans-serif',
-                  fontSize: '13px',
-                  letterSpacing: '.1em',
-                  cursor: loading ? 'not-allowed' : 'pointer',
-                  opacity: loading ? 0.7 : 1,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                  transition: 'background .2s ease',
-                }}
-                onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
-                onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
-              >
-                {loading ? (
-                  <><Loader2 size={15} className="animate-spin" />ENVOI EN COURS…</>
-                ) : (
-                  <>ENVOYER MA DEMANDE <ChevronRight size={15} /></>
-                )}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleNext}
-                style={{
-                  padding: '16px 24px',
-                  background: '#1b0b09',
-                  color: '#fcf7cf',
-                  border: 'none',
-                  borderRadius: '2px',
-                  fontFamily: '"Anton", sans-serif',
-                  fontSize: '13px',
-                  letterSpacing: '.1em',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  transition: 'background .2s ease',
-                }}
-                onMouseEnter={e => { e.target.style.background = '#322624' }}
-                onMouseLeave={e => { e.target.style.background = '#1b0b09' }}
-              >
-                SUIVANT <ChevronRight size={15} />
-              </button>
-            )}
+              )
+            })}
           </div>
 
-          {isLastStep && (
-            <p style={{ textAlign: 'center', fontSize: '11px', color: '#7e7e7e', marginTop: '12px' }}>
-              Vos données sont confidentielles et utilisées uniquement pour votre projet.
-            </p>
-          )}
-        </form>
+          <form onSubmit={handleSubmit} noValidate style={{ flex: 1, minWidth: 0 }}>
+            {(() => {
+              const { section, subtitle, fields } = FORM_FIELDS[step]
+              return (
+                <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '18px', padding: '32px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                    <p style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.12em', color: '#b8a508', margin: 0, textTransform: 'uppercase' }}>
+                      Étape {step + 1} / {FORM_FIELDS.length}
+                    </p>
+                    <p className="hidden lg:block" style={{ fontSize: '12.5px', color: '#a89b8c', margin: 0 }}>{section}</p>
+                  </div>
+                  <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '26px', fontWeight: 700, color: '#1b0b09', margin: '0 0 6px' }}>
+                    {section}
+                  </h2>
+                  {subtitle && (
+                    <p style={{ fontSize: '14px', color: '#7e7e7e', margin: '0 0 26px' }}>{subtitle}</p>
+                  )}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    {fields.map(({ label, name, type, placeholder, options, required }) => (
+                      <div key={name} data-error={errors[name] ? 'true' : 'false'}>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '8px' }}>
+                          {label}
+                          {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
+                        </label>
+                        {type === 'tags' ? (
+                          <TagSelect
+                            options={options}
+                            value={values[name]}
+                            onChange={v => set(name, v)}
+                            hasError={!!errors[name]}
+                          />
+                        ) : type === 'textarea' ? (
+                          <textarea
+                            rows={3}
+                            placeholder={placeholder}
+                            value={values[name]}
+                            onChange={e => set(name, e.target.value)}
+                            style={{ ...(errors[name] ? textareaError : textareaBase), resize: 'vertical' }}
+                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                          />
+                        ) : type === 'select' ? (
+                          <select
+                            value={values[name]}
+                            onChange={e => set(name, e.target.value)}
+                            style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
+                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                          >
+                            <option value="">— Choisir —</option>
+                            {options.map(o => <option key={o} value={o}>{o}</option>)}
+                          </select>
+                        ) : (
+                          <input
+                            type={type}
+                            placeholder={placeholder}
+                            value={values[name]}
+                            onChange={e => set(name, e.target.value)}
+                            style={errors[name] ? inputError : inputBase}
+                            onFocus={e => { e.target.style.borderColor = '#1b0b09' }}
+                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc' }}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ height: '1px', background: '#e8e0cc', margin: '30px 0 24px' }} />
+
+                  {/* Navigation */}
+                  <div style={{ display: 'flex', justifyContent: step > 0 ? 'space-between' : 'flex-end', gap: '12px' }}>
+                    {step > 0 && (
+                      <button
+                        type="button"
+                        onClick={handlePrevious}
+                        style={{
+                          padding: '15px 24px',
+                          background: '#fdfbf4',
+                          color: '#1b0b09',
+                          border: '1.5px solid #e8e0cc',
+                          borderRadius: '999px',
+                          fontFamily: '"DM Sans", sans-serif',
+                          fontWeight: 600,
+                          fontSize: '13.5px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'background .2s ease',
+                        }}
+                        onMouseEnter={e => { e.target.style.background = '#f2ecda' }}
+                        onMouseLeave={e => { e.target.style.background = '#fdfbf4' }}
+                      >
+                        <ChevronLeft size={15} /> Précédent
+                      </button>
+                    )}
+
+                    {isLastStep ? (
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        style={{
+                          padding: '15px 26px',
+                          background: '#1b0b09',
+                          color: '#fcf7cf',
+                          border: 'none',
+                          borderRadius: '999px',
+                          fontFamily: '"DM Sans", sans-serif',
+                          fontWeight: 600,
+                          fontSize: '13.5px',
+                          cursor: loading ? 'not-allowed' : 'pointer',
+                          opacity: loading ? 0.7 : 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '8px',
+                          transition: 'background .2s ease',
+                        }}
+                        onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
+                        onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
+                      >
+                        {loading ? (
+                          <><Loader2 size={15} className="animate-spin" />Envoi en cours…</>
+                        ) : (
+                          <>Envoyer ma demande <ChevronRight size={15} /></>
+                        )}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleNext}
+                        style={{
+                          padding: '15px 26px',
+                          background: '#1b0b09',
+                          color: '#fcf7cf',
+                          border: 'none',
+                          borderRadius: '999px',
+                          fontFamily: '"DM Sans", sans-serif',
+                          fontWeight: 600,
+                          fontSize: '13.5px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '8px',
+                          transition: 'background .2s ease',
+                        }}
+                        onMouseEnter={e => { e.target.style.background = '#322624' }}
+                        onMouseLeave={e => { e.target.style.background = '#1b0b09' }}
+                      >
+                        Continuer <ChevronRight size={15} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {isLastStep && (
+              <p style={{ textAlign: 'center', fontSize: '11px', color: '#7e7e7e', marginTop: '16px' }}>
+                Vos données sont confidentielles et utilisées uniquement pour votre projet.
+              </p>
+            )}
+          </form>
+        </div>
       </div>
     </div>
   )
