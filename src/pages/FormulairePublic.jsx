@@ -45,7 +45,7 @@ const FORM_FIELDS = [
       {
         label: 'Combien de produits souhaitez-vous intégrer ? (pour affiner le devis)', name: 'nombreProduits', type: 'select',
         options: ['1 à 10 produits', '11 à 30 produits', '31 à 50 produits', 'Plus de 50 produits'],
-        showIf: v => v.budget === 'E-commerce Shopify',
+        nestUnder: 'budget', nestOptionValue: 'E-commerce Shopify',
       },
       { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
       { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
@@ -137,52 +137,66 @@ function TagSelect({ options, value, onChange, hasError }) {
   )
 }
 
-function CardSelect({ options, value, onChange }) {
+function CardSelect({ options, value, onChange, renderExtra }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {options.map(o => {
         const selected = value === o.value
+        const extra = renderExtra && renderExtra(o.value)
         return (
-          <button
+          <div
             key={o.value}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => onChange(selected ? '' : o.value)}
+            onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(selected ? '' : o.value) } }}
             style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '16px',
-              width: '100%',
-              textAlign: 'left',
-              padding: '18px 20px',
               borderRadius: '16px',
               border: selected ? '1.5px solid #1b0b09' : '1.5px solid #e8e0cc',
               background: selected ? '#fcf7cf' : '#fdfbf4',
               cursor: 'pointer',
-              transition: 'all .15s ease',
+              transition: 'border-color .15s ease, background .15s ease',
             }}
           >
-            <div>
-              <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-2.5">
-                <p style={{ margin: 0, fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '18px', fontWeight: 700, color: '#1b0b09' }}>
-                  {o.title}
-                </p>
-                {o.price && <p style={{ margin: 0, fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</p>}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', padding: '18px 20px' }}>
+              <div>
+                <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-2.5">
+                  <p style={{ margin: 0, fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '18px', fontWeight: 700, color: '#1b0b09' }}>
+                    {o.title}
+                  </p>
+                  {o.price && <p style={{ margin: 0, fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</p>}
+                </div>
+                {o.desc && <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>}
               </div>
-              {o.desc && <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>}
+              <div
+                style={{
+                  flexShrink: 0,
+                  width: '20px',
+                  height: '20px',
+                  borderRadius: '50%',
+                  border: selected ? '6px solid #1b0b09' : '1.5px solid #d4c9b0',
+                  background: '#fdfbf4',
+                  transition: 'all .15s ease',
+                }}
+              />
             </div>
-            <div
-              style={{
-                flexShrink: 0,
-                width: '20px',
-                height: '20px',
-                borderRadius: '50%',
-                border: selected ? '6px solid #1b0b09' : '1.5px solid #d4c9b0',
-                background: '#fdfbf4',
-                transition: 'all .15s ease',
-              }}
-            />
-          </button>
+            {extra && (
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateRows: selected ? '1fr' : '0fr',
+                  opacity: selected ? 1 : 0,
+                  transition: 'grid-template-rows .35s ease, opacity .25s ease',
+                }}
+              >
+                <div style={{ overflow: 'hidden' }} onClick={e => e.stopPropagation()}>
+                  <div style={{ padding: '16px 20px 18px', borderTop: '1px solid #e8dfc8' }}>
+                    {extra}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         )
       })}
     </div>
@@ -244,6 +258,57 @@ export default function FormulairePublic() {
       if (f.required && !values[f.name]?.trim()) newErrors[f.name] = true
     })
     return newErrors
+  }
+
+  const renderFieldLabel = ({ label, name }) => (
+    <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '8px' }}>
+      {label}
+      {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
+    </label>
+  )
+
+  const renderFieldControl = ({ name, type, placeholder, options }) => {
+    if (type === 'tags') {
+      return <TagSelect options={options} value={values[name]} onChange={v => set(name, v)} hasError={!!errors[name]} />
+    }
+    if (type === 'textarea') {
+      return (
+        <textarea
+          rows={3}
+          placeholder={placeholder}
+          value={values[name]}
+          onChange={e => set(name, e.target.value)}
+          style={{ ...(errors[name] ? textareaError : textareaBase), resize: 'vertical' }}
+          onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
+        />
+      )
+    }
+    if (type === 'select') {
+      return (
+        <select
+          value={values[name]}
+          onChange={e => set(name, e.target.value)}
+          style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
+          onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+          onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
+        >
+          <option value="">— Choisir —</option>
+          {options.map(o => <option key={o} value={o}>{o}</option>)}
+        </select>
+      )
+    }
+    return (
+      <input
+        type={type}
+        placeholder={placeholder}
+        value={values[name]}
+        onChange={e => set(name, e.target.value)}
+        style={errors[name] ? inputError : inputBase}
+        onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
+        onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
+      />
+    )
   }
 
   const handleNext = () => {
@@ -467,59 +532,28 @@ export default function FormulairePublic() {
                     </div>
                   )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    {fields.filter(f => !f.showIf || f.showIf(values)).map(({ label, name, type, placeholder, options, required }) => (
-                      <div key={name} data-error={errors[name] ? 'true' : 'false'}>
-                        <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#1b0b09', marginBottom: '8px' }}>
-                          {label}
-                          {errors[name] && <span style={{ marginLeft: '8px', fontSize: '12px', fontWeight: 400, color: '#b8a508' }}>Champ requis</span>}
-                        </label>
-                        {type === 'tags' ? (
-                          <TagSelect
-                            options={options}
-                            value={values[name]}
-                            onChange={v => set(name, v)}
-                            hasError={!!errors[name]}
-                          />
-                        ) : type === 'cards' ? (
-                          <CardSelect
-                            options={options}
-                            value={values[name]}
-                            onChange={v => set(name, v)}
-                          />
-                        ) : type === 'textarea' ? (
-                          <textarea
-                            rows={3}
-                            placeholder={placeholder}
-                            value={values[name]}
-                            onChange={e => set(name, e.target.value)}
-                            style={{ ...(errors[name] ? textareaError : textareaBase), resize: 'vertical' }}
-                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
-                          />
-                        ) : type === 'select' ? (
-                          <select
-                            value={values[name]}
-                            onChange={e => set(name, e.target.value)}
-                            style={{ ...(errors[name] ? inputError : inputBase), appearance: 'auto' }}
-                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
-                          >
-                            <option value="">— Choisir —</option>
-                            {options.map(o => <option key={o} value={o}>{o}</option>)}
-                          </select>
-                        ) : (
-                          <input
-                            type={type}
-                            placeholder={placeholder}
-                            value={values[name]}
-                            onChange={e => set(name, e.target.value)}
-                            style={errors[name] ? inputError : inputBase}
-                            onFocus={e => { e.target.style.borderColor = '#b8a508'; e.target.style.boxShadow = '0 0 0 4px rgba(184,165,8,.15)' }}
-                            onBlur={e => { e.target.style.borderColor = errors[name] ? '#b8a508' : '#e8e0cc'; e.target.style.boxShadow = 'none' }}
-                          />
-                        )}
-                      </div>
-                    ))}
+                    {fields.filter(f => !f.nestUnder && (!f.showIf || f.showIf(values))).map(field => {
+                      const { name, type } = field
+                      const nested = type === 'cards' ? fields.find(f => f.nestUnder === name) : null
+                      return (
+                        <div key={name} data-error={errors[name] ? 'true' : 'false'}>
+                          {renderFieldLabel(field)}
+                          {type === 'cards' ? (
+                            <CardSelect
+                              options={field.options}
+                              value={values[name]}
+                              onChange={v => set(name, v)}
+                              renderExtra={nested ? (optValue => optValue === nested.nestOptionValue ? (
+                                <div>
+                                  {renderFieldLabel(nested)}
+                                  {renderFieldControl(nested)}
+                                </div>
+                              ) : null) : undefined}
+                            />
+                          ) : renderFieldControl(field)}
+                        </div>
+                      )
+                    })}
                   </div>
 
                   {isLastStep && (
