@@ -16,7 +16,7 @@ const FORM_FIELDS = [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'tags', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
-    { label: 'Qui sont vos concurrents (sites que vous connaissez) ?', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
+    { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
   { section: 'Votre contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
@@ -26,16 +26,36 @@ const FORM_FIELDS = [
     { label: 'Avez-vous déjà un logo / charte graphique ?', name: 'logoCharte', type: 'tags', options: ["Oui", 'Non, pas encore', 'En cours'] },
     { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
   ]},
-  { section: 'Comment nous avez-vous trouvés ?', short: 'Découverte', subtitle: 'Comment vous nous avez trouvés.', fields: [
-    { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
-    { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
-  ]},
-  { section: 'Budget & délais', short: 'Pour finir', subtitle: 'Budget, délais et dernières précisions.', fields: [
-    { label: 'Quel est votre budget estimé ? *', name: 'budget', type: 'text', placeholder: 'Ex : une fourchette de prix', required: true },
-    { label: 'Avez-vous une date butoir ?', name: 'dateButoir', type: 'text', placeholder: 'Ex : fin juillet 2026, ou "pas de contrainte"' },
-    { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
-    { label: 'Remarques libres', name: 'remarques', type: 'textarea', placeholder: 'Tout ce que vous souhaitez nous dire…' },
-  ]},
+  {
+    section: 'Budget & délais',
+    short: 'Budget',
+    subtitle: 'Pour vous proposer un accompagnement réaliste et adapté.',
+    banner: "Nos tarifs démarrent à partir d'un montant selon le type de prestation — le prix final dépend toujours de votre besoin réel.",
+    fields: [
+      {
+        label: 'Vers quelle prestation vous orientez-vous ? *', name: 'budget', type: 'cards', required: true,
+        options: [
+          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 €', desc: "Une page unique, jusqu'à 7 sections" },
+          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 €', desc: "Jusqu'à 5 pages, univers visuel personnalisé" },
+          { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT', desc: "Boutique sur mesure, jusqu'à 10 produits" },
+          { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore précisément', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
+        ],
+      },
+      { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
+      { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
+    ],
+  },
+  {
+    section: 'Pour finir',
+    short: 'Derniers détails',
+    title: 'Un dernier mot ?',
+    subtitle: 'Tout élément qui nous aiderait à mieux préparer notre échange.',
+    fields: [
+      { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
+      { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo', showIf: v => v.reseauContact === 'Instagram' || v.reseauContact === 'TikTok' },
+      { label: 'Remarques ou précisions', name: 'remarques', type: 'textarea', placeholder: 'Toute information utile à partager avant notre appel de découverte…' },
+    ],
+  },
 ]
 
 const initialValues = Object.fromEntries(
@@ -104,6 +124,56 @@ function TagSelect({ options, value, onChange, hasError }) {
             }}
           >
             {o}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
+function CardSelect({ options, value, onChange }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {options.map(o => {
+        const selected = value === o.value
+        return (
+          <button
+            key={o.value}
+            type="button"
+            onClick={() => onChange(selected ? '' : o.value)}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '16px',
+              width: '100%',
+              textAlign: 'left',
+              padding: '18px 20px',
+              borderRadius: '16px',
+              border: selected ? '1.5px solid #1b0b09' : '1.5px solid #e8e0cc',
+              background: selected ? '#fcf7cf' : '#fdfbf4',
+              cursor: 'pointer',
+              transition: 'all .15s ease',
+            }}
+          >
+            <div>
+              <p style={{ margin: 0, fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '18px', fontWeight: 700, color: '#1b0b09' }}>
+                {o.title}
+                {o.price && <span style={{ marginLeft: '10px', fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</span>}
+              </p>
+              <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>
+            </div>
+            <div
+              style={{
+                flexShrink: 0,
+                width: '20px',
+                height: '20px',
+                borderRadius: '50%',
+                border: selected ? '6px solid #1b0b09' : '1.5px solid #d4c9b0',
+                background: '#fdfbf4',
+                transition: 'all .15s ease',
+              }}
+            />
           </button>
         )
       })}
@@ -270,6 +340,41 @@ export default function FormulairePublic() {
           </p>
         </div>
 
+        {/* Mobile horizontal stepper */}
+        <div className="lg:hidden" style={{ display: 'flex', alignItems: 'center', marginBottom: '28px' }}>
+          {FORM_FIELDS.map((s, i) => {
+            const isDone = i < step
+            const isActive = i === step
+            return (
+              <div key={s.section} style={{ display: 'flex', alignItems: 'center', flex: i < FORM_FIELDS.length - 1 ? 1 : 'none' }}>
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    fontFamily: '"DM Sans", sans-serif',
+                    transition: 'all .2s ease',
+                    background: isDone || isActive ? '#1b0b09' : '#fdfbf4',
+                    color: isDone || isActive ? '#fcf7cf' : '#a89b8c',
+                    border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
+                  }}
+                >
+                  {isDone ? <CheckCircle2 size={14} /> : i + 1}
+                </div>
+                {i < FORM_FIELDS.length - 1 && (
+                  <div style={{ height: '1.5px', flex: 1, background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
+                )}
+              </div>
+            )
+          })}
+        </div>
+
         <div ref={progressRef} className="lg:flex lg:items-start lg:gap-12" style={{ scrollMarginTop: '16px' }}>
           {/* Desktop step list */}
           <div className="hidden lg:flex" style={{ flexDirection: 'column', width: '230px', flexShrink: 0, paddingTop: '4px' }}>
@@ -316,7 +421,7 @@ export default function FormulairePublic() {
 
           <form onSubmit={handleSubmit} noValidate style={{ flex: 1, minWidth: 0 }}>
             {(() => {
-              const { section, subtitle, fields } = FORM_FIELDS[step]
+              const { section, title, subtitle, banner, fields } = FORM_FIELDS[step]
               return (
                 <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '18px', padding: '32px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -326,10 +431,16 @@ export default function FormulairePublic() {
                     <p className="hidden lg:block" style={{ fontSize: '12.5px', color: '#a89b8c', margin: 0 }}>{section}</p>
                   </div>
                   <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '26px', fontWeight: 700, color: '#1b0b09', margin: '0 0 6px' }}>
-                    {section}
+                    {title || section}
                   </h2>
                   {subtitle && (
                     <p style={{ fontSize: '14px', color: '#7e7e7e', margin: '0 0 26px' }}>{subtitle}</p>
+                  )}
+                  {banner && (
+                    <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginBottom: '26px' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
+                      <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>{banner}</p>
+                    </div>
                   )}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {fields.filter(f => !f.showIf || f.showIf(values)).map(({ label, name, type, placeholder, options, required }) => (
@@ -344,6 +455,12 @@ export default function FormulairePublic() {
                             value={values[name]}
                             onChange={v => set(name, v)}
                             hasError={!!errors[name]}
+                          />
+                        ) : type === 'cards' ? (
+                          <CardSelect
+                            options={options}
+                            value={values[name]}
+                            onChange={v => set(name, v)}
                           />
                         ) : type === 'textarea' ? (
                           <textarea
@@ -380,6 +497,12 @@ export default function FormulairePublic() {
                       </div>
                     ))}
                   </div>
+
+                  {isLastStep && (
+                    <p style={{ fontSize: '12.5px', color: '#7e7e7e', margin: '20px 0 0' }}>
+                      ✓ Réponse sous 24h &nbsp;·&nbsp; ✓ Sans engagement &nbsp;·&nbsp; ✓ Vos données restent confidentielles
+                    </p>
+                  )}
 
                   <div style={{ height: '1px', background: '#e8e0cc', margin: '30px 0 24px' }} />
 
@@ -438,7 +561,7 @@ export default function FormulairePublic() {
                         {loading ? (
                           <><Loader2 size={15} className="animate-spin" />Envoi en cours…</>
                         ) : (
-                          <>Envoyer ma demande <ChevronRight size={15} /></>
+                          <>Envoyer le formulaire ✓</>
                         )}
                       </button>
                     ) : (
@@ -470,12 +593,6 @@ export default function FormulairePublic() {
                 </div>
               )
             })()}
-
-            {isLastStep && (
-              <p style={{ textAlign: 'center', fontSize: '11px', color: '#7e7e7e', marginTop: '16px' }}>
-                Vos données sont confidentielles et utilisées uniquement pour votre projet.
-              </p>
-            )}
           </form>
         </div>
       </div>
