@@ -35,8 +35,8 @@ const FORM_FIELDS = [
       {
         label: 'Vers quelle prestation vous orientez-vous ? *', name: 'budget', type: 'cards', required: true,
         options: [
-          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 €', desc: "Une page unique, jusqu'à 7 sections" },
-          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 €', desc: "Jusqu'à 5 pages, univers visuel personnalisé" },
+          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 € HT', desc: "Une page unique, jusqu'à 7 sections" },
+          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 € HT', desc: "Jusqu'à 5 pages, univers visuel personnalisé" },
           { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT', desc: "Boutique sur mesure, jusqu'à 10 produits" },
           { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore précisément', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
         ],
@@ -350,14 +350,14 @@ export default function FormulairePublic() {
                 <div key={s.section} style={{ display: 'flex', alignItems: 'center', flex: i < FORM_FIELDS.length - 1 ? 1 : 'none' }}>
                   <div
                     style={{
-                      width: '28px',
-                      height: '28px',
+                      width: '20px',
+                      height: '20px',
                       borderRadius: '50%',
                       flexShrink: 0,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '12px',
+                      fontSize: '9.5px',
                       fontWeight: 700,
                       fontFamily: '"DM Sans", sans-serif',
                       transition: 'all .2s ease',
@@ -366,7 +366,7 @@ export default function FormulairePublic() {
                       border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
                     }}
                   >
-                    {isDone ? <CheckCircle2 size={14} /> : i + 1}
+                    {isDone ? <CheckCircle2 size={10} /> : i + 1}
                   </div>
                   {i < FORM_FIELDS.length - 1 && (
                     <div style={{ height: '1.5px', flex: 1, background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
@@ -375,13 +375,13 @@ export default function FormulairePublic() {
               )
             })}
           </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '6px' }}>
             {FORM_FIELDS.map((s, i) => {
               const isDone = i < step
               const isActive = i === step
               return (
-                <div key={s.section} style={{ flex: i < FORM_FIELDS.length - 1 ? 1 : 'none', width: i === FORM_FIELDS.length - 1 ? '28px' : undefined, textAlign: 'center' }}>
-                  <p style={{ fontSize: '11px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, padding: '0 2px', lineHeight: 1.3, transition: 'color .2s ease' }}>
+                <div key={s.section} style={{ flex: i < FORM_FIELDS.length - 1 ? 1 : 'none', width: i === FORM_FIELDS.length - 1 ? '20px' : undefined, textAlign: 'center' }}>
+                  <p style={{ fontSize: '8.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, padding: '0 1px', lineHeight: 1.25, transition: 'color .2s ease' }}>
                     {s.section}
                   </p>
                 </div>
