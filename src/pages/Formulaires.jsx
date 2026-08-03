@@ -363,6 +363,11 @@ function CarteReponse({ rep, onToggle, open }) {
   const [clientCree, setClientCree] = useState(false)
   const [editingNote, setEditingNote] = useState(false)
   const [noteValue, setNoteValue] = useState(rep.noteInterne || '')
+  const [collapsedSections, setCollapsedSections] = useState({})
+
+  const toggleSection = (section) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }))
+  }
 
   function toggleTag(label) {
     setSelectedTags(prev => prev.includes(label) ? prev.filter(t => t !== label) : [...prev, label])
@@ -384,27 +389,53 @@ function CarteReponse({ rep, onToggle, open }) {
     day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
   })
 
-  const rows = [
-    { icon: Building2, label: 'Entreprise', value: rep.nomEntreprise || '—' },
-    { icon: Mail, label: 'Email', value: rep.email || '—' },
-    { icon: Phone, label: 'Téléphone', value: rep.telephone || '—' },
-    { icon: Star, label: "Secteur d'activité", value: rep.secteurActivite || '—' },
-    { icon: Globe, label: 'Site web actuel', value: rep.siteActuel || (rep.aSiteWeb ? rep.aSiteWeb : '—') },
-    { icon: MessageSquare, label: 'Histoire de la marque', value: rep.histoire || '—' },
-    { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
-    { icon: Target, label: 'Objectif du visiteur', value: rep.objectif || '—' },
-    { icon: Users, label: 'Concurrents', value: rep.concurrents || '—' },
-    { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
-    { icon: Users, label: 'Cible', value: rep.cible || '—' },
-    { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
-    { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
-    { icon: ExternalLink, label: 'Sites inspirants', value: rep.sitesInspirants || '—' },
-    { icon: Users, label: 'Réseau de contact', value: rep.reseauContact || '—' },
-    { icon: MessageSquare, label: 'Pseudo sur le réseau', value: rep.pseudoReseau || '—' },
-    { icon: Euro, label: 'Prestation souhaitée', value: rep.budget || '—' },
-    { icon: Calendar, label: 'Date de lancement souhaitée', value: rep.dateButoir || '—' },
-    { icon: MessageSquare, label: 'Demandes spécifiques', value: rep.demandesSpecifiques || '—' },
-    { icon: MessageSquare, label: 'Remarques', value: rep.remarques || '—' },
+  const rowGroups = [
+    {
+      section: 'Entreprise',
+      rows: [
+        { icon: Building2, label: 'Entreprise', value: rep.nomEntreprise || '—' },
+        { icon: Mail, label: 'Email', value: rep.email || '—' },
+        { icon: Phone, label: 'Téléphone', value: rep.telephone || '—' },
+        { icon: Star, label: "Secteur d'activité", value: rep.secteurActivite || '—' },
+        { icon: Globe, label: 'Site web actuel', value: rep.siteActuel || (rep.aSiteWeb ? rep.aSiteWeb : '—') },
+      ],
+    },
+    {
+      section: 'Projet',
+      rows: [
+        { icon: MessageSquare, label: 'Histoire de la marque', value: rep.histoire || '—' },
+        { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
+        { icon: Target, label: 'Objectif du visiteur', value: rep.objectif || '—' },
+        { icon: Users, label: 'Concurrents', value: rep.concurrents || '—' },
+      ],
+    },
+    {
+      section: 'Contenu & identité',
+      rows: [
+        { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
+        { icon: Users, label: 'Cible', value: rep.cible || '—' },
+        { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
+        { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
+        { icon: ExternalLink, label: 'Sites inspirants', value: rep.sitesInspirants || '—' },
+      ],
+    },
+    {
+      section: 'Budget & délais',
+      rows: [
+        { icon: Euro, label: 'Prestation souhaitée', value: rep.budget || '—' },
+        ...(rep.nombreProduits ? [{ icon: PackageOpen, label: 'Nombre de produits', value: rep.nombreProduits }] : []),
+        { icon: Calendar, label: 'Date de lancement souhaitée', value: rep.dateButoir || '—' },
+        { icon: MessageSquare, label: 'Demandes spécifiques', value: rep.demandesSpecifiques || '—' },
+      ],
+    },
+    {
+      section: 'Pour finir',
+      rows: [
+        { icon: Users, label: 'Réseau de contact', value: rep.reseauContact || '—' },
+        { icon: MessageSquare, label: 'Pseudo sur le réseau', value: rep.pseudoReseau || '—' },
+        { icon: MessageSquare, label: 'Remarques', value: rep.remarques || '—' },
+      ],
+    },
   ]
 
   return (
@@ -516,18 +547,37 @@ function CarteReponse({ rep, onToggle, open }) {
       {/* Détail */}
       {open && (
         <div className="border-t border-gray-100 px-6 py-5">
-          <div className="grid grid-cols-1 gap-4">
-            {rows.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex gap-3">
-                <div className="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <Icon size={13} className="text-indigo-500" />
+          <div className="flex flex-col gap-2">
+            {rowGroups.map(({ section, rows }) => {
+              const isCollapsed = !!collapsedSections[section]
+              return (
+                <div key={section} className="rounded-xl border border-gray-100 overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => toggleSection(section)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">{section}</span>
+                    {isCollapsed ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronUp size={14} className="text-gray-400" />}
+                  </button>
+                  {!isCollapsed && (
+                    <div className="grid grid-cols-1 gap-4 px-4 py-4">
+                      {rows.map(({ icon: Icon, label, value }) => (
+                        <div key={label} className="flex gap-3">
+                          <div className="w-7 h-7 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <Icon size={13} className="text-indigo-500" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">{label}</p>
+                            <p className="text-sm text-gray-800 whitespace-pre-wrap mt-0.5">{value}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-semibold text-gray-400 uppercase tracking-wide">{label}</p>
-                  <p className="text-sm text-gray-800 whitespace-pre-wrap mt-0.5">{value}</p>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Actions rapides */}
