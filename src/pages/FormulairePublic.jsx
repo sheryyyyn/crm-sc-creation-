@@ -39,7 +39,7 @@ const FORM_FIELDS = [
           { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 € HT' },
           { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT' },
           { value: 'Refonte de site existant', title: 'Refonte de site existant', price: 'sur devis uniquement' },
-          { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore précisément', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
+          { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
         ],
       },
       { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
@@ -158,10 +158,12 @@ function CardSelect({ options, value, onChange }) {
             }}
           >
             <div>
-              <p style={{ margin: 0, fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '18px', fontWeight: 700, color: '#1b0b09' }}>
-                {o.title}
-                {o.price && <span style={{ marginLeft: '10px', fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</span>}
-              </p>
+              <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-2.5">
+                <p style={{ margin: 0, fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '18px', fontWeight: 700, color: '#1b0b09' }}>
+                  {o.title}
+                </p>
+                {o.price && <p style={{ margin: 0, fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</p>}
+              </div>
               {o.desc && <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>}
             </div>
             <div
