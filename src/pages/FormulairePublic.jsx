@@ -15,15 +15,14 @@ const FORM_FIELDS = [
   { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
-    { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'tags', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
+    { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'tags', required: true, options: ['Acheter en ligne', 'Me contacter / demander un devis', 'Prendre rendez-vous', 'Découvrir mes réalisations', 'Autre'] },
     { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
   { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
-    { label: 'Souhaitez-vous un formulaire de contact sur votre site ?', name: 'formulaireContact', type: 'tags', options: ['Oui', 'Non', 'Je ne sais pas encore'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
     { label: 'Avez-vous déjà un nom de domaine ?', name: 'nomDomaine', type: 'tags', options: ['Oui', 'Non'] },
-    { label: 'Avez-vous déjà un logo / charte graphique ?', name: 'logoCharte', type: 'tags', options: ["Oui", 'Non, pas encore', 'En cours'] },
+    { label: 'Avez-vous déjà une charte graphique (logo, couleurs, typographies) ?', name: 'logoCharte', type: 'tags', options: ["Oui", 'Non, pas encore', 'En cours'] },
     { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
   ]},
   {
@@ -36,9 +35,10 @@ const FORM_FIELDS = [
       {
         label: 'Vers quelle prestation vous orientez-vous ? *', name: 'budget', type: 'cards', required: true,
         options: [
-          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 € HT', desc: "Une page unique, jusqu'à 7 sections" },
-          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 € HT', desc: "Jusqu'à 5 pages, univers visuel personnalisé" },
-          { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT', desc: "Boutique sur mesure, jusqu'à 10 produits" },
+          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 € HT' },
+          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 € HT' },
+          { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT' },
+          { value: 'Refonte de site existant', title: 'Refonte de site existant', price: 'sur devis uniquement' },
           { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore précisément', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
         ],
       },
@@ -162,7 +162,7 @@ function CardSelect({ options, value, onChange }) {
                 {o.title}
                 {o.price && <span style={{ marginLeft: '10px', fontFamily: '"DM Sans", sans-serif', fontWeight: 500, fontSize: '14px', color: '#7e7e7e' }}>{o.price}</span>}
               </p>
-              <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>
+              {o.desc && <p style={{ margin: '4px 0 0', fontSize: '13.5px', color: '#7e7e7e' }}>{o.desc}</p>}
             </div>
             <div
               style={{
