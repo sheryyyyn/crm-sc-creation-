@@ -4,7 +4,7 @@ import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
 
 const FORM_FIELDS = [
-  { section: 'Votre entreprise', short: 'Qui vous êtes', subtitle: 'Quelques informations pour vous identifier et vous recontacter.', fields: [
+  { section: 'Votre entreprise', mobileTitle: 'Vous', short: 'Qui vous êtes', subtitle: 'Quelques informations pour vous identifier et vous recontacter.', fields: [
     { label: 'Nom de votre entreprise / marque *', name: 'nomEntreprise', type: 'text', placeholder: 'Ex : SC Création', required: true },
     { label: 'Adresse e-mail *', name: 'email', type: 'email', placeholder: 'contact@votreentreprise.fr', required: true },
     { label: 'Numéro de téléphone *', name: 'telephone', type: 'tel', placeholder: '06 00 00 00 00', required: true },
@@ -12,13 +12,13 @@ const FORM_FIELDS = [
     { label: 'Avez-vous déjà un site web ?', name: 'aSiteWeb', type: 'tags', options: ['Non, pas encore', "Oui, j'en ai un"] },
     { label: 'Adresse de votre site actuel', name: 'siteActuel', type: 'text', placeholder: 'https://... — adresse de votre site actuel', showIf: v => v.aSiteWeb === "Oui, j'en ai un" },
   ]},
-  { section: 'Votre projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
+  { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: 'Quel est votre objectif principal pour ce site ? *', name: 'objectif', type: 'tags', required: true, options: ['Vente en ligne (e-commerce)', 'Vitrine / présentation', 'Prise de rendez-vous', 'Portfolio', 'Autre'] },
     { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
-  { section: 'Votre contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
+  { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
     { label: 'Souhaitez-vous un formulaire de contact sur votre site ?', name: 'formulaireContact', type: 'tags', options: ['Oui', 'Non', 'Je ne sais pas encore'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
@@ -28,6 +28,7 @@ const FORM_FIELDS = [
   ]},
   {
     section: 'Budget & délais',
+    mobileTitle: 'Budget',
     short: 'Budget',
     subtitle: 'Pour vous proposer un accompagnement réaliste et adapté.',
     banner: "Nos tarifs démarrent à partir d'un montant selon le type de prestation — le prix final dépend toujours de votre besoin réel.",
@@ -350,14 +351,14 @@ export default function FormulairePublic() {
                 <div key={s.section} style={{ display: 'flex', alignItems: 'center', flex: i < FORM_FIELDS.length - 1 ? 1 : 'none' }}>
                   <div
                     style={{
-                      width: '20px',
-                      height: '20px',
+                      width: '24px',
+                      height: '24px',
                       borderRadius: '50%',
                       flexShrink: 0,
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      fontSize: '9.5px',
+                      fontSize: '11px',
                       fontWeight: 700,
                       fontFamily: '"DM Sans", sans-serif',
                       transition: 'all .2s ease',
@@ -366,7 +367,7 @@ export default function FormulairePublic() {
                       border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
                     }}
                   >
-                    {isDone ? <CheckCircle2 size={10} /> : i + 1}
+                    {isDone ? <CheckCircle2 size={12} /> : i + 1}
                   </div>
                   {i < FORM_FIELDS.length - 1 && (
                     <div style={{ height: '1.5px', flex: 1, background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
@@ -380,9 +381,9 @@ export default function FormulairePublic() {
               const isDone = i < step
               const isActive = i === step
               return (
-                <div key={s.section} style={{ flex: i < FORM_FIELDS.length - 1 ? 1 : 'none', width: i === FORM_FIELDS.length - 1 ? '20px' : undefined, textAlign: 'center' }}>
-                  <p style={{ fontSize: '8.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, padding: '0 1px', lineHeight: 1.25, transition: 'color .2s ease' }}>
-                    {s.section}
+                <div key={s.section} style={{ flex: i < FORM_FIELDS.length - 1 ? 1 : 'none', width: i === FORM_FIELDS.length - 1 ? '24px' : undefined, textAlign: 'center' }}>
+                  <p style={{ fontSize: '10.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, padding: '0 1px', lineHeight: 1.25, transition: 'color .2s ease' }}>
+                    {s.mobileTitle || s.section}
                   </p>
                 </div>
               )
