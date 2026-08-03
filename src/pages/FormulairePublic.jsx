@@ -42,6 +42,11 @@ const FORM_FIELDS = [
           { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
         ],
       },
+      {
+        label: 'Combien de produits souhaitez-vous intégrer ? (pour affiner le devis)', name: 'nombreProduits', type: 'select',
+        options: ['1 à 10 produits', '11 à 30 produits', '31 à 50 produits', 'Plus de 50 produits'],
+        showIf: v => v.budget === 'E-commerce Shopify',
+      },
       { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
       { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
     ],
@@ -344,7 +349,7 @@ export default function FormulairePublic() {
         </div>
 
         {/* Mobile horizontal stepper */}
-        <div className="lg:hidden" style={{ display: 'grid', gridTemplateColumns: `repeat(${FORM_FIELDS.length}, 1fr)`, marginBottom: '28px' }}>
+        <div className="grid lg:hidden" style={{ gridTemplateColumns: `repeat(${FORM_FIELDS.length}, 1fr)`, marginBottom: '28px' }}>
           {FORM_FIELDS.map((s, i) => {
             const isDone = i < step
             const isActive = i === step
