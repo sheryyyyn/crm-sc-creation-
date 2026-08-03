@@ -342,53 +342,54 @@ export default function FormulairePublic() {
         </div>
 
         {/* Mobile horizontal stepper */}
-        <div className="flex lg:hidden" style={{ flexDirection: 'column', marginBottom: '28px' }}>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            {FORM_FIELDS.map((s, i) => {
-              const isDone = i < step
-              const isActive = i === step
-              return (
-                <div key={s.section} style={{ display: 'flex', alignItems: 'center', flex: i < FORM_FIELDS.length - 1 ? 1 : 'none' }}>
+        <div className="lg:hidden" style={{ display: 'grid', gridTemplateColumns: `repeat(${FORM_FIELDS.length}, 1fr)`, marginBottom: '28px' }}>
+          {FORM_FIELDS.map((s, i) => {
+            const isDone = i < step
+            const isActive = i === step
+            return (
+              <div key={s.section} style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {i < FORM_FIELDS.length - 1 && (
                   <div
                     style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '50%',
-                      flexShrink: 0,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '11px',
-                      fontWeight: 700,
-                      fontFamily: '"DM Sans", sans-serif',
-                      transition: 'all .2s ease',
-                      background: isDone || isActive ? '#1b0b09' : '#fdfbf4',
-                      color: isDone || isActive ? '#fcf7cf' : '#a89b8c',
-                      border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
+                      position: 'absolute',
+                      top: '12px',
+                      left: '50%',
+                      width: '100%',
+                      height: '1.5px',
+                      background: isDone ? '#1b0b09' : '#e8e0cc',
+                      transition: 'background .25s ease',
+                      zIndex: 0,
                     }}
-                  >
-                    {isDone ? <CheckCircle2 size={12} /> : i + 1}
-                  </div>
-                  {i < FORM_FIELDS.length - 1 && (
-                    <div style={{ height: '1.5px', flex: 1, background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
-                  )}
+                  />
+                )}
+                <div
+                  style={{
+                    position: 'relative',
+                    zIndex: 1,
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '11px',
+                    fontWeight: 700,
+                    fontFamily: '"DM Sans", sans-serif',
+                    transition: 'all .2s ease',
+                    background: isDone || isActive ? '#1b0b09' : '#fdfbf4',
+                    color: isDone || isActive ? '#fcf7cf' : '#a89b8c',
+                    border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
+                  }}
+                >
+                  {isDone ? <CheckCircle2 size={12} /> : i + 1}
                 </div>
-              )
-            })}
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '6px' }}>
-            {FORM_FIELDS.map((s, i) => {
-              const isDone = i < step
-              const isActive = i === step
-              return (
-                <div key={s.section} style={{ flex: i < FORM_FIELDS.length - 1 ? 1 : 'none', width: i === FORM_FIELDS.length - 1 ? '24px' : undefined, textAlign: 'center' }}>
-                  <p style={{ fontSize: '10.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, padding: '0 1px', lineHeight: 1.25, transition: 'color .2s ease' }}>
-                    {s.mobileTitle || s.section}
-                  </p>
-                </div>
-              )
-            })}
-          </div>
+                <p style={{ fontSize: '10.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: '6px 0 0', padding: '0 2px', textAlign: 'center', lineHeight: 1.25, transition: 'color .2s ease' }}>
+                  {s.mobileTitle || s.section}
+                </p>
+              </div>
+            )
+          })}
         </div>
 
         <div ref={progressRef} className="lg:flex lg:items-start lg:gap-12" style={{ scrollMarginTop: '16px' }}>
