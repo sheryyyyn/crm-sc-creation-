@@ -39,6 +39,7 @@ const FORM_FIELDS = [
   { section: 'Pour finir', fields: [
     { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'select', options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
     { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
+    { label: 'Comment aimeriez-vous être recontacté ? *', name: 'moyenContact', type: 'select', options: ['Par SMS', 'Par e-mail'] },
     { label: 'Remarques ou précisions', name: 'remarques', type: 'textarea', placeholder: 'Toute information utile à partager avant notre appel de découverte…' },
   ]},
 ]
@@ -433,6 +434,7 @@ function CarteReponse({ rep, onToggle, open }) {
       rows: [
         { icon: Users, label: 'Réseau de contact', value: rep.reseauContact || '—' },
         { icon: MessageSquare, label: 'Pseudo sur le réseau', value: rep.pseudoReseau || '—' },
+        { icon: Phone, label: 'Moyen de contact souhaité', value: rep.moyenContact || '—' },
         { icon: MessageSquare, label: 'Remarques', value: rep.remarques || '—' },
       ],
     },

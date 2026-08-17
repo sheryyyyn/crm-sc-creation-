@@ -59,6 +59,7 @@ const FORM_FIELDS = [
     fields: [
       { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
       { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo', showIf: v => v.reseauContact === 'Instagram' || v.reseauContact === 'TikTok' },
+      { label: 'Comment aimeriez-vous être recontacté ? *', name: 'moyenContact', type: 'tags', required: true, options: ['Par SMS', 'Par e-mail'] },
       { label: 'Remarques ou précisions', name: 'remarques', type: 'textarea', placeholder: 'Toute information utile à partager avant notre appel de découverte…' },
     ],
   },
@@ -557,9 +558,12 @@ export default function FormulairePublic() {
                   </div>
 
                   {isLastStep && (
-                    <p style={{ fontSize: '12.5px', color: '#7e7e7e', margin: '20px 0 0' }}>
-                      ✓ Réponse sous 24h &nbsp;·&nbsp; ✓ Sans engagement &nbsp;·&nbsp; ✓ Vos données restent confidentielles
-                    </p>
+                    <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginTop: '20px' }}>
+                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
+                      <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>
+                        Vérifiez bien votre boîte de réception, vous serez recontacté(e) sous 24-48h par Sheryn et Chainez.
+                      </p>
+                    </div>
                   )}
 
                   <div style={{ height: '1px', background: '#e8e0cc', margin: '30px 0 24px' }} />
