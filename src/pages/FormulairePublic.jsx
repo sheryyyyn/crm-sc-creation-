@@ -59,15 +59,15 @@ const FORM_FIELDS = [
     fields: [
       { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'tags', required: true, options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
       { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo', showIf: v => v.reseauContact === 'Instagram' || v.reseauContact === 'TikTok' },
-      { label: 'Comment aimeriez-vous être recontacté ? *', name: 'moyenContact', type: 'tags', required: true, options: ['Par SMS', 'Par e-mail'] },
       { label: 'Remarques ou précisions', name: 'remarques', type: 'textarea', placeholder: 'Toute information utile à partager avant notre appel de découverte…' },
     ],
   },
 ]
 
-const initialValues = Object.fromEntries(
-  FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])
-)
+const initialValues = {
+  ...Object.fromEntries(FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])),
+  moyenContact: '',
+}
 
 function TagSelect({ options, value, onChange, hasError }) {
   if (options.length <= 2) {
@@ -240,6 +240,8 @@ export default function FormulairePublic() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
   const [step, setStep] = useState(0)
+  const [showContactPopup, setShowContactPopup] = useState(false)
+  const [contactError, setContactError] = useState(false)
   const progressRef = useRef(null)
 
   const isLastStep = step === FORM_FIELDS.length - 1
@@ -328,12 +330,20 @@ export default function FormulairePublic() {
     scrollToProgress()
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     const stepErrors = validateFields(FORM_FIELDS[step].fields)
     if (Object.keys(stepErrors).length > 0) {
       setErrors(prev => ({ ...prev, ...stepErrors }))
       document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    setShowContactPopup(true)
+  }
+
+  const handleConfirmContact = async () => {
+    if (!values.moyenContact) {
+      setContactError(true)
       return
     }
     setLoading(true)
@@ -342,6 +352,7 @@ export default function FormulairePublic() {
     addClient(buildClientFromForm(values))
     setSubmitted(true)
     setLoading(false)
+    setShowContactPopup(false)
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -557,14 +568,6 @@ export default function FormulairePublic() {
                     })}
                   </div>
 
-                  {isLastStep && (
-                    <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginTop: '20px' }}>
-                      <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
-                      <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>
-                        Vérifiez bien votre boîte de réception, vous serez recontacté(e) sous 24-48h par Sheryn et Chainez.
-                      </p>
-                    </div>
-                  )}
 
                   <div style={{ height: '1px', background: '#e8e0cc', margin: '30px 0 24px' }} />
 
@@ -658,6 +661,92 @@ export default function FormulairePublic() {
           </form>
         </div>
       </div>
+
+      {showContactPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(27,11,9,.45)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            zIndex: 100,
+          }}
+          onClick={() => !loading && setShowContactPopup(false)}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxWidth: '440px',
+              width: '100%',
+              background: '#fff',
+              border: '1px solid #e8e0cc',
+              borderRadius: '20px',
+              padding: '36px 32px',
+              boxShadow: '0 12px 48px rgba(27,11,9,.18)',
+            }}
+          >
+            <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', margin: '0 0 6px' }}>
+              Comment aimeriez-vous être recontacté ? *
+            </h2>
+            <p style={{ fontSize: '13.5px', color: '#7e7e7e', margin: '0 0 22px' }}>
+              Dernière étape avant l'envoi de votre demande.
+            </p>
+
+            <TagSelect
+              options={['Par SMS', 'Par e-mail']}
+              value={values.moyenContact}
+              onChange={v => { set('moyenContact', v); setContactError(false) }}
+              hasError={contactError}
+            />
+            {contactError && (
+              <p style={{ fontSize: '12px', color: '#b8a508', margin: '8px 0 0', fontWeight: 600 }}>Merci de choisir une option</p>
+            )}
+
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginTop: '24px' }}>
+              <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
+              <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>
+                Vérifiez bien votre boîte de réception, vous serez recontacté(e) sous 24-48h par Sheryn et Chainez.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleConfirmContact}
+              disabled={loading}
+              style={{
+                width: '100%',
+                marginTop: '24px',
+                padding: '15px 26px',
+                background: '#1b0b09',
+                color: '#fcf7cf',
+                border: 'none',
+                borderRadius: '999px',
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                opacity: loading ? 0.7 : 1,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                transition: 'background .2s ease',
+              }}
+              onMouseEnter={e => { if (!loading) e.target.style.background = '#322624' }}
+              onMouseLeave={e => { if (!loading) e.target.style.background = '#1b0b09' }}
+            >
+              {loading ? (
+                <><Loader2 size={15} className="animate-spin" />Envoi en cours…</>
+              ) : (
+                <>Confirmer et envoyer ✓</>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
