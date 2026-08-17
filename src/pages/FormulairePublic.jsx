@@ -384,12 +384,8 @@ export default function FormulairePublic() {
             </svg>
           </div>
           <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', marginBottom: '12px' }}>
-            Merci pour votre demande
+            Le formulaire a bien été transmis à notre équipe, merci !
           </h2>
-          <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.7 }}>
-            Nous avons bien reçu votre formulaire. L'équipe SC Création vous recontactera
-            dans les <strong>24 heures</strong> pour discuter de votre projet.
-          </p>
           <div style={{ marginTop: '32px', padding: '16px', background: '#fcf7cf', borderRadius: '2px' }}>
             <p style={{ fontSize: '11px', fontFamily: '"Anton", sans-serif', letterSpacing: '.08em', color: '#1b0b09', marginBottom: '2px' }}>SC CRÉATION</p>
             <p style={{ fontSize: '12px', color: '#7e7e7e' }}>Création de sites web</p>
