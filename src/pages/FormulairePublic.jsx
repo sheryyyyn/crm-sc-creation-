@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { CheckCircle2, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
+import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, MessageCircle, Mail } from 'lucide-react'
 import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
 
@@ -686,6 +686,7 @@ export default function FormulairePublic() {
               borderRadius: '20px',
               padding: '36px 32px',
               boxShadow: '0 12px 48px rgba(27,11,9,.18)',
+              textAlign: 'center',
             }}
           >
             <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', margin: '0 0 6px' }}>
@@ -695,18 +696,47 @@ export default function FormulairePublic() {
               Dernière étape avant l'envoi de votre demande.
             </p>
 
-            <TagSelect
-              options={['Par SMS', 'Par e-mail']}
-              value={values.moyenContact}
-              onChange={v => { set('moyenContact', v); setContactError(false) }}
-              hasError={contactError}
-            />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              {[
+                { value: 'Par SMS', icon: MessageCircle },
+                { value: 'Par e-mail', icon: Mail },
+              ].map(({ value, icon: Icon }) => {
+                const selected = values.moyenContact === value
+                return (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => { set('moyenContact', selected ? '' : value); setContactError(false) }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '10px',
+                      width: '100%',
+                      padding: '15px 20px',
+                      borderRadius: '999px',
+                      border: selected ? '1.5px solid #1b0b09' : `1.5px solid ${contactError ? '#b8a508' : '#e8e0cc'}`,
+                      background: selected ? '#1b0b09' : '#fdfbf4',
+                      color: selected ? '#fcf7cf' : '#1b0b09',
+                      fontSize: '14px',
+                      fontFamily: '"DM Sans", sans-serif',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all .15s ease',
+                    }}
+                  >
+                    <Icon size={17} />
+                    {value}
+                  </button>
+                )
+              })}
+            </div>
             {contactError && (
               <p style={{ fontSize: '12px', color: '#b8a508', margin: '8px 0 0', fontWeight: 600 }}>Merci de choisir une option</p>
             )}
 
-            <div style={{ display: 'flex', gap: '14px', alignItems: 'flex-start', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginTop: '24px' }}>
-              <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0, marginTop: '1px' }}>!</div>
+            <div style={{ display: 'flex', gap: '14px', alignItems: 'center', background: '#fcf7cf', border: '1px solid #e8dfa8', borderRadius: '14px', padding: '18px 20px', marginTop: '24px', textAlign: 'left' }}>
+              <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: '1.5px solid #b8a508', color: '#b8a508', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px', fontWeight: 700, flexShrink: 0 }}>!</div>
               <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>
                 Vérifiez bien votre boîte de réception, vous serez recontacté(e) sous 24-48h par Sheryn et Chainez.
               </p>
@@ -743,6 +773,34 @@ export default function FormulairePublic() {
               ) : (
                 <>Confirmer et envoyer ✓</>
               )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowContactPopup(false)}
+              disabled={loading}
+              style={{
+                width: '100%',
+                marginTop: '10px',
+                padding: '13px 26px',
+                background: 'transparent',
+                color: '#7e7e7e',
+                border: 'none',
+                borderRadius: '999px',
+                fontFamily: '"DM Sans", sans-serif',
+                fontWeight: 600,
+                fontSize: '13px',
+                cursor: loading ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                transition: 'color .2s ease',
+              }}
+              onMouseEnter={e => { if (!loading) e.target.style.color = '#1b0b09' }}
+              onMouseLeave={e => { if (!loading) e.target.style.color = '#7e7e7e' }}
+            >
+              <ChevronLeft size={15} /> Retour au formulaire
             </button>
           </div>
         </div>
