@@ -70,7 +70,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
           const assoc = getAssocLabel(t)
           const isUrgent = groupForPriorite(t.priorite) === 'urgentes'
           return (
-            <div key={t.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
+            <div key={t.id} className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
               <button
                 onClick={() => handleDone(t)}
                 className="mt-0.5 w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
@@ -220,13 +220,13 @@ export default function Dashboard() {
         </div>
       )}
 
-    <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
       {/* ── Colonne gauche ── */}
-      <div className="order-2 lg:order-1 w-full lg:w-[40%] xl:w-[36%] min-w-0 flex flex-col gap-4">
+      <div className="order-2 lg:order-1 w-full lg:w-[34%] xl:w-[30%] min-w-0 flex flex-col gap-5">
 
         {/* Prochaines échéances */}
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid #eeece7' }}>
+        <div className="bg-white rounded-3xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="px-6 py-5" style={{ borderBottom: '1px solid #eeece7' }}>
             <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochaines échéances</span>
           </div>
           {upcomingEcheances.length === 0 ? (
@@ -239,7 +239,7 @@ export default function Dashboard() {
                 const jours = Math.round((new Date(t.deadline) - new Date(today)) / 86400000)
                 return (
                   <div key={t.id} onClick={() => navigate('/taches')}
-                    className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-[#f7f6f3] transition-colors" style={{ borderBottom: '1px solid #eeece7' }}>
+                    className="flex items-center gap-3 px-6 py-4 cursor-pointer hover:bg-[#f7f6f3] transition-colors" style={{ borderBottom: '1px solid #eeece7' }}>
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: '#8a7a1f' }}>
                         {isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
@@ -259,8 +259,8 @@ export default function Dashboard() {
         </div>
 
         {/* Prochains rendez-vous */}
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid #eeece7' }}>
+        <div className="bg-white rounded-3xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="px-6 py-5" style={{ borderBottom: '1px solid #eeece7' }}>
             <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochains rendez-vous</span>
           </div>
           {upcomingRDVs.length === 0 ? (
@@ -270,7 +270,7 @@ export default function Dashboard() {
               {upcomingRDVs.map(r => {
                 const client = getClient(r.clientId)
                 return (
-                  <div key={r.id} className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: '1px solid #eeece7' }}>
+                  <div key={r.id} className="flex items-center gap-3 px-6 py-4" style={{ borderBottom: '1px solid #eeece7' }}>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs" style={{ color: '#a89b8c' }}>
                         {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}{r.heure ? ` · ${r.heure}` : ''}
@@ -296,15 +296,15 @@ export default function Dashboard() {
 
       {/* ── Colonne droite : To-do du jour ── */}
       <div className="order-1 lg:order-2 w-full lg:flex-1 min-w-0">
-        <div className="rounded-2xl p-5 sm:p-6 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
-          <div className="flex items-center gap-2.5 mb-6">
-            <span className="font-display text-lg font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
+        <div className="rounded-3xl p-6 sm:p-8 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+          <div className="flex items-center gap-2.5 mb-8">
+            <span className="font-display text-xl font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
               {totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''}
             </span>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
+          <div className="flex flex-col sm:flex-row gap-8 sm:gap-10">
             <TodoColumn profil="Sheryn" taches={taches} clients={clients} projets={projets}
               moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
             <div className="hidden sm:block w-px" style={{ background: '#eeece7' }} />
