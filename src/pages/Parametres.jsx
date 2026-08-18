@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Settings, Users, Palette, Globe, Link2, Save, Trash2 } from 'lucide-react'
+import { Settings, Users, Palette, Globe, Link2, Save, Trash2, Bell } from 'lucide-react'
 import useStore from '../store/useStore'
+import { notify, requestNotificationPermission } from '../utils/notify'
+import { registerFCMToken } from '../utils/fcm'
 
 export const getCalendlyUrl = () => localStorage.getItem('sc_calendly_url') || 'https://cal.eu/sc.creation/45min'
 export const setCalendlyUrl = (url) => localStorage.setItem('sc_calendly_url', url)
@@ -34,6 +36,19 @@ export default function Parametres() {
   const [purged, setPurged] = useState(false)
   const [confirmPurge, setConfirmPurge] = useState(false)
   const { purgeDemoData } = useStore()
+  const [notifPermission, setNotifPermission] = useState(
+    typeof Notification !== 'undefined' ? Notification.permission : 'denied'
+  )
+
+  async function handleActiverNotifs() {
+    const granted = await requestNotificationPermission()
+    setNotifPermission(granted ? 'granted' : 'denied')
+    if (granted) {
+      const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
+      await registerFCMToken(profil)
+      notify('🔔 Notifications activées !', 'Vous recevrez des alertes pour vos RDV, formulaires et tâches urgentes.')
+    }
+  }
 
   async function handlePurge() {
     setPurging(true)
@@ -55,6 +70,23 @@ export default function Parametres() {
       <div className="page-header">
         <h1 className="page-title">Paramètres</h1>
       </div>
+
+      {notifPermission === 'default' && (
+        <div className="mb-5 rounded-2xl overflow-hidden" style={{ background: '#fcf7cf', border: '1px solid #e8dfa8' }}>
+          <div className="flex items-center gap-3 px-5 py-3">
+            <Bell size={18} style={{ color: '#8a7a1f' }} />
+            <div className="flex-1">
+              <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Activer les notifications</p>
+              <p className="text-xs mt-0.5" style={{ color: '#8a7a1f' }}>Soyez alertée en temps réel des nouveaux formulaires, RDV à venir et tâches urgentes.</p>
+            </div>
+            <button onClick={handleActiverNotifs}
+              className="text-xs font-bold px-4 py-2 rounded-xl flex-shrink-0"
+              style={{ background: '#1b0b09', color: '#fdfbf4' }}>
+              Activer
+            </button>
+          </div>
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row gap-5">
         {/* Sidebar tabs */}

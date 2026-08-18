@@ -25,7 +25,7 @@ const generateId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString
 const fsSet = (col, id, data) => setDoc(doc(db, col, id), data)
 const fsDel = (col, id) => deleteDoc(doc(db, col, id))
 
-const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias']
+const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems']
 
 const SEED_MAP = {
   clients: mockClients,
@@ -40,6 +40,7 @@ const SEED_MAP = {
   formReponses: mockFormReponses,
   notifications: mockNotifications,
   medias: [],
+  partenaireItems: [],
 }
 
 async function seedIfEmpty() {
@@ -69,6 +70,7 @@ const useStore = create((set, get) => ({
   contenus: [],
   depenses: [],
   notifications: [],
+  partenaireItems: [],
   loading: true,
 
   // ─── Init Firestore listeners ────────────────────────────────────────────
@@ -173,6 +175,21 @@ const useStore = create((set, get) => ({
     fsSet('leads', id, updated)
   },
   deleteLead: (id) => fsDel('leads', id),
+
+  // ─── Espace partenaire (Cheïma) ─────────────────────────────────────────
+  addPartenaireItem: (data) => {
+    const item = { ...data, id: generateId('pi'), lu: false, statut: data.statut || 'nouveau', createdAt: new Date().toISOString() }
+    fsSet('partenaireItems', item.id, item)
+  },
+  updatePartenaireItem: (id, data) => {
+    const updated = { ...get().partenaireItems.find((p) => p.id === id), ...data }
+    fsSet('partenaireItems', id, updated)
+  },
+  markPartenaireItemRead: (id) => {
+    const item = get().partenaireItems.find((p) => p.id === id)
+    if (item) fsSet('partenaireItems', id, { ...item, lu: true })
+  },
+  deletePartenaireItem: (id) => fsDel('partenaireItems', id),
 
   // ─── Contenus ───────────────────────────────────────────────────────────
   addContenu: (data) => {

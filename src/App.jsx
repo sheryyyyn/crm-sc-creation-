@@ -19,6 +19,7 @@ import FormulairePublic from './pages/FormulairePublic'
 import CalendrierEditorial from './pages/CalendrierEditorial'
 import Mediatheque from './pages/Mediatheque'
 import MotDePasse from './pages/MotDePasse'
+import EspacePartenaire from './pages/EspacePartenaire'
 
 export default function App() {
   const initListeners = useStore((s) => s.initListeners)
@@ -54,6 +55,7 @@ export default function App() {
               <Route path="/calendrier-editorial" element={<CalendrierEditorial />} />
               <Route path="/mediatheque" element={<Mediatheque />} />
               <Route path="/mots-de-passe" element={<MotDePasse />} />
+              <Route path="/espace-partenaire" element={<EspacePartenaire />} />
               <Route path="/parametres" element={<Parametres />} />
             </Routes>
           </Layout>

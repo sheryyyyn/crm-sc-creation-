@@ -1,58 +1,75 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import {
-  LayoutDashboard, Users, FolderOpen, CheckSquare, Calendar,
-  FileText, CreditCard, Wallet, Settings, Hexagon, ClipboardList,
-  CalendarDays, Lock, X, LogOut, Image,
+  LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
+  FolderOpen, CalendarDays, Handshake, Lock, Settings, X, LogOut,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 import { logout } from './LoginGate'
 
+// Entrée seule, sans groupe
+const topItem = { label: 'Dashboard', icon: LayoutDashboard, to: '/' }
+
 const navCategories = [
   {
-    label: 'Général',
+    label: 'Organisation',
     items: [
-      { label: 'Dashboard', icon: LayoutDashboard, to: '/' },
+      { label: 'To-do', icon: CheckSquare, to: '/taches' },
+      { label: 'Échéances', icon: CalendarClock, to: '/taches' },
     ],
   },
   {
     label: 'Clients',
     items: [
-      { label: 'Clients', icon: Users, to: '/clients' },
-      { label: 'Projets', icon: FolderOpen, to: '/projets' },
       { label: 'Formulaires', icon: ClipboardList, to: '/formulaires' },
-      { label: 'RDV', icon: Calendar, to: '/rdv' },
-      { label: 'Documents', icon: FileText, to: '/documents' },
+      { label: 'Rendez-vous', icon: Calendar, to: '/rdv' },
+      { label: 'Projets', icon: FolderOpen, to: '/projets' },
     ],
   },
   {
-    label: 'Organisation',
+    label: 'Communication',
     items: [
-      { label: 'Tâches', icon: CheckSquare, to: '/taches' },
-      { label: 'Calendrier Éditorial', icon: CalendarDays, to: '/calendrier-editorial' },
-      { label: 'Médiathèque', icon: Image, to: '/mediatheque' },
-    ],
-  },
-  {
-    label: 'Finances',
-    items: [
-      { label: 'Finances', icon: CreditCard, to: '/finances' },
-      { label: 'Dépenses', icon: Wallet, to: '/depenses' },
-    ],
-  },
-  {
-    label: 'Paramètres',
-    items: [
-      { label: 'Mots de passe', icon: Lock, to: '/mots-de-passe' },
-      { label: 'Paramètres', icon: Settings, to: '/parametres' },
+      { label: 'Calendrier éditorial', icon: CalendarDays, to: '/calendrier-editorial' },
     ],
   },
 ]
 
+// Entrée seule, entre deux séparateurs
+const partnerItem = { label: 'Espace partenaire', icon: Handshake, to: '/espace-partenaire' }
+
+const settingsCategory = {
+  label: 'Paramètres',
+  items: [
+    { label: 'Mots de passe', icon: Lock, to: '/mots-de-passe' },
+    { label: 'Paramètres', icon: Settings, to: '/parametres' },
+  ],
+}
+
+function NavItem({ label, icon: Icon, to, isActive, onClose, badge }) {
+  return (
+    <NavLink key={to} to={to} onClick={onClose}
+      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer"
+      style={isActive
+        ? { background: '#fcf7cf', color: '#1b0b09' }
+        : { color: 'rgba(253,251,244,.62)' }}
+    >
+      <Icon size={16} style={{ color: isActive ? '#1b0b09' : 'rgba(253,251,244,.4)' }} />
+      <span className="flex-1">{label}</span>
+      {badge > 0 && (
+        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${isActive ? 'bg-[#1b0b09] text-[#fdfbf4]' : 'bg-amber-500 text-white'}`}>
+          {badge}
+        </span>
+      )}
+    </NavLink>
+  )
+}
+
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation()
-  const { taches, formReponses } = useStore()
+  const { taches, formReponses, partenaireItems } = useStore()
   const urgentCount = taches.filter(t => t.statut === 'urgent' || t.priorite === 'urgente').length
   const newFormCount = formReponses.filter(r => !r.lu).length
+  const newPartnerCount = partenaireItems.filter(p => !p.lu).length
+  const isPathActive = (to) => to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
 
   return (
     <aside
@@ -87,38 +104,43 @@ export default function Sidebar({ isOpen, onClose }) {
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 overflow-y-auto">
+        <div className="space-y-0.5 mb-5">
+          <NavItem {...topItem} isActive={isPathActive(topItem.to)} onClose={onClose} />
+        </div>
+
         <div className="space-y-5">
           {navCategories.map(({ label: catLabel, items }) => (
             <div key={catLabel}>
               <p className="text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5" style={{ color: 'rgba(253,251,244,.32)' }}>{catLabel}</p>
               <div className="space-y-0.5">
-                {items.map(({ label, icon: Icon, to }) => {
-                  const isActive = to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
-                  return (
-                    <NavLink key={to} to={to} onClick={onClose}
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer"
-                      style={isActive
-                        ? { background: '#fdfbf4', color: '#1b0b09' }
-                        : { color: 'rgba(253,251,244,.62)' }}
-                    >
-                      <Icon size={16} style={{ color: isActive ? '#b8a508' : 'rgba(253,251,244,.4)' }} />
-                      <span className="flex-1">{label}</span>
-                      {label === 'Tâches' && urgentCount > 0 && (
-                        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${isActive ? 'bg-[#1b0b09] text-[#fdfbf4]' : 'bg-red-500 text-white'}`}>
-                          {urgentCount}
-                        </span>
-                      )}
-                      {label === 'Formulaires' && newFormCount > 0 && (
-                        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${isActive ? 'bg-[#1b0b09] text-[#fdfbf4]' : 'bg-amber-500 text-white'}`}>
-                          {newFormCount}
-                        </span>
-                      )}
-                    </NavLink>
-                  )
-                })}
+                {items.map(({ label, icon: Icon, to }) => (
+                  <NavItem key={label} label={label} icon={Icon} to={to} onClose={onClose}
+                    isActive={isPathActive(to)}
+                    badge={label === 'To-do' ? urgentCount : label === 'Formulaires' ? newFormCount : 0}
+                  />
+                ))}
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Séparateur */}
+        <div className="my-5" style={{ borderTop: '1px solid rgba(253,251,244,.08)' }} />
+
+        <div className="space-y-0.5">
+          <NavItem {...partnerItem} isActive={isPathActive(partnerItem.to)} onClose={onClose} badge={newPartnerCount} />
+        </div>
+
+        {/* Séparateur */}
+        <div className="my-5" style={{ borderTop: '1px solid rgba(253,251,244,.08)' }} />
+
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5" style={{ color: 'rgba(253,251,244,.32)' }}>{settingsCategory.label}</p>
+          <div className="space-y-0.5">
+            {settingsCategory.items.map(({ label, icon: Icon, to }) => (
+              <NavItem key={label} label={label} icon={Icon} to={to} onClose={onClose} isActive={isPathActive(to)} />
+            ))}
+          </div>
         </div>
       </nav>
 
