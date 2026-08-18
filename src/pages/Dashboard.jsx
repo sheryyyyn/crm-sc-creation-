@@ -194,7 +194,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col lg:flex-row gap-5 lg:gap-6">
       {/* ── Colonne gauche ── */}
-      <div className="w-full lg:w-[40%] xl:w-[36%] min-w-0 flex flex-col gap-4">
+      <div className="order-2 lg:order-1 w-full lg:w-[40%] xl:w-[36%] min-w-0 flex flex-col gap-4">
 
         <div>
           <h1 className="font-display text-2xl sm:text-[1.7rem] font-bold" style={{ color: '#1b0b09' }}>Dashboard</h1>
@@ -304,7 +304,7 @@ export default function Dashboard() {
       </div>
 
       {/* ── Colonne droite : To-do du jour ── */}
-      <div className="w-full lg:flex-1 min-w-0">
+      <div className="order-1 lg:order-2 w-full lg:flex-1 min-w-0">
         <div className="rounded-2xl p-5 sm:p-6 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
           <div className="flex items-center gap-2.5 mb-6">
             <span className="font-display text-lg font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
