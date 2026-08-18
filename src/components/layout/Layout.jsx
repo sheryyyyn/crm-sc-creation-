@@ -6,7 +6,7 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen" style={{ background: '#f0f2f8' }}>
+    <div className="min-h-screen" style={{ background: '#fdfbf4' }}>
       {/* Overlay mobile */}
       {sidebarOpen && (
         <div

@@ -44,11 +44,12 @@ export default function Topbar({ onMenuToggle }) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 lg:left-60 right-0 h-14 bg-white/80 backdrop-blur-md flex items-center px-4 lg:px-7 gap-3 lg:gap-4 z-20" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+      <header className="fixed top-0 left-0 lg:left-60 right-0 h-14 backdrop-blur-md flex items-center px-4 lg:px-7 gap-3 lg:gap-4 z-20" style={{ background: 'rgba(253,251,244,.85)', borderBottom: '1px solid #e8e0cc' }}>
         {/* Hamburger — mobile uniquement */}
         <button
           onClick={onMenuToggle}
-          className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors flex-shrink-0"
+          className="lg:hidden w-9 h-9 rounded-xl flex items-center justify-center transition-colors flex-shrink-0"
+          style={{ color: '#7e7e7e' }}
         >
           <Menu size={20} />
         </button>
@@ -56,12 +57,12 @@ export default function Topbar({ onMenuToggle }) {
         {/* Search */}
         <button
           onClick={() => { setSearchOpen(true); setTimeout(() => searchRef.current?.focus(), 50) }}
-          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm text-gray-400 transition-colors flex-1 lg:flex-none"
-          style={{ background: '#f4f5f7', minWidth: '0', maxWidth: '320px' }}
+          className="flex items-center gap-2 h-9 px-4 rounded-xl text-sm transition-colors flex-1 lg:flex-none"
+          style={{ background: '#fff', border: '1px solid #e8e0cc', color: '#a89b8c', minWidth: '0', maxWidth: '320px' }}
         >
-          <Search size={14} className="text-gray-400" />
+          <Search size={14} style={{ color: '#a89b8c' }} />
           <span className="flex-1 text-left">Recherche globale...</span>
-          <span className="hidden sm:inline text-xs bg-white text-gray-400 px-1.5 py-0.5 rounded-lg border border-gray-200">⌘K</span>
+          <span className="hidden sm:inline text-xs px-1.5 py-0.5 rounded-lg" style={{ background: '#fdfbf4', color: '#a89b8c', border: '1px solid #e8e0cc' }}>⌘K</span>
         </button>
 
         <div className="flex-1" />
@@ -70,7 +71,8 @@ export default function Topbar({ onMenuToggle }) {
         <div className="relative">
           <button
             onClick={() => setNotifOpen(!notifOpen)}
-            className="relative w-9 h-9 rounded-xl flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors"
+            className="relative w-9 h-9 rounded-xl flex items-center justify-center transition-colors"
+            style={{ color: '#7e7e7e' }}
           >
             <Bell size={18} />
             {unread > 0 && (

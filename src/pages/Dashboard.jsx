@@ -163,9 +163,9 @@ function MiniCalendar({ rdvs, clients }) {
               <button
                 onClick={() => setSelectedDay(isSelected ? null : day)}
                 className={`w-7 h-7 flex items-center justify-center rounded-xl text-xs font-medium transition-all
-                  ${isToday ? 'text-white font-bold' : isSelected ? 'bg-indigo-100 text-indigo-700 font-bold' : 'text-gray-600 hover:bg-gray-100'}
+                  ${isToday ? 'font-bold' : isSelected ? 'font-bold' : 'text-gray-600 hover:bg-gray-100'}
                 `}
-                style={isToday ? { background: 'linear-gradient(135deg,#6366f1,#4f46e5)' } : {}}>
+                style={isToday ? { background: '#1b0b09', color: '#fdfbf4' } : isSelected ? { background: '#fcf7cf', color: '#8a7a1f' } : {}}>
                 {day}
               </button>
               {hasRDV && (
@@ -337,8 +337,8 @@ export default function Dashboard() {
   }, [rdvs])
 
   const statCards = [
-    { label: 'Tâches terminées', value: tachesTerminees, total: tachesTotal, color: '#6366f1', bg: 'bg-indigo-50', text: 'text-indigo-700', icon: CheckSquare, to: '/taches' },
-    { label: 'Projets actifs', value: projetsActifs, total: projetsTotal, color: '#8b5cf6', bg: 'bg-purple-50', text: 'text-purple-700', icon: TrendingUp, to: '/projets' },
+    { label: 'Tâches terminées', value: tachesTerminees, total: tachesTotal, color: '#1b0b09', bg: 'bg-[#fcf7cf]', text: 'text-[#8a7a1f]', icon: CheckSquare, to: '/taches' },
+    { label: 'Projets actifs', value: projetsActifs, total: projetsTotal, color: '#1b0b09', bg: 'bg-[#fcf7cf]', text: 'text-[#8a7a1f]', icon: TrendingUp, to: '/projets' },
     { label: 'Tâches urgentes', value: tachesUrgentes, total: tachesTotal, color: '#ef4444', bg: 'bg-red-50', text: 'text-red-700', icon: AlertTriangle, to: '/taches' },
     { label: 'CA objectif', value: caTotal, total: caCible, color: '#10b981', bg: 'bg-emerald-50', text: 'text-emerald-700', icon: Euro, to: '/finances', money: true },
   ]
@@ -350,21 +350,20 @@ export default function Dashboard() {
 
         {/* Welcome banner */}
         <div className="relative rounded-2xl lg:rounded-3xl mb-4 lg:mb-6 overflow-hidden" style={{
-          background: 'linear-gradient(135deg, #4338ca 0%, #6366f1 55%, #818cf8 100%)',
-          boxShadow: '0 8px 32px rgba(99,102,241,0.32)',
+          background: '#1b0b09',
         }}>
-          <div className="absolute right-0 top-0 w-72 h-72 rounded-full opacity-[0.07]" style={{ background: 'white', transform: 'translate(25%,-35%)' }} />
-          <div className="absolute right-24 bottom-0 w-44 h-44 rounded-full opacity-[0.07]" style={{ background: 'white', transform: 'translateY(55%)' }} />
-          <div className="absolute right-10 top-6 w-28 h-28 rounded-full opacity-[0.07]" style={{ background: 'white' }} />
+          <div className="absolute right-0 top-0 w-72 h-72 rounded-full opacity-[0.06]" style={{ background: '#b8a508', transform: 'translate(25%,-35%)' }} />
+          <div className="absolute right-24 bottom-0 w-44 h-44 rounded-full opacity-[0.05]" style={{ background: '#fdfbf4', transform: 'translateY(55%)' }} />
+          <div className="absolute right-10 top-6 w-28 h-28 rounded-full opacity-[0.05]" style={{ background: '#fdfbf4' }} />
 
           <div className="relative px-5 py-5 sm:px-8 sm:py-6 flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={14} className="text-indigo-300" />
-                <span className="text-indigo-200 text-xs font-semibold tracking-wide uppercase">SC Création · CRM 360</span>
+                <Sparkles size={14} style={{ color: '#b8a508' }} />
+                <span className="font-label text-[11px] tracking-wide uppercase" style={{ color: '#b8a508' }}>SC Création · CRM 360</span>
               </div>
-              <h1 className="text-xl sm:text-[1.6rem] font-bold text-white leading-tight mb-1">{greeting}, {localStorage.getItem('sc-crm-profil') || 'Sheryn'} ! 👋</h1>
-              <p className="text-indigo-200 text-sm">
+              <h1 className="font-display text-xl sm:text-[1.7rem] font-bold leading-tight mb-1" style={{ color: '#fdfbf4' }}>{greeting}, {localStorage.getItem('sc-crm-profil') || 'Sheryn'} !</h1>
+              <p className="text-sm" style={{ color: 'rgba(253,251,244,.6)' }}>
                 {tachesUrgentes > 0
                   ? `Vous avez ${tachesUrgentes} tâche${tachesUrgentes > 1 ? 's' : ''} urgente${tachesUrgentes > 1 ? 's' : ''} en attente.`
                   : upcomingRDVs.length > 0
@@ -372,10 +371,10 @@ export default function Dashboard() {
                   : 'Tout est sous contrôle. Bonne journée !'}
               </p>
               <div className="flex gap-2 mt-4 flex-wrap">
-                <button onClick={() => navigate('/taches')} className="text-xs font-semibold px-4 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white backdrop-blur-sm transition-colors">
+                <button onClick={() => navigate('/taches')} className="text-xs font-semibold px-4 py-2 rounded-xl backdrop-blur-sm transition-colors" style={{ background: 'rgba(253,251,244,.12)', color: '#fdfbf4' }}>
                   Mes tâches
                 </button>
-                <button onClick={() => navigate('/clients')} className="text-xs font-semibold px-4 py-2 rounded-xl bg-white text-indigo-600 hover:bg-indigo-50 transition-colors shadow-sm">
+                <button onClick={() => navigate('/clients')} className="text-xs font-semibold px-4 py-2 rounded-xl transition-colors shadow-sm" style={{ background: '#b8a508', color: '#1b0b09' }}>
                   Mes clients
                 </button>
               </div>
@@ -386,9 +385,9 @@ export default function Dashboard() {
                 { l: 'Clients', v: clients.filter(c => c.statut === 'actif').length },
                 { l: 'Leads', v: leads.length },
               ].map(({ l, v }) => (
-                <div key={l} className="text-center px-5 py-3 rounded-2xl backdrop-blur-sm" style={{ background: 'rgba(255,255,255,0.14)' }}>
-                  <p className="text-xl font-bold text-white">{v}</p>
-                  <p className="text-[11px] text-indigo-200 font-medium">{l}</p>
+                <div key={l} className="text-center px-5 py-3 rounded-2xl backdrop-blur-sm" style={{ background: 'rgba(253,251,244,.08)' }}>
+                  <p className="text-xl font-bold" style={{ color: '#fdfbf4' }}>{v}</p>
+                  <p className="text-[11px] font-medium" style={{ color: 'rgba(253,251,244,.5)' }}>{l}</p>
                 </div>
               ))}
             </div>
@@ -397,21 +396,21 @@ export default function Dashboard() {
 
         {/* Bannière activation notifications */}
         {notifPermission === 'default' && (
-          <div className="mb-4 rounded-2xl overflow-hidden" style={{ background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)', border: '1px solid #c7d2fe' }}>
+          <div className="mb-4 rounded-2xl overflow-hidden" style={{ background: '#fcf7cf', border: '1px solid #e8dfa8' }}>
             <div className="flex items-center gap-3 px-5 py-3">
               <span className="text-2xl">🔔</span>
               <div className="flex-1">
-                <p className="text-sm font-bold text-indigo-900">Activer les notifications</p>
-                <p className="text-xs text-indigo-600 mt-0.5">Soyez alertées en temps réel des nouveaux formulaires, RDV à venir et tâches urgentes.</p>
+                <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Activer les notifications</p>
+                <p className="text-xs mt-0.5" style={{ color: '#8a7a1f' }}>Soyez alertées en temps réel des nouveaux formulaires, RDV à venir et tâches urgentes.</p>
               </div>
               <div className="flex gap-2 flex-shrink-0">
                 <button onClick={handleActiverNotifs}
-                  className="text-xs font-bold px-4 py-2 rounded-xl text-white transition-all"
-                  style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+                  className="text-xs font-bold px-4 py-2 rounded-xl transition-all"
+                  style={{ background: '#1b0b09', color: '#fdfbf4' }}>
                   Activer
                 </button>
                 <button onClick={() => setNotifPermission('denied')}
-                  className="text-xs font-medium px-3 py-2 rounded-xl bg-white/60 text-indigo-400 hover:bg-white transition-colors">
+                  className="text-xs font-medium px-3 py-2 rounded-xl transition-colors" style={{ background: 'rgba(255,255,255,.5)', color: '#8a7a1f' }}>
                   Plus tard
                 </button>
               </div>
@@ -471,12 +470,12 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
             <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center">
                 <CheckSquare size={13} className="text-white" />
               </div>
               <span className="text-sm font-bold text-gray-800">Suivi des tâches</span>
             </div>
-            <button onClick={() => navigate('/taches')} className="text-xs text-indigo-500 font-semibold flex items-center gap-1 hover:text-indigo-700">
+            <button onClick={() => navigate('/taches')} className="text-xs font-semibold flex items-center gap-1 transition-colors" style={{ color: '#b8a508' }}>
               Voir tout <ArrowRight size={12} />
             </button>
           </div>
@@ -552,12 +551,12 @@ export default function Dashboard() {
         <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <div className="w-6 h-6 rounded-lg flex items-center justify-center">
                 <Calendar size={12} className="text-white" />
               </div>
               <span className="text-sm font-bold text-gray-800">Prochains RDV</span>
             </div>
-            <button onClick={() => navigate('/rdv')} className="text-xs text-indigo-500 font-semibold flex items-center gap-1 hover:text-indigo-700">
+            <button onClick={() => navigate('/rdv')} className="text-xs font-semibold flex items-center gap-1 transition-colors" style={{ color: '#b8a508' }}>
               Voir tout <ArrowRight size={11} />
             </button>
           </div>
@@ -572,11 +571,11 @@ export default function Dashboard() {
                 <div key={r.id} onClick={() => navigate('/rdv')}
                   className="flex items-center gap-3 px-5 py-3 hover:bg-gray-50 cursor-pointer transition-colors">
                   <div className="w-9 h-9 rounded-xl flex flex-col items-center justify-center flex-shrink-0"
-                    style={isToday ? { background: 'linear-gradient(135deg,#6366f1,#4f46e5)' } : { background: '#f0f2f8' }}>
-                    <span className={`text-xs font-bold leading-none ${isToday ? 'text-white' : 'text-gray-700'}`}>
+                    style={isToday ? { background: '#1b0b09' } : { background: '#fdfbf4' }}>
+                    <span className="text-xs font-bold leading-none" style={{ color: isToday ? '#fdfbf4' : '#374151' }}>
                       {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day: '2-digit' }) : '?'}
                     </span>
-                    <span className={`text-[8px] uppercase font-semibold leading-none mt-0.5 ${isToday ? 'text-indigo-200' : 'text-gray-400'}`}>
+                    <span className="text-[8px] uppercase font-semibold leading-none mt-0.5" style={{ color: isToday ? '#b8a508' : '#9ca3af' }}>
                       {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { month: 'short' }) : ''}
                     </span>
                   </div>
@@ -615,7 +614,7 @@ export default function Dashboard() {
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-pink-100 text-pink-600">{postsSemaine.length}</span>
               )}
             </div>
-            <button onClick={() => navigate('/calendrier-editorial')} className="text-xs text-indigo-500 font-semibold flex items-center gap-1 hover:text-indigo-700">
+            <button onClick={() => navigate('/calendrier-editorial')} className="text-xs font-semibold flex items-center gap-1 transition-colors" style={{ color: '#b8a508' }}>
               Voir tout <ArrowRight size={11} />
             </button>
           </div>

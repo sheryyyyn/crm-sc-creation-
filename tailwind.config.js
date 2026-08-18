@@ -5,8 +5,15 @@ export default {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['"Playfair Display"', 'Times New Roman', 'serif'],
+        label: ['Anton', 'sans-serif'],
+        body: ['"DM Sans"', 'Inter', 'sans-serif'],
       },
       colors: {
+        ink: '#1b0b09',
+        cream: '#fdfbf4',
+        gold: '#b8a508',
+        line: '#e8e0cc',
         brand: {
           50: '#eef2ff',
           100: '#e0e7ff',
