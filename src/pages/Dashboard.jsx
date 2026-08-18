@@ -78,11 +78,11 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
               <div key={t.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
                 <button
                   onClick={() => handleDone(t)}
-                  className="mt-0.5 w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
-                  style={{ borderColor: '#d4c9b0' }}
+                  className="mt-0.5 w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
+                  style={{ borderColor: '#d4c9b0', background: '#fff' }}
                   title="Marquer comme terminée"
                 >
-                  <div className="w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
+                  <div className="w-2 h-2 rounded-[2px] opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
                 </button>
                 <div className="flex-1 min-w-0">
                   <p className="font-display text-[14px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
@@ -106,10 +106,11 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
   return (
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style={{ background: '#1b0b09', color: '#fdfbf4' }}>
+        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#1b0b09', color: '#fdfbf4' }}>
           {profil[0]}
         </div>
-        <span className="font-label text-[13px] tracking-wide uppercase" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
+        <span className="text-sm font-bold tracking-wide uppercase" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
       </div>
       <Group title="Urgentes" items={urgentes} open={openUrgentes} setOpen={setOpenUrgentes} />
       <Group title="Secondaires" items={secondaires} open={openSecondaires} setOpen={setOpenSecondaires} />
