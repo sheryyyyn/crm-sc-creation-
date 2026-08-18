@@ -18,7 +18,7 @@ export default function Layout({ children }) {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
 
-      <main className="lg:ml-60 pt-14 min-h-screen">
+      <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
         <div className="p-4 lg:p-7 max-w-screen-2xl">
           {children}
         </div>
