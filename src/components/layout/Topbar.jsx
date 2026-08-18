@@ -44,7 +44,7 @@ export default function Topbar({ onMenuToggle }) {
 
   return (
     <>
-      <header className="fixed top-0 left-0 lg:left-60 right-0 h-14 backdrop-blur-md flex items-center px-4 lg:px-7 gap-3 lg:gap-4 z-20" style={{ background: 'rgba(253,251,244,.85)', borderBottom: '1px solid #e8e0cc' }}>
+      <header className="fixed top-0 left-0 lg:left-60 right-0 h-14 backdrop-blur-md flex items-center px-4 lg:px-7 gap-3 lg:gap-4 z-20" style={{ background: 'rgba(255,255,255,.85)', borderBottom: '1px solid #ece9e4' }}>
         {/* Hamburger — mobile uniquement */}
         <button
           onClick={onMenuToggle}

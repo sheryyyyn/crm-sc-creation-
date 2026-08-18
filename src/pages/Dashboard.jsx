@@ -61,7 +61,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
       <button
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wide mb-1.5"
-        style={{ background: '#fdfbf4', color: '#7e7e7e', border: '1px solid #e8e0cc' }}
+        style={{ background: '#ffffff', color: '#7e7e7e', border: '1px solid #e7e5e1' }}
       >
         <span>{title} · {items.length}</span>
         {open ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
@@ -75,7 +75,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
             const overdue = t.deadline && t.deadline < todayStr
             const assoc = getAssocLabel(t)
             return (
-              <div key={t.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[#fdfbf4] transition-colors group">
+              <div key={t.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
                 <button
                   onClick={() => handleDone(t)}
                   className="mt-0.5 w-[18px] h-[18px] rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
@@ -85,7 +85,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
                   <div className="w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
                 </button>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                  <p className="font-display text-[14px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
                   <p className="text-[11px] mt-0.5" style={{ color: '#a89b8c' }}>
                     {assoc || '—'}
                     {t.deadline && (
@@ -109,7 +109,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
         <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold" style={{ background: '#1b0b09', color: '#fdfbf4' }}>
           {profil[0]}
         </div>
-        <span className="text-sm font-bold uppercase tracking-wide" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
+        <span className="font-label text-[13px] tracking-wide uppercase" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
       </div>
       <Group title="Urgentes" items={urgentes} open={openUrgentes} setOpen={setOpenUrgentes} />
       <Group title="Secondaires" items={secondaires} open={openSecondaires} setOpen={setOpenSecondaires} />
@@ -234,9 +234,9 @@ export default function Dashboard() {
         )}
 
         {/* Prochaines échéances */}
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e8e0cc' }}>
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid #f2ecda' }}>
-            <span className="text-sm font-bold" style={{ color: '#1b0b09' }}>Prochaines échéances</span>
+        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid #eeece7' }}>
+            <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochaines échéances</span>
           </div>
           {upcomingEcheances.length === 0 ? (
             <p className="text-sm text-center py-6" style={{ color: '#a89b8c' }}>Aucune échéance à venir</p>
@@ -248,16 +248,16 @@ export default function Dashboard() {
                 const jours = Math.round((new Date(t.deadline) - new Date(today)) / 86400000)
                 return (
                   <div key={t.id} onClick={() => navigate('/taches')}
-                    className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-[#fdfbf4] transition-colors" style={{ borderBottom: '1px solid #f2ecda' }}>
+                    className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-[#f7f6f3] transition-colors" style={{ borderBottom: '1px solid #eeece7' }}>
                     <div className="flex-1 min-w-0">
                       <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: '#8a7a1f' }}>
                         {isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                       </p>
-                      <p className="text-sm font-semibold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
                       {getAssoc(t) && <p className="text-xs truncate" style={{ color: '#a89b8c' }}>{getAssoc(t)}</p>}
                     </div>
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg flex-shrink-0"
-                      style={{ background: overdue ? '#f2ecda' : '#fdfbf4', color: overdue ? '#8a5a2b' : '#7e7e7e', border: '1px solid #e8e0cc' }}>
+                      style={{ background: overdue ? '#eeece7' : '#fdfbf4', color: overdue ? '#8a5a2b' : '#7e7e7e', border: '1px solid #e7e5e1' }}>
                       {overdue ? 'En retard' : isToday ? "J-0" : `J-${jours}`}
                     </span>
                   </div>
@@ -268,9 +268,9 @@ export default function Dashboard() {
         </div>
 
         {/* Prochains rendez-vous */}
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e8e0cc' }}>
-          <div className="px-5 py-4" style={{ borderBottom: '1px solid #f2ecda' }}>
-            <span className="text-sm font-bold" style={{ color: '#1b0b09' }}>Prochains rendez-vous</span>
+        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid #eeece7' }}>
+            <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochains rendez-vous</span>
           </div>
           {upcomingRDVs.length === 0 ? (
             <p className="text-sm text-center py-6" style={{ color: '#a89b8c' }}>Aucun rendez-vous à venir</p>
@@ -279,12 +279,12 @@ export default function Dashboard() {
               {upcomingRDVs.map(r => {
                 const client = getClient(r.clientId)
                 return (
-                  <div key={r.id} className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: '1px solid #f2ecda' }}>
+                  <div key={r.id} className="flex items-center gap-3 px-5 py-3" style={{ borderBottom: '1px solid #eeece7' }}>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs" style={{ color: '#a89b8c' }}>
                         {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}{r.heure ? ` · ${r.heure}` : ''}
                       </p>
-                      <p className="text-sm font-semibold truncate" style={{ color: '#1b0b09' }}>{r.sujet || 'Rendez-vous'}</p>
+                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#1b0b09' }}>{r.sujet || 'Rendez-vous'}</p>
                       {client && <p className="text-xs truncate" style={{ color: '#a89b8c' }}>{client.nom}</p>}
                     </div>
                     {r.lienMeet && (
@@ -305,10 +305,10 @@ export default function Dashboard() {
 
       {/* ── Colonne droite : To-do du jour ── */}
       <div className="w-full lg:flex-1 min-w-0">
-        <div className="bg-white rounded-2xl p-5 sm:p-6 h-full" style={{ border: '1px solid #e8e0cc' }}>
+        <div className="rounded-2xl p-5 sm:p-6 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
           <div className="flex items-center gap-2.5 mb-6">
             <span className="font-display text-lg font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#fdfbf4', color: '#a89b8c', border: '1px solid #e8e0cc' }}>
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
               {totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''}
             </span>
           </div>
@@ -316,14 +316,14 @@ export default function Dashboard() {
           <div className="flex flex-col sm:flex-row gap-6 sm:gap-8">
             <TodoColumn profil="Sheryn" taches={taches} clients={clients} projets={projets}
               moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
-            <div className="hidden sm:block w-px" style={{ background: '#f2ecda' }} />
+            <div className="hidden sm:block w-px" style={{ background: '#eeece7' }} />
             <TodoColumn profil="Chainez" taches={taches} clients={clients} projets={projets}
               moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
           </div>
 
           <button onClick={() => navigate('/taches')}
             className="mt-6 pt-4 w-full flex items-center gap-1.5 text-sm font-semibold"
-            style={{ borderTop: '1px solid #f2ecda', color: '#8a7a1f' }}>
+            style={{ borderTop: '1px solid #eeece7', color: '#8a7a1f' }}>
             Ouvrir toute la to-do <ArrowRight size={14} />
           </button>
         </div>
