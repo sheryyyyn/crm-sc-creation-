@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import ClientDetail from './pages/ClientDetail'
 import Projets from './pages/Projets'
+import BaseClient from './pages/BaseClient'
 import Taches from './pages/Taches'
 import RDV from './pages/RDV'
 import Documents from './pages/Documents'
@@ -46,6 +47,7 @@ export default function App() {
               <Route path="/clients" element={<Clients />} />
               <Route path="/clients/:id" element={<ClientDetail />} />
               <Route path="/projets" element={<Projets />} />
+              <Route path="/base-client" element={<BaseClient />} />
               <Route path="/taches" element={<Taches />} />
               <Route path="/rdv" element={<RDV />} />
               <Route path="/documents" element={<Documents />} />

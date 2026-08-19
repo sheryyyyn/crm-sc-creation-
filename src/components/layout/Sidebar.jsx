@@ -1,10 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, CalendarDays, Handshake, Lock, Settings, X, LogOut,
+  FolderOpen, Users, CalendarDays, Handshake, Lock, X,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
-import { logout } from './LoginGate'
 
 // Entrée seule, sans groupe
 const topItem = { label: 'Dashboard', icon: LayoutDashboard, to: '/' }
@@ -23,6 +22,7 @@ const navCategories = [
       { label: 'Formulaires', icon: ClipboardList, to: '/formulaires' },
       { label: 'Rendez-vous', icon: Calendar, to: '/rdv' },
       { label: 'Projets', icon: FolderOpen, to: '/projets' },
+      { label: 'Base client', icon: Users, to: '/base-client' },
     ],
   },
   {
@@ -35,14 +35,7 @@ const navCategories = [
 
 // Entrée seule, entre deux séparateurs
 const partnerItem = { label: 'Espace partenaire', icon: Handshake, to: '/espace-partenaire' }
-
-const settingsCategory = {
-  label: 'Paramètres',
-  items: [
-    { label: 'Mots de passe', icon: Lock, to: '/mots-de-passe' },
-    { label: 'Paramètres', icon: Settings, to: '/parametres' },
-  ],
-}
+const passwordItem = { label: 'Mots de passe', icon: Lock, to: '/mots-de-passe' }
 
 function NavItem({ label, icon: Icon, to, isActive, onClose, badge }) {
   return (
@@ -129,42 +122,9 @@ export default function Sidebar({ isOpen, onClose }) {
 
         <div className="space-y-0.5">
           <NavItem {...partnerItem} isActive={isPathActive(partnerItem.to)} onClose={onClose} badge={newPartnerCount} />
-        </div>
-
-        {/* Séparateur */}
-        <div className="my-5" style={{ borderTop: '1px solid rgba(253,251,244,.08)' }} />
-
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest px-3 mb-1.5" style={{ color: 'rgba(253,251,244,.32)' }}>{settingsCategory.label}</p>
-          <div className="space-y-0.5">
-            {settingsCategory.items.map(({ label, icon: Icon, to }) => (
-              <NavItem key={label} label={label} icon={Icon} to={to} onClose={onClose} isActive={isPathActive(to)} />
-            ))}
-          </div>
+          <NavItem {...passwordItem} isActive={isPathActive(passwordItem.to)} onClose={onClose} />
         </div>
       </nav>
-
-      {/* Footer */}
-      <div className="px-4 py-4" style={{ borderTop: '1px solid rgba(253,251,244,.08)' }}>
-        <div className="rounded-2xl p-3 flex items-center gap-3" style={{ background: 'rgba(253,251,244,.06)' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: '#b8a508' }}>
-            <span className="text-xs font-bold" style={{ color: '#1b0b09' }}>{(localStorage.getItem('sc-crm-profil') || 'Sheryn')[0]}</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-bold" style={{ color: '#fdfbf4' }}>{localStorage.getItem('sc-crm-profil') || 'Sheryn'}</p>
-            <p className="text-[10px]" style={{ color: 'rgba(253,251,244,.45)' }}>Administratrice</p>
-          </div>
-          <div className="w-2 h-2 bg-emerald-400 rounded-full shadow shadow-emerald-200" />
-        </div>
-        <button
-          onClick={logout}
-          className="mt-2 w-full flex items-center justify-center gap-2 py-2 rounded-xl text-xs font-semibold transition-colors hover:text-red-400"
-          style={{ color: 'rgba(253,251,244,.4)' }}
-        >
-          <LogOut size={13} />
-          Se déconnecter
-        </button>
-      </div>
     </aside>
   )
 }
