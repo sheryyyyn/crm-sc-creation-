@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Video, ClipboardList, Handshake, ArrowRight,
-  CheckSquare, CalendarClock, Calendar, ChevronRight,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
@@ -103,6 +102,99 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
           )
         })}
       </div>
+    </div>
+  )
+}
+
+// ─── Carte to-do compacte pour mobile (aperçu de 2 tâches + lien vers le reste) ──
+function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotification, todayStr, currentProfil, navigate }) {
+  const mine = taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
+  const items = sortTaches(mine, todayStr)
+  const preview = items.slice(0, 2)
+  const remaining = items.length - preview.length
+
+  const getAssocLabel = (t) => {
+    const client = clients.find(c => c.id === t.clientId)
+    if (client) return client.nom
+    const projet = projets.find(p => p.id === t.projetId)
+    return projet?.nom || null
+  }
+
+  const handleDone = (e, t) => {
+    e.stopPropagation()
+    moveTache(t.id, 'termine')
+    if (currentProfil === 'Chainez' && (t.assignee === 'Sheryn' || t.assignee === 'Les deux')) {
+      addNotification({
+        type: 'tache',
+        titre: 'Tâche terminée par Chainez',
+        message: `"${t.titre}" a été marquée comme terminée.`,
+        lien: '/taches',
+      })
+    }
+  }
+
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+      <div className="flex items-center gap-2.5 px-4 py-3.5" style={{ borderBottom: '1px solid #eeece7' }}>
+        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
+          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#1b0b09', color: '#fdfbf4' }}>
+          {profil[0]}
+        </div>
+        <span className="font-display text-[15px] font-bold flex-1" style={{ color: '#1b0b09' }}>
+          To-do {profil === 'Chainez' ? 'Chaïnez' : profil}
+        </span>
+        <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#f5f4f1', color: '#a89b8c' }}>
+          {items.length}
+        </span>
+      </div>
+
+      {preview.length === 0 ? (
+        <p className="text-xs px-4 py-4" style={{ color: '#a89b8c' }}>Aucune tâche</p>
+      ) : (
+        <div>
+          {preview.map(t => {
+            const overdue = t.deadline && t.deadline < todayStr
+            const assoc = getAssocLabel(t)
+            const isUrgent = groupForPriorite(t.priorite) === 'urgentes'
+            return (
+              <div key={t.id} onClick={() => navigate('/taches')}
+                className="flex items-start gap-2.5 px-4 py-3 cursor-pointer active:bg-[#f7f6f3] transition-colors" style={{ borderBottom: '1px solid #eeece7' }}>
+                <button
+                  onClick={(e) => handleDone(e, t)}
+                  className="mt-0.5 w-[16px] h-[16px] rounded-[4px] border-2 flex items-center justify-center flex-shrink-0"
+                  style={{ borderColor: '#d4c9b0', background: '#fff' }}
+                  title="Marquer comme terminée"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-display text-[13px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                    <span className="text-[8px] font-bold uppercase tracking-wide px-1 py-0.5 rounded flex-shrink-0"
+                      style={isUrgent
+                        ? { background: '#f2e4d8', color: '#8a5a2b' }
+                        : { background: '#eeece7', color: '#8a8478' }}>
+                      {isUrgent ? 'Urgent' : 'Secondaire'}
+                    </span>
+                  </div>
+                  <p className="text-[10.5px] mt-0.5 truncate" style={{ color: '#a89b8c' }}>
+                    {assoc || '—'}
+                    {t.deadline && (
+                      <span style={{ color: overdue ? '#8a5a2b' : '#a89b8c' }}>
+                        {' '}· {overdue ? 'En retard · ' : ''}{new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      <button onClick={() => navigate('/taches')}
+        className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-3"
+        style={{ color: '#8a7a1f' }}>
+        {remaining > 0 ? `Voir ${remaining} tâche${remaining > 1 ? 's' : ''} de plus` : 'Ouvrir la to-do'} <ArrowRight size={12} />
+      </button>
     </div>
   )
 }
@@ -222,40 +314,15 @@ export default function Dashboard() {
         </div>
       )}
 
-    {/* ── Mobile : widgets raccourcis (pas de scroll) ── */}
-    <div className="lg:hidden grid grid-cols-2 gap-3">
-      <button onClick={() => navigate('/taches')}
-        className="col-span-2 flex items-center gap-3 p-4 rounded-2xl text-left" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#1b0b09' }}>
-          <CheckSquare size={17} style={{ color: '#fdfbf4' }} />
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>To-do du jour</p>
-          <p className="text-xs" style={{ color: '#a89b8c' }}>{totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''} à faire</p>
-        </div>
-        <ChevronRight size={16} style={{ color: '#a89b8c' }} className="flex-shrink-0" />
-      </button>
-
-      <button onClick={() => navigate('/taches')}
-        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
-          <CalendarClock size={16} style={{ color: '#8a7a1f' }} />
-        </div>
-        <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Échéances</p>
-        <p className="text-xs" style={{ color: '#a89b8c' }}>{allUpcomingEcheances.length} à venir</p>
-      </button>
-
-      <button onClick={() => navigate('/rdv')}
-        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
-        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
-          <Calendar size={16} style={{ color: '#8a7a1f' }} />
-        </div>
-        <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Rendez-vous</p>
-        <p className="text-xs" style={{ color: '#a89b8c' }}>{allUpcomingRDVs.length} à venir</p>
-      </button>
+    {/* ── Mobile : to-do de chacune (aperçu) ── */}
+    <div className="lg:hidden flex flex-col gap-3 mb-5">
+      <MobileTodoCard profil="Sheryn" taches={taches} clients={clients} projets={projets}
+        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
+      <MobileTodoCard profil="Chainez" taches={taches} clients={clients} projets={projets}
+        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
     </div>
 
-    <div className="hidden lg:flex flex-col lg:flex-row gap-6 lg:gap-8">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
       {/* ── Colonne gauche ── */}
       <div className="order-2 lg:order-1 w-full lg:w-[34%] xl:w-[30%] min-w-0 flex flex-col gap-5">
 
@@ -329,8 +396,8 @@ export default function Dashboard() {
 
       </div>
 
-      {/* ── Colonne droite : To-do du jour ── */}
-      <div className="order-1 lg:order-2 w-full lg:flex-1 min-w-0">
+      {/* ── Colonne droite : To-do du jour (desktop uniquement, remplacée par MobileTodoCard sur mobile) ── */}
+      <div className="hidden lg:block order-1 lg:order-2 w-full lg:flex-1 min-w-0">
         <div className="rounded-3xl p-6 sm:p-8 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
           <div className="flex items-center gap-2.5 mb-8">
             <span className="font-display text-xl font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
