@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Video, ClipboardList, Handshake, ArrowRight,
+  Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
@@ -29,8 +29,12 @@ function sortTaches(list, todayStr) {
 
 // ─── Une colonne de to-do (Sheryn ou Chaïnez) ────────────────────────────────
 function TodoColumn({ profil, taches, clients, projets, moveTache, addNotification, todayStr, currentProfil }) {
+  const [openUrgentes, setOpenUrgentes] = useState(true)
+  const [openSecondaires, setOpenSecondaires] = useState(true)
+
   const mine = taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
-  const items = sortTaches(mine, todayStr)
+  const urgentes = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'urgentes'), todayStr)
+  const secondaires = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'secondaires'), todayStr)
 
   const getAssocLabel = (t) => {
     const client = clients.find(c => c.id === t.clientId)
@@ -51,6 +55,61 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
     }
   }
 
+  const Group = ({ title, items, open, setOpen, dark }) => (
+    <div className="mb-3">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wide mb-1.5"
+        style={dark
+          ? { background: '#1b0b09', color: '#fdfbf4' }
+          : { background: '#fcf7cf', color: '#8a7a1f' }}
+      >
+        <span>{title}</span>
+        <span className="flex items-center gap-1.5">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+            style={dark ? { background: 'rgba(253,251,244,.15)' } : { background: 'rgba(138,122,31,.12)' }}>
+            {items.length}
+          </span>
+          {open ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+        </span>
+      </button>
+      {open && (
+        <div className="space-y-1">
+          {items.length === 0 && (
+            <p className="text-xs px-3 py-2" style={{ color: '#a89b8c' }}>Aucune tâche</p>
+          )}
+          {items.map(t => {
+            const overdue = t.deadline && t.deadline < todayStr
+            const assoc = getAssocLabel(t)
+            return (
+              <div key={t.id} className="flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
+                <button
+                  onClick={() => handleDone(t)}
+                  className="mt-0.5 w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
+                  style={{ borderColor: '#d4c9b0', background: '#fff' }}
+                  title="Marquer comme terminée"
+                >
+                  <div className="w-2 h-2 rounded-[2px] opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
+                </button>
+                <div className="flex-1 min-w-0">
+                  <p className="font-display text-[14px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                  <p className="text-[11px] mt-0.5" style={{ color: '#a89b8c' }}>
+                    {assoc || '—'}
+                    {t.deadline && (
+                      <span style={{ color: overdue ? '#8a5a2b' : '#a89b8c' }}>
+                        {' '}· {overdue ? 'En retard · ' : ''}{new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      </span>
+                    )}
+                  </p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 mb-3">
@@ -61,47 +120,8 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
         <span className="text-sm font-bold tracking-wide uppercase" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
       </div>
 
-      <div className="space-y-1">
-        {items.length === 0 && (
-          <p className="text-xs px-3 py-2" style={{ color: '#a89b8c' }}>Aucune tâche</p>
-        )}
-        {items.map(t => {
-          const overdue = t.deadline && t.deadline < todayStr
-          const assoc = getAssocLabel(t)
-          const isUrgent = groupForPriorite(t.priorite) === 'urgentes'
-          return (
-            <div key={t.id} className="flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-[#f7f6f3] transition-colors group">
-              <button
-                onClick={() => handleDone(t)}
-                className="mt-0.5 w-[18px] h-[18px] rounded-[5px] border-2 flex items-center justify-center flex-shrink-0 transition-all hover:scale-110"
-                style={{ borderColor: '#d4c9b0', background: '#fff' }}
-                title="Marquer comme terminée"
-              >
-                <div className="w-2 h-2 rounded-[2px] opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
-              </button>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="font-display text-[14px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
-                  <span className="text-[9px] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded-md flex-shrink-0"
-                    style={isUrgent
-                      ? { background: '#f2e4d8', color: '#8a5a2b' }
-                      : { background: '#eeece7', color: '#8a8478' }}>
-                    {isUrgent ? 'Urgent' : 'Secondaire'}
-                  </span>
-                </div>
-                <p className="text-[11px] mt-0.5" style={{ color: '#a89b8c' }}>
-                  {assoc || '—'}
-                  {t.deadline && (
-                    <span style={{ color: overdue ? '#8a5a2b' : '#a89b8c' }}>
-                      {' '}· {overdue ? 'En retard · ' : ''}{new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                    </span>
-                  )}
-                </p>
-              </div>
-            </div>
-          )
-        })}
-      </div>
+      <Group title="Urgentes" items={urgentes} open={openUrgentes} setOpen={setOpenUrgentes} dark />
+      <Group title="Secondaires" items={secondaires} open={openSecondaires} setOpen={setOpenSecondaires} />
     </div>
   )
 }
