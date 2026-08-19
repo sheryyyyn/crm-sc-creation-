@@ -207,7 +207,7 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
   )
 
   return (
-    <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
       <div className="flex items-center gap-2.5 px-4 py-3.5" style={{ borderBottom: '1px solid #eeece7' }}>
         <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
           style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#1b0b09', color: '#fdfbf4' }}>
@@ -216,7 +216,7 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
         <span className="font-display text-[15px] font-bold flex-1" style={{ color: '#1b0b09' }}>
           To-do {profil === 'Chainez' ? 'Chaïnez' : profil}
         </span>
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#f5f4f1', color: '#a89b8c' }}>
+        <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
           {urgentes.length + secondaires.length}
         </span>
       </div>
