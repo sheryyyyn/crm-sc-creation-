@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Video, ClipboardList, Handshake, ArrowRight,
+  CheckSquare, CalendarClock, Calendar, ChevronRight,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
@@ -117,18 +118,19 @@ export default function Dashboard() {
   const dateLabelCap = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1)
 
   const nowStr = new Date().toISOString()
-  const upcomingRDVs = rdvs.filter(r => {
+  const allUpcomingRDVs = rdvs.filter(r => {
     if (!r.date) return false
     if (r.date > today) return true
     if (r.date < today) return false
     if (!r.heure) return true
     return `${r.date}T${r.heure}` > nowStr.slice(0, 16)
-  }).sort((a, b) => a.date.localeCompare(b.date) || (a.heure || '').localeCompare(b.heure || '')).slice(0, 3)
+  }).sort((a, b) => a.date.localeCompare(b.date) || (a.heure || '').localeCompare(b.heure || ''))
+  const upcomingRDVs = allUpcomingRDVs.slice(0, 3)
 
-  const upcomingEcheances = taches
+  const allUpcomingEcheances = taches
     .filter(t => t.deadline && t.statut !== 'termine')
     .sort((a, b) => a.deadline.localeCompare(b.deadline))
-    .slice(0, 3)
+  const upcomingEcheances = allUpcomingEcheances.slice(0, 3)
 
   const newFormReponses = formReponses.filter(r => !r.lu)
   const newFormCount = newFormReponses.length
@@ -220,7 +222,40 @@ export default function Dashboard() {
         </div>
       )}
 
-    <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+    {/* ── Mobile : widgets raccourcis (pas de scroll) ── */}
+    <div className="lg:hidden grid grid-cols-2 gap-3">
+      <button onClick={() => navigate('/taches')}
+        className="col-span-2 flex items-center gap-3 p-4 rounded-2xl text-left" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#1b0b09' }}>
+          <CheckSquare size={17} style={{ color: '#fdfbf4' }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>To-do du jour</p>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>{totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''} à faire</p>
+        </div>
+        <ChevronRight size={16} style={{ color: '#a89b8c' }} className="flex-shrink-0" />
+      </button>
+
+      <button onClick={() => navigate('/taches')}
+        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
+          <CalendarClock size={16} style={{ color: '#8a7a1f' }} />
+        </div>
+        <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Échéances</p>
+        <p className="text-xs" style={{ color: '#a89b8c' }}>{allUpcomingEcheances.length} à venir</p>
+      </button>
+
+      <button onClick={() => navigate('/rdv')}
+        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
+          <Calendar size={16} style={{ color: '#8a7a1f' }} />
+        </div>
+        <p className="text-sm font-bold" style={{ color: '#1b0b09' }}>Rendez-vous</p>
+        <p className="text-xs" style={{ color: '#a89b8c' }}>{allUpcomingRDVs.length} à venir</p>
+      </button>
+    </div>
+
+    <div className="hidden lg:flex flex-col lg:flex-row gap-6 lg:gap-8">
       {/* ── Colonne gauche ── */}
       <div className="order-2 lg:order-1 w-full lg:w-[34%] xl:w-[30%] min-w-0 flex flex-col gap-5">
 
