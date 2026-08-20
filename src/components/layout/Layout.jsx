@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import NotificationBanner from './NotificationBanner'
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -21,6 +22,7 @@ export default function Layout({ children }) {
         <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
         <main className="flex-1 pt-14 lg:pt-0">
           <div className="p-4 lg:p-8 max-w-screen-2xl">
+            <NotificationBanner />
             {children}
           </div>
         </main>
