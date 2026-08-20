@@ -35,19 +35,19 @@ function sortTachesMobile(list, todayStr) {
 }
 
 // ─── Section repliable Urgentes/Secondaires (vue mobile) ────────────────────────
-function MobileGroup({ title, items, open, setOpen, bg, fg, today, getAssoc, onDone, onOpen }) {
+function MobileGroup({ title, items, open, setOpen, fg, today, getAssoc, onDone, onOpen }) {
   return (
     <div className="mb-4">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl"
-        style={{ background: bg }}
+        className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl bg-white"
+        style={{ border: '1px solid #e7e5e1' }}
       >
         {open ? <ChevronUp size={16} style={{ color: fg }} /> : <ChevronDown size={16} style={{ color: fg }} />}
         <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: fg }}>{title}</span>
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-          style={{ background: 'rgba(255,255,255,.18)', color: fg }}
+          style={{ background: `${fg}1a`, color: fg }}
         >
           {items.length}
         </span>
@@ -259,9 +259,9 @@ export default function Taches() {
         </div>
 
         <MobileGroup title="Urgentes" items={mobileUrgentes} open={openUrgentes} setOpen={setOpenUrgentes}
-          bg="#7a352a" fg="#FDFCF8" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          fg="#a1402d" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
         <MobileGroup title="Secondaires" items={mobileSecondaires} open={openSecondaires} setOpen={setOpenSecondaires}
-          bg="#6b6b68" fg="#FDFCF8" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          fg="#6b6b68" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
 
         <button
           onClick={() => { setForm({ ...emptyTache, assignee: mobileProfil }); setModal(true) }}
