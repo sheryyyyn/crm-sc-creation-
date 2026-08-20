@@ -35,19 +35,19 @@ function sortTachesMobile(list, todayStr) {
 }
 
 // ─── Section repliable Urgentes/Secondaires (vue mobile) ────────────────────────
-function MobileGroup({ title, items, open, setOpen, fg, today, getAssoc, onDone, onOpen }) {
+function MobileGroup({ title, items, open, setOpen, dark, today, getAssoc, onDone, onOpen }) {
   return (
     <div className="mb-4">
       <button
         onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl bg-white"
-        style={{ border: '1px solid #e7e5e1' }}
+        className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl"
+        style={{ background: dark ? '#241512' : '#fcf7cf' }}
       >
-        {open ? <ChevronUp size={16} style={{ color: fg }} /> : <ChevronDown size={16} style={{ color: fg }} />}
-        <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: fg }}>{title}</span>
+        {open ? <ChevronUp size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} /> : <ChevronDown size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} />}
+        <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: dark ? '#FDFCF8' : '#241512' }}>{title}</span>
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-          style={{ background: `${fg}1a`, color: fg }}
+          style={{ background: dark ? 'rgba(253,251,244,.15)' : 'rgba(36,21,18,.08)', color: dark ? '#FDFCF8' : '#241512' }}
         >
           {items.length}
         </span>
@@ -259,9 +259,9 @@ export default function Taches() {
         </div>
 
         <MobileGroup title="Urgentes" items={mobileUrgentes} open={openUrgentes} setOpen={setOpenUrgentes}
-          fg="#a1402d" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          dark today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
         <MobileGroup title="Secondaires" items={mobileSecondaires} open={openSecondaires} setOpen={setOpenSecondaires}
-          fg="#6b6b68" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          dark={false} today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
 
         <button
           onClick={() => { setForm({ ...emptyTache, assignee: mobileProfil }); setModal(true) }}
