@@ -21,7 +21,7 @@ export default function Layout({ children }) {
 
       <div className="lg:flex-1 lg:min-w-0 flex flex-col">
         <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
-        <main className="flex-1 pt-14 lg:pt-0">
+        <main className="flex-1 pt-[calc(56px+env(safe-area-inset-top))] lg:pt-0">
           <div className="p-4 pb-24 lg:p-8 max-w-screen-2xl">
             <NotificationBanner />
             {children}
