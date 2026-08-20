@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
 import NotificationBanner from './NotificationBanner'
+import MobileBottomNav from './MobileBottomNav'
 
 export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -21,12 +22,14 @@ export default function Layout({ children }) {
       <div className="lg:flex-1 lg:min-w-0 flex flex-col">
         <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
         <main className="flex-1 pt-14 lg:pt-0">
-          <div className="p-4 lg:p-8 max-w-screen-2xl">
+          <div className="p-4 pb-24 lg:p-8 max-w-screen-2xl">
             <NotificationBanner />
             {children}
           </div>
         </main>
       </div>
+
+      <MobileBottomNav />
     </div>
   )
 }

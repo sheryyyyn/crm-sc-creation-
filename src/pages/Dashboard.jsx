@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp, Plus, Check,
+  Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp, ChevronRight, Plus, Check,
+  CheckSquare, Clock, Calendar, Instagram, Music2,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
+import { statutBadge } from '../components/ui/Badge'
 
 // ─── Ajout rapide de tâche depuis le Dashboard ────────────────────────────────
 // Réutilise exactement le même store.addTache() et les mêmes valeurs que la page
@@ -213,132 +215,10 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
   )
 }
 
-// ─── Carte to-do mobile : mêmes groupes repliables URGENTES/SECONDAIRES que le desktop ──
-// ─── Carte to-do mobile : une seule carte, onglets Sheryn / Chaïnez ───────────
-function MobileTodoTabs({ taches, clients, projets, moveTache, addNotification, todayStr, currentProfil, navigate, onAddClick, showToast }) {
-  const [activeProfil, setActiveProfil] = useState('Sheryn')
-
-  const mineFor = (profil) => taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
-  const mine = mineFor(activeProfil)
-  const urgentes = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'urgentes'), todayStr)
-  const secondaires = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'secondaires'), todayStr)
-
-  // Total distinct = union des tâches assignées à Sheryn, Chaïnez ou aux deux (sans double-compte)
-  const totalCount = taches.filter(t => t.statut !== 'termine' && (t.assignee === 'Sheryn' || t.assignee === 'Chainez' || t.assignee === 'Les deux')).length
-
-  const getAssocLabel = (t) => {
-    const client = clients.find(c => c.id === t.clientId)
-    if (client) return client.nom
-    const projet = projets.find(p => p.id === t.projetId)
-    return projet?.nom || null
-  }
-
-  const handleDone = (e, t) => {
-    e.stopPropagation()
-    moveTache(t.id, 'termine')
-    if (currentProfil === 'Chainez' && (t.assignee === 'Sheryn' || t.assignee === 'Les deux')) {
-      addNotification({
-        type: 'tache',
-        titre: 'Tâche terminée par Chainez',
-        message: `"${t.titre}" a été marquée comme terminée.`,
-        lien: '/taches',
-      })
-    }
-  }
-
-  const Section = ({ title, items }) => (
-    <div className="mb-4">
-      <p className="text-[11px] font-bold uppercase tracking-wide mb-2" style={{ color: '#a89b8c' }}>{title}</p>
-      {items.length === 0 ? (
-        <p className="text-xs px-0.5" style={{ color: '#a89b8c' }}>Aucune tâche</p>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {items.map(t => {
-            const overdue = t.deadline && t.deadline < todayStr
-            const isToday = t.deadline === todayStr
-            const assoc = getAssocLabel(t)
-            return (
-              <div key={t.id} onClick={() => navigate('/taches')}
-                className="flex items-start gap-3 cursor-pointer active:opacity-70 transition-opacity">
-                <button
-                  onClick={(e) => handleDone(e, t)}
-                  className="mt-0.5 w-[22px] h-[22px] rounded-[6px] border-2 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
-                  style={{ borderColor: '#d4c9b0', background: '#fff' }}
-                  title="Marquer comme terminée"
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-[15px] font-bold truncate" style={{ color: '#241512' }}>{t.titre}</p>
-                  <p className="text-[13px] mt-0.5 truncate" style={{ color: '#a89b8c' }}>
-                    {assoc || '—'}
-                    {t.deadline && (
-                      <span style={{ color: overdue ? '#8a5a2b' : '#a89b8c' }}>
-                        {' '}· {overdue ? 'En retard' : isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                      </span>
-                    )}
-                  </p>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-
-  return (
-    <div className="rounded-3xl p-4" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
-      <div className="flex items-center gap-2 mb-3.5">
-        <span className="font-display text-lg font-bold flex-1" style={{ color: '#241512' }}>TO-DO DU JOUR</span>
-        <span className="text-sm font-semibold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
-          {totalCount}
-        </span>
-        <button
-          onClick={onAddClick}
-          className="flex items-center justify-center rounded-full flex-shrink-0 w-9 h-9 transition-colors active:scale-95"
-          style={{ background: '#241512', color: '#FDFCF8' }}
-          title="Ajouter une tâche"
-        >
-          <Plus size={16} />
-        </button>
-      </div>
-
-      {showToast && (
-        <div className="flex items-center gap-2 mb-3.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold" style={{ background: '#e6f6ee', color: '#1a9a5b' }}>
-          <Check size={15} /> Tâche ajoutée avec succès
-        </div>
-      )}
-
-      <div className="flex p-1 rounded-full mb-4" style={{ background: '#ffffff', border: '1px solid #e7e5e1' }}>
-        {['Sheryn', 'Chainez'].map(p => (
-          <button
-            key={p}
-            onClick={() => setActiveProfil(p)}
-            className="flex-1 text-sm font-bold py-2.5 rounded-full transition-colors"
-            style={activeProfil === p
-              ? { background: '#241512', color: '#FDFCF8' }
-              : { background: 'transparent', color: '#241512' }}
-          >
-            {p === 'Chainez' ? 'Chaïnez' : p}
-          </button>
-        ))}
-      </div>
-
-      <Section title="Urgentes" items={urgentes} />
-      <Section title="Secondaires" items={secondaires} />
-
-      <button onClick={() => navigate('/taches')}
-        className="w-full flex items-center justify-center gap-1.5 text-sm font-semibold pt-3"
-        style={{ color: '#8a7a1f', borderTop: '1px solid #eeece7' }}>
-        Ouvrir la to-do <ArrowRight size={13} />
-      </button>
-    </div>
-  )
-}
-
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { taches, clients, projets, rdvs, formReponses, partenaireItems, moveTache, addTache, addNotification } = useStore()
+  const { taches, clients, projets, rdvs, formReponses, partenaireItems, contenus, moveTache, addTache, addNotification } = useStore()
   const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
 
   const [quickAddOpen, setQuickAddOpen] = useState(false)
@@ -380,6 +260,25 @@ export default function Dashboard() {
   const getAssoc = (t) => getClient(t.clientId)?.nom || projets.find(p => p.id === t.projetId)?.nom || null
 
   const totalTodoCount = taches.filter(t => t.statut !== 'termine' && (t.assignee === 'Sheryn' || t.assignee === 'Chainez' || t.assignee === 'Les deux')).length
+
+  // Projets en cours (mobile) — exclut les projets livrés/annulés, triés par date de
+  // création (le CRM ne suit pas de date de "dernière modification" séparée).
+  const projetsEnCours = projets
+    .filter(p => p.statut !== 'livre' && p.statut !== 'annule')
+    .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
+    .slice(0, 3)
+
+  // Prochains posts de la semaine (mobile) — calendrier éditorial réel, non publiés,
+  // avec une date de publication future ou du jour, triés du plus proche au plus loin.
+  const upcomingContenus = (contenus || [])
+    .filter(c => c.datePublication && c.datePublication >= today && c.statut !== 'publie' && c.statut !== 'archive')
+    .sort((a, b) => a.datePublication.localeCompare(b.datePublication))
+    .slice(0, 3)
+  const jourLabel = (dateStr) => {
+    const d = new Date(dateStr)
+    const label = d.toLocaleDateString('fr-FR', { weekday: 'long' })
+    return label.charAt(0).toUpperCase() + label.slice(1)
+  }
 
   // Rappels RDV : veille, 1h avant, 30 min avant (fonctionnalité conservée, sans bannière dédiée)
   const notifiedRdvs = useRef(new Set())
@@ -423,48 +322,127 @@ export default function Dashboard() {
   return (
     <div>
       {/* Titre — mobile uniquement ici ; sur desktop il vit dans la colonne gauche pour aligner son sommet avec celui de la to-do */}
-      <div className="mb-3 lg:hidden">
-        <h1 className="font-display text-2xl sm:text-[1.7rem] font-bold" style={{ color: '#241512' }}>Dashboard</h1>
-        <p className="text-sm capitalize" style={{ color: '#a89b8c' }}>{dateLabelCap}</p>
+      <div className="mb-4 lg:hidden">
+        <h1 className="font-display font-bold" style={{ color: '#241512', fontSize: '40px', lineHeight: 1.1 }}>Dashboard</h1>
+        <p className="capitalize mt-1" style={{ color: '#a89b8c', fontFamily: 'Inter, sans-serif', fontSize: '16px' }}>{dateLabelCap}</p>
       </div>
 
-      {/* Notifications — au-dessus de la to-do sur mobile (la colonne gauche n'existe pas encore) */}
-      {(newPartnerCount > 0 || newFormCount > 0) && (
+      {/* Notifications — au-dessus de la to-do sur mobile, formulaires puis partenaire, en puce discrète */}
+      {(newFormCount > 0 || newPartnerCount > 0) && (
         <div className="lg:hidden flex flex-col gap-2.5 mb-4">
-          {newPartnerCount > 0 && (
-            <button
-              onClick={() => navigate('/espace-partenaire')}
-              className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-opacity hover:opacity-90"
-              style={{ background: '#241512' }}
-            >
-              <Handshake size={16} style={{ color: '#b8a508' }} className="flex-shrink-0" />
-              <span className="text-sm font-semibold flex-1" style={{ color: '#FDFCF8' }}>
-                {newPartnerCount === 1 ? '1 nouveau projet' : `${newPartnerCount} nouveaux projets`} transmis par {partnerName}
-              </span>
-              <ArrowRight size={14} style={{ color: 'rgba(253,251,244,.5)' }} />
-            </button>
-          )}
           {newFormCount > 0 && (
             <button
               onClick={() => navigate('/formulaires')}
-              className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-opacity hover:opacity-90"
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-left transition-opacity active:opacity-80"
               style={{ background: '#fcf7cf' }}
             >
-              <ClipboardList size={16} style={{ color: '#8a7a1f' }} className="flex-shrink-0" />
-              <span className="text-sm font-semibold flex-1" style={{ color: '#241512' }}>
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#8a5a2b' }} />
+              <span className="text-[15px] font-bold flex-1" style={{ color: '#5A352D' }}>
                 {newFormCount === 1 ? '1 nouveau formulaire' : `${newFormCount} nouveaux formulaires`}
               </span>
-              <ArrowRight size={14} style={{ color: '#8a7a1f' }} />
+            </button>
+          )}
+          {newPartnerCount > 0 && (
+            <button
+              onClick={() => navigate('/espace-partenaire')}
+              className="w-full flex items-center gap-3 px-5 py-4 rounded-2xl text-left transition-opacity active:opacity-80"
+              style={{ background: '#241512' }}
+            >
+              <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#fcf7cf' }} />
+              <span className="text-[15px] font-bold flex-1" style={{ color: '#FDFCF8' }}>
+                {newPartnerCount === 1 ? '1 nouveau projet' : `${newPartnerCount} nouveaux projets`} transmis par {partnerName}
+              </span>
             </button>
           )}
         </div>
       )}
 
-    {/* ── Mobile : to-do avec onglets Sheryn / Chaïnez ── */}
-    <div className="lg:hidden mb-5">
-      <MobileTodoTabs taches={taches} clients={clients} projets={projets}
-        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate}
-        onAddClick={() => setQuickAddOpen(true)} showToast={taskAddedToast} />
+    {/* ── Mobile : widgets raccourcis (pas de scroll) ── */}
+    <div className="lg:hidden grid grid-cols-2 gap-3 mb-5">
+      <button onClick={() => navigate('/taches')}
+        className="col-span-2 flex items-center gap-3 p-4 rounded-2xl text-left" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: '#241512' }}>
+          <CheckSquare size={17} style={{ color: '#FDFCF8' }} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p style={{ fontFamily: 'Inter, sans-serif', fontSize: '14.5px', fontWeight: 800, textTransform: 'uppercase', color: '#5A352D', letterSpacing: '0.02em', lineHeight: 1.2 }}>TO-DO DU JOUR</p>
+          <p className="text-xs mt-1" style={{ color: '#a89b8c' }}>{totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''}</p>
+        </div>
+        <ChevronRight size={16} style={{ color: '#a89b8c' }} className="flex-shrink-0" />
+      </button>
+
+      <button onClick={() => navigate('/taches')}
+        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
+          <Clock size={16} style={{ color: '#8a7a1f' }} />
+        </div>
+        <p className="text-[16px] font-bold" style={{ color: '#241512' }}>Échéances</p>
+        <p className="text-[13px]" style={{ color: '#a89b8c' }}>{allUpcomingEcheances.length} à venir</p>
+      </button>
+
+      <button onClick={() => navigate('/rdv')}
+        className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
+          <Calendar size={16} style={{ color: '#8a7a1f' }} />
+        </div>
+        <p className="text-[16px] font-bold" style={{ color: '#241512' }}>Rendez-vous</p>
+        <p className="text-[13px]" style={{ color: '#a89b8c' }}>{allUpcomingRDVs.length} à venir</p>
+      </button>
+    </div>
+
+    {/* Projets en cours (mobile) */}
+    <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
+      <p className="font-display text-[21px] font-bold mb-4" style={{ color: '#241512' }}>Projets en cours</p>
+      {projetsEnCours.length === 0 ? (
+        <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun projet en cours</p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {projetsEnCours.map(p => (
+            <div key={p.id}>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
+                <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
+              </div>
+              <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
+                <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <button onClick={() => navigate('/projets')}
+        className="w-full mt-5 py-3 rounded-xl text-sm font-bold text-center"
+        style={{ background: '#f5f4f1', color: '#241512', border: '1px solid #e7e5e1' }}>
+        Voir tous les projets
+      </button>
+    </div>
+
+    {/* Prochains posts de la semaine (mobile) */}
+    <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
+      <p className="font-display text-[21px] font-bold mb-4" style={{ color: '#241512' }}>Prochains posts de la semaine</p>
+      {upcomingContenus.length === 0 ? (
+        <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun post prévu cette semaine</p>
+      ) : (
+        <div className="flex flex-col gap-2.5">
+          {upcomingContenus.map(c => {
+            const Icon = c.plateforme === 'Instagram' ? Instagram : Music2
+            return (
+              <button key={c.id} onClick={() => navigate('/calendrier-editorial')}
+                className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left" style={{ background: '#fcf7cf' }}>
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff' }}>
+                  <Icon size={15} style={{ color: '#8a7a1f' }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{c.titre}</p>
+                  <p className="text-[13px] truncate" style={{ color: '#a89b8c' }}>
+                    {c.client || 'SC Création'} · {jourLabel(c.datePublication)}
+                  </p>
+                </div>
+              </button>
+            )
+          })}
+        </div>
+      )}
     </div>
 
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
@@ -509,8 +487,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Prochaines échéances */}
-        <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ border: '1px solid #e7e5e1' }}>
+        {/* Prochaines échéances — desktop uniquement (raccourci équivalent sur mobile) */}
+        <div className="hidden lg:flex bg-white rounded-2xl overflow-hidden flex-col" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-7 pt-6 pb-2">
             <span className="font-display text-lg font-bold" style={{ color: '#241512' }}>Prochaines échéances</span>
           </div>
@@ -550,8 +528,8 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Prochains rendez-vous */}
-        <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ border: '1px solid #e7e5e1' }}>
+        {/* Prochains rendez-vous — desktop uniquement (raccourci équivalent sur mobile) */}
+        <div className="hidden lg:flex bg-white rounded-2xl overflow-hidden flex-col" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-7 pt-6 pb-2">
             <span className="font-display text-lg font-bold" style={{ color: '#241512' }}>Prochains rendez-vous</span>
           </div>
