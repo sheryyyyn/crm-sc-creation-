@@ -371,7 +371,7 @@ export default function Dashboard() {
         <ChevronRight size={16} style={{ color: '#a89b8c' }} className="flex-shrink-0" />
       </button>
 
-      <button onClick={() => navigate('/taches')}
+      <button onClick={() => navigate('/echeances')}
         className="flex flex-col gap-2 p-4 rounded-2xl text-left bg-white" style={{ border: '1px solid #e7e5e1' }}>
         <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#fcf7cf' }}>
           <Clock size={16} style={{ color: '#8a7a1f' }} />
@@ -501,7 +501,7 @@ export default function Dashboard() {
                 const isToday = t.deadline === today
                 const jours = Math.round((new Date(t.deadline) - new Date(today)) / 86400000)
                 return (
-                  <div key={t.id} onClick={() => navigate('/taches')}
+                  <div key={t.id} onClick={() => navigate('/echeances')}
                     className="flex items-start gap-3.5 py-3.5 cursor-pointer">
                     <div className="flex flex-col items-center pt-2 flex-shrink-0">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ background: '#8a5a2b' }} />

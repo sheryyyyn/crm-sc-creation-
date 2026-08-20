@@ -13,7 +13,7 @@ const navCategories = [
     label: 'Organisation',
     items: [
       { label: 'To-do', icon: CheckSquare, to: '/taches' },
-      { label: 'Échéances', icon: CalendarClock, to: '/taches' },
+      { label: 'Échéances', icon: CalendarClock, to: '/echeances' },
     ],
   },
   {
