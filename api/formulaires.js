@@ -99,7 +99,7 @@ module.exports = async function handler(req, res) {
       id: generateId('t'),
       titre: `Répondre au formulaire de ${reponse.nomEntreprise}`,
       description: `Formulaire reçu le ${now.toLocaleDateString('fr-FR')} — Budget : ${budget || '—'}`,
-      assignee: 'Les deux',
+      assignee: 'Chainez',
       priorite: 'haute',
       statut: 'a_faire',
       clientId: '',

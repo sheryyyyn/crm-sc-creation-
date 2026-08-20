@@ -236,7 +236,7 @@ const useStore = create((set, get) => ({
       id: generateId('t'),
       titre: `Répondre au formulaire de ${data.nomEntreprise || 'nouveau prospect'}`,
       description: `Formulaire reçu le ${new Date().toLocaleDateString('fr-FR')} — Budget : ${data.budget || '—'}`,
-      assignee: 'Les deux',
+      assignee: 'Chainez',
       priorite: 'haute',
       statut: 'a_faire',
       clientId: '',

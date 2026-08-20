@@ -750,14 +750,6 @@ export default function Formulaires() {
 
   const toggle = (id) => setOpenId(prev => prev === id ? null : id)
 
-  // Assignée = celle du tâche auto-créée pour ce formulaire (src/store/useStore.js
-  // → addFormReponse), qui peut avoir été réassignée depuis la page To-do.
-  const getAssignee = (rep) => {
-    const t = taches.find(t => t.formReponseId === rep.id)
-    if (!t) return null
-    return t.assignee === 'Chainez' ? 'Chaïnez' : t.assignee === 'Les deux' ? 'Communes' : t.assignee
-  }
-
   const openDetail = (rep) => {
     if (!rep.lu) markFormReponseRead(rep.id)
     setDetailId(rep.id)
@@ -830,36 +822,32 @@ export default function Formulaires() {
               </div>
             ) : (
               <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
-                <div className="grid px-7 py-3.5" style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr .8fr', borderBottom: '1px solid #eeece7' }}>
-                  {['Date', 'Marque', 'Type', 'Budget', 'Statut', 'Assigné'].map(h => (
+                <div className="grid px-7 py-3.5" style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr', borderBottom: '1px solid #eeece7' }}>
+                  {['Date', 'Marque', 'Type', 'Budget', 'Statut'].map(h => (
                     <span key={h} className="text-xs font-bold uppercase tracking-wide" style={{ color: '#a89b8c' }}>{h}</span>
                   ))}
                 </div>
-                {sorted.map(rep => {
-                  const assignee = getAssignee(rep)
-                  return (
-                    <div
-                      key={rep.id}
-                      onClick={() => openDetail(rep)}
-                      className="grid items-center px-7 py-4 cursor-pointer hover:bg-[#faf9f6] transition-colors"
-                      style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr .8fr', borderBottom: '1px solid #f0eee9' }}
-                    >
-                      <span className="text-sm" style={{ color: '#a89b8c' }}>
-                        {new Date(rep.horodateur).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                {sorted.map(rep => (
+                  <div
+                    key={rep.id}
+                    onClick={() => openDetail(rep)}
+                    className="grid items-center px-7 py-4 cursor-pointer hover:bg-[#faf9f6] transition-colors"
+                    style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr', borderBottom: '1px solid #f0eee9' }}
+                  >
+                    <span className="text-sm" style={{ color: '#a89b8c' }}>
+                      {new Date(rep.horodateur).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </span>
+                    <span className="text-sm font-bold truncate pr-2" style={{ color: '#241512' }}>{rep.nomEntreprise || '—'}</span>
+                    <span className="text-sm truncate pr-2" style={{ color: '#241512' }}>{rep.budget || '—'}</span>
+                    <span className="text-sm" style={{ color: '#a89b8c' }}>{BUDGET_INDICATIF[rep.budget] || '—'}</span>
+                    <span>
+                      <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                        style={rep.lu ? { background: '#f5f4f1', color: '#241512' } : { background: '#f5e6e3', color: '#a1402d' }}>
+                        {rep.lu ? 'Lu' : 'Nouveau'}
                       </span>
-                      <span className="text-sm font-bold truncate pr-2" style={{ color: '#241512' }}>{rep.nomEntreprise || '—'}</span>
-                      <span className="text-sm truncate pr-2" style={{ color: '#241512' }}>{rep.budget || '—'}</span>
-                      <span className="text-sm" style={{ color: '#a89b8c' }}>{BUDGET_INDICATIF[rep.budget] || '—'}</span>
-                      <span>
-                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
-                          style={rep.lu ? { background: '#f5f4f1', color: '#241512' } : { background: '#f5e6e3', color: '#a1402d' }}>
-                          {rep.lu ? 'Lu' : 'Nouveau'}
-                        </span>
-                      </span>
-                      <span className="text-sm truncate" style={{ color: assignee ? '#241512' : '#a89b8c' }}>{assignee || '—'}</span>
-                    </div>
-                  )
-                })}
+                    </span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
