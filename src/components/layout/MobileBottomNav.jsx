@@ -20,7 +20,7 @@ export default function MobileBottomNav() {
   return (
     <nav
       className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex"
-      style={{ background: '#241512', borderTop: '1px solid rgba(253,251,244,.08)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
+      style={{ background: '#241512', borderTop: '1px solid rgba(253,251,244,.08)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 6px)' }}
     >
       {ITEMS.map(({ label, to, icon: Icon }) => {
         const active = isActive(to)
