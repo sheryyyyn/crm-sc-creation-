@@ -20,7 +20,7 @@ export default function MobileBottomNav() {
   return (
     <nav
       className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex bg-white"
-      style={{ borderTop: '1px solid #eeece7', paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ borderTop: '1px solid #eeece7', paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
     >
       {ITEMS.map(({ label, to, icon: Icon }) => {
         const active = isActive(to)
@@ -29,7 +29,7 @@ export default function MobileBottomNav() {
           <NavLink
             key={to}
             to={to}
-            className="flex-1 flex flex-col items-center justify-center gap-1 py-2.5 relative"
+            className="flex-1 flex flex-col items-center justify-center gap-1 pt-2.5 relative"
           >
             <div className="relative">
               <Icon size={20} style={{ color }} strokeWidth={active ? 2.4 : 2} />
