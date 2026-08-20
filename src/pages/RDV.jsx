@@ -903,10 +903,20 @@ export default function RDV() {
                           <MessageSquare size={13} /> Questions
                         </button>
                       )}
-                      {r.lienMeet && (
-                        <a href={r.lienMeet} target="_blank" rel="noreferrer" className="btn-primary text-xs py-1.5">
+                      {r.lienMeet ? (
+                        <a href={r.lienMeet} target="_blank" rel="noreferrer"
+                          className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
+                          style={{ background: '#111827' }}>
                           <Video size={13} /> Rejoindre
                         </a>
+                      ) : (
+                        <span
+                          className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg cursor-not-allowed"
+                          style={{ background: '#e5e7eb', color: '#9ca3af' }}
+                          title="Aucun lien de visio renseigné"
+                        >
+                          <Video size={13} /> Rejoindre
+                        </span>
                       )}
                       <button onClick={() => openEdit(r)} className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-100"><Edit size={15} /></button>
                       <button onClick={() => { if (confirm('Supprimer ce RDV ?')) deleteRDV(r.id) }} className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-100"><Trash2 size={15} /></button>
