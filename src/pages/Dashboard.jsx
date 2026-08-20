@@ -490,12 +490,12 @@ export default function Dashboard() {
         )}
 
         {/* Prochaines échéances */}
-        <div className="bg-white rounded-2xl overflow-hidden flex flex-col justify-center" style={{ border: '1px solid #e7e5e1', minHeight: '200px' }}>
+        <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-7 pt-6 pb-2">
             <span className="font-display text-lg font-bold" style={{ color: '#241512' }}>Prochaines échéances</span>
           </div>
           {upcomingEcheances.length === 0 ? (
-            <p className="text-sm text-center py-8" style={{ color: '#a89b8c' }}>Aucune échéance à venir</p>
+            <p className="text-sm text-center px-7 pt-1 pb-6" style={{ color: '#a89b8c' }}>Aucune échéance à venir</p>
           ) : (
             <div className="px-7 pb-6 pt-2">
               {upcomingEcheances.map((t, i) => {
@@ -531,12 +531,12 @@ export default function Dashboard() {
         </div>
 
         {/* Prochains rendez-vous */}
-        <div className="bg-white rounded-2xl overflow-hidden flex flex-col justify-center" style={{ border: '1px solid #e7e5e1', minHeight: '200px' }}>
+        <div className="bg-white rounded-2xl overflow-hidden flex flex-col" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-7 pt-6 pb-2">
             <span className="font-display text-lg font-bold" style={{ color: '#241512' }}>Prochains rendez-vous</span>
           </div>
           {upcomingRDVs.length === 0 ? (
-            <p className="text-sm text-center py-8" style={{ color: '#a89b8c' }}>Aucun rendez-vous à venir</p>
+            <p className="text-sm text-center px-7 pt-1 pb-6" style={{ color: '#a89b8c' }}>Aucun rendez-vous à venir</p>
           ) : (
             <div className="px-7 pb-6 pt-2 flex flex-col gap-3.5">
               {upcomingRDVs.map(r => {
