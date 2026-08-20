@@ -1,26 +1,32 @@
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js')
-importScripts('https://www.gstatic.com/firebasejs/10.7.1/firebase-messaging-compat.js')
+// Service worker de notifications push.
+// Gère à la fois les push FCM (Android/Chrome) et les push web natifs
+// (iOS/Safari, envoyés directement via le protocole Web Push standard)
+// avec un seul et même listener générique 'push' — plus fiable que le
+// helper firebase-messaging-compat qui ne couvre que le format FCM.
 
-firebase.initializeApp({
-  apiKey: "AIzaSyB0EZsUfj2rAw4UZm9wv_0m09lYwc2F_X0",
-  authDomain: "sccreation-b6aa0.firebaseapp.com",
-  projectId: "sccreation-b6aa0",
-  storageBucket: "sccreation-b6aa0.firebasestorage.app",
-  messagingSenderId: "32364190871",
-  appId: "1:32364190871:web:42125ce2b67eac6fd19dd2"
-})
+self.addEventListener('push', (event) => {
+  let payload = {}
+  try {
+    payload = event.data ? event.data.json() : {}
+  } catch (err) {
+    payload = {}
+  }
 
-const messaging = firebase.messaging()
+  const notif = payload.notification || payload
+  const title = notif.title || 'SC Création'
+  const body = notif.body || ''
+  const icon = notif.icon || '/logo.jpg'
+  const url = payload.data?.url || payload.fcmOptions?.link || payload.url || '/'
 
-messaging.onBackgroundMessage((payload) => {
-  const { title, body, icon } = payload.notification || {}
-  self.registration.showNotification(title || 'SC Création', {
-    body: body || '',
-    icon: icon || '/logo.jpg',
-    badge: '/logo.jpg',
-    vibrate: [200, 100, 200],
-    data: payload.data || {},
-  })
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon,
+      badge: '/logo.jpg',
+      vibrate: [200, 100, 200],
+      data: { url },
+    })
+  )
 })
 
 self.addEventListener('notificationclick', (event) => {

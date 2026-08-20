@@ -14,6 +14,19 @@ function isApple() {
   return /iPhone|iPad|iPod|Mac/i.test(navigator.userAgent) && /Safari/i.test(navigator.userAgent)
 }
 
+// La Push API attend applicationServerKey en Uint8Array (BufferSource) — passer
+// directement la chaîne base64url échoue silencieusement sur Safari/iOS.
+function urlB64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
+  const rawData = atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
+  for (let i = 0; i < rawData.length; i++) {
+    outputArray[i] = rawData.charCodeAt(i)
+  }
+  return outputArray
+}
+
 // Enregistrement Web Push natif (iOS Safari PWA)
 async function registerNativeWebPush(profil) {
   try {
@@ -22,7 +35,7 @@ async function registerNativeWebPush(profil) {
 
     const sub = await swReg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: VAPID_PUBLIC_KEY,
+      applicationServerKey: urlB64ToUint8Array(VAPID_PUBLIC_KEY),
     })
 
     const subJson = sub.toJSON()
