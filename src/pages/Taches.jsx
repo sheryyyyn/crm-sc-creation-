@@ -1,8 +1,7 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, List, Columns, Check, X, Trash2, Edit, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, X, ChevronLeft, ChevronDown, ChevronUp, Search } from 'lucide-react'
 import useStore from '../store/useStore'
-import { statutBadge, prioriteBadge, assigneeBadge } from '../components/ui/Badge'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 
 const COLUMNS = [
@@ -95,31 +94,98 @@ function MobileGroup({ title, items, open, setOpen, bg, fg, today, getAssoc, onD
   )
 }
 
+// ─── Section repliable Urgentes/Secondaires (vue desktop) ───────────────────────
+function DesktopGroup({ title, titleColor, items, open, setOpen, today, getAssoc, onDone, onOpen, onDoneAll, assigneeLabel }) {
+  return (
+    <div className="bg-white rounded-2xl mb-6 overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+      <div className="flex items-center gap-3 px-6 py-4" style={{ borderBottom: open ? '1px solid #eeece7' : 'none' }}>
+        <button
+          onClick={() => onDoneAll()}
+          className="w-[18px] h-[18px] rounded-[6px] border-2 flex-shrink-0"
+          style={{ borderColor: '#d4c9b0' }}
+          title="Tout marquer comme terminé"
+        />
+        <button onClick={() => setOpen(o => !o)} className="flex items-center gap-2 flex-1 text-left">
+          <span className="text-sm font-bold uppercase tracking-wide" style={{ color: titleColor, fontFamily: 'Inter, sans-serif' }}>{title}</span>
+        </button>
+        <span className="text-sm" style={{ color: '#a89b8c' }}>{items.length}</span>
+        <button onClick={() => setOpen(o => !o)}>
+          {open ? <ChevronUp size={16} style={{ color: '#a89b8c' }} /> : <ChevronDown size={16} style={{ color: '#a89b8c' }} />}
+        </button>
+      </div>
+      {open && (
+        items.length === 0 ? (
+          <p className="text-sm px-6 py-6" style={{ color: '#a89b8c' }}>Aucune tâche</p>
+        ) : (
+          items.map((t, i) => {
+            const overdue = t.deadline && t.deadline < today
+            const isToday = t.deadline === today
+            const assoc = getAssoc(t)
+            return (
+              <div
+                key={t.id}
+                onClick={() => onOpen(t)}
+                className="flex items-center gap-4 px-6 py-4 cursor-pointer hover:bg-[#faf9f6] transition-colors"
+                style={i > 0 ? { borderTop: '1px solid #f0eee9' } : undefined}
+              >
+                <button
+                  onClick={(e) => { e.stopPropagation(); onDone(t) }}
+                  className="w-[18px] h-[18px] rounded-[5px] border-2 flex-shrink-0 transition-transform hover:scale-110"
+                  style={{ borderColor: '#d4c9b0', background: '#fff' }}
+                  title="Marquer comme terminée"
+                />
+                <div className="flex-1 min-w-0">
+                  <p className="text-[15px] font-semibold" style={{ color: '#241512' }}>{t.titre}</p>
+                  <div className="flex items-center flex-wrap gap-2 mt-1.5">
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#f5f4f1', color: '#241512' }}>
+                      {assigneeLabel(t.assignee)}
+                    </span>
+                    {assoc && <span className="text-xs" style={{ color: '#a89b8c' }}>{assoc}</span>}
+                    {t.deadline && (
+                      <span className="text-xs font-bold" style={{ color: overdue ? '#a1402d' : isToday ? '#a1402d' : '#a89b8c' }}>
+                        {overdue ? 'En retard · ' : isToday ? "Aujourd'hui · " : ''}
+                        {new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <span className="text-xs font-semibold px-3 py-1.5 rounded-full flex-shrink-0" style={{ background: '#fcf7cf', color: '#8a7a1f' }}>
+                  {statutLabel(t.statut)}
+                </span>
+              </div>
+            )
+          })
+        )
+      )}
+    </div>
+  )
+}
+
+function statutLabel(statut) {
+  const found = COLUMNS.find(c => c.id === statut)
+  return found ? found.label : statut
+}
+
 export default function Taches() {
   const navigate = useNavigate()
   const { taches, clients, projets, addTache, updateTache, deleteTache, moveTache } = useStore()
-  const [view, setView] = useState('kanban')
   const [modal, setModal] = useState(false)
   const [editModal, setEditModal] = useState(null)
   const [form, setForm] = useState(emptyTache)
   const [editForm, setEditForm] = useState(null)
-  const [filterAssignee, setFilterAssignee] = useState('tous')
-  const [filterPriorite, setFilterPriorite] = useState('tous')
-  const [dragId, setDragId] = useState(null)
   const [mobileProfil, setMobileProfil] = useState('Sheryn')
   const [openUrgentes, setOpenUrgentes] = useState(true)
   const [openSecondaires, setOpenSecondaires] = useState(true)
+  const [desktopWho, setDesktopWho] = useState('Toutes')
+  const [desktopSearch, setDesktopSearch] = useState('')
+  const [desktopProjetFilter, setDesktopProjetFilter] = useState('tous')
+  const [desktopOpenUrgentes, setDesktopOpenUrgentes] = useState(true)
+  const [desktopOpenSecondaires, setDesktopOpenSecondaires] = useState(true)
 
   const today = new Date().toISOString().split('T')[0]
   const getClient = (id) => clients.find(c => c.id === id)
   const getProjets = (clientId) => projets.filter(p => p.clientId === clientId)
   const getAssoc = (t) => getClient(t.clientId)?.nom || projets.find(p => p.id === t.projetId)?.nom || null
-
-  const filtered = taches.filter(t => {
-    const a = filterAssignee === 'tous' || t.assignee === filterAssignee
-    const p = filterPriorite === 'tous' || t.priorite === filterPriorite
-    return a && p
-  })
 
   // ── Vue mobile : tâches groupées par personne puis par priorité ──
   const mineFor = (profil) => taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
@@ -129,6 +195,25 @@ export default function Taches() {
   const mobileUrgentes = sortTachesMobile(mobileMine.filter(t => groupForPrioriteMobile(t.priorite) === 'urgentes'), today)
   const mobileSecondaires = sortTachesMobile(mobileMine.filter(t => groupForPrioriteMobile(t.priorite) === 'secondaires'), today)
   const handleMobileDone = (t) => moveTache(t.id, 'termine')
+
+  // ── Vue desktop : mêmes tâches, groupées globalement urgentes/secondaires ──
+  const assigneeLabelDesktop = (a) => (a === 'Chainez' ? 'Chaïnez' : a === 'Les deux' ? 'Communes' : a)
+  const desktopFiltered = taches.filter(t => {
+    if (t.statut === 'termine') return false
+    if (desktopWho === 'Sheryn' && t.assignee !== 'Sheryn') return false
+    if (desktopWho === 'Chainez' && t.assignee !== 'Chainez') return false
+    if (desktopWho === 'Communes' && t.assignee !== 'Les deux') return false
+    if (desktopProjetFilter !== 'tous' && t.projetId !== desktopProjetFilter) return false
+    if (desktopSearch.trim()) {
+      const q = desktopSearch.trim().toLowerCase()
+      const assoc = (getAssoc(t) || '').toLowerCase()
+      if (!t.titre.toLowerCase().includes(q) && !assoc.includes(q)) return false
+    }
+    return true
+  })
+  const desktopUrgentes = sortTachesMobile(desktopFiltered.filter(t => groupForPrioriteMobile(t.priorite) === 'urgentes'), today)
+  const desktopSecondaires = sortTachesMobile(desktopFiltered.filter(t => groupForPrioriteMobile(t.priorite) === 'secondaires'), today)
+  const handleDoneAllDesktop = (items) => { items.forEach(t => moveTache(t.id, 'termine')) }
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -146,65 +231,6 @@ export default function Taches() {
   function openEdit(t) {
     setEditForm({ ...t })
     setEditModal(t.id)
-  }
-
-  function handleDragStart(e, id) {
-    setDragId(id)
-    e.dataTransfer.effectAllowed = 'move'
-  }
-
-  function handleDragOver(e) {
-    e.preventDefault()
-    e.dataTransfer.dropEffect = 'move'
-  }
-
-  function handleDrop(e, colId) {
-    e.preventDefault()
-    if (dragId && dragId !== colId) {
-      moveTache(dragId, colId)
-    }
-    setDragId(null)
-  }
-
-  function TacheCard({ t }) {
-    const client = getClient(t.clientId)
-    const isLate = t.deadline && t.deadline < today && t.statut !== 'termine'
-    return (
-      <div
-        draggable
-        onDragStart={e => handleDragStart(e, t.id)}
-        className="kanban-card group"
-      >
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <p className="text-sm font-medium text-gray-800 leading-snug flex-1">{t.titre}</p>
-          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={() => openEdit(t)} className="p-1 text-gray-400 hover:text-indigo-600"><Edit size={12} /></button>
-            <button onClick={() => { if (confirm('Supprimer ?')) deleteTache(t.id) }} className="p-1 text-gray-400 hover:text-red-500"><Trash2 size={12} /></button>
-          </div>
-        </div>
-        {client && <p className="text-xs text-gray-400 mb-2">{client.nom}</p>}
-        <div className="flex flex-wrap gap-1 mb-2">
-          {prioriteBadge(t.priorite)}
-          {assigneeBadge(t.assignee)}
-        </div>
-        {t.deadline && (
-          <p className={`text-xs ${isLate ? 'text-red-600 font-semibold' : 'text-gray-400'}`}>
-            {isLate ? '⚠ ' : ''}📅 {new Date(t.deadline).toLocaleDateString('fr-FR')}
-          </p>
-        )}
-        {t.checklist?.length > 0 && (
-          <div className="mt-2 pt-2 border-t border-gray-100">
-            <div className="flex items-center justify-between text-xs text-gray-400">
-              <span>Checklist</span>
-              <span>{t.checklist.filter(c => c.fait).length}/{t.checklist.length}</span>
-            </div>
-            <div className="w-full bg-gray-100 rounded h-1 mt-1">
-              <div className="bg-indigo-400 h-1 rounded" style={{ width: `${t.checklist.length ? (t.checklist.filter(c => c.fait).length / t.checklist.length) * 100 : 0}%` }} />
-            </div>
-          </div>
-        )}
-      </div>
-    )
   }
 
   return (
@@ -267,137 +293,70 @@ export default function Taches() {
         </button>
       </div>
 
-      {/* ── Desktop : kanban / liste inchangés ── */}
+      {/* ── Desktop : to-do repensée, mêmes typos que le mobile ── */}
       <div className="hidden lg:block">
-      <div className="page-header">
-        <div>
-          <h1 className="page-title">Tâches</h1>
-          <p className="text-sm text-gray-500 mt-1">{taches.length} tâche{taches.length > 1 ? 's' : ''} au total</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button onClick={() => setView('kanban')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'kanban' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
-              <Columns size={14} /> Kanban
-            </button>
-            <button onClick={() => setView('liste')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'liste' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
-              <List size={14} /> Liste
-            </button>
+        <div className="flex items-start justify-between mb-6">
+          <div>
+            <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>To-do</h1>
+            <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>Toutes les tâches de l'agence</p>
           </div>
-          <button className="btn-primary" onClick={() => setModal(true)}>
+          <button
+            onClick={() => { setForm(emptyTache); setModal(true) }}
+            className="flex items-center gap-2 px-5 py-3 rounded-full font-bold text-sm transition-colors"
+            style={{ background: '#241512', color: '#FDFCF8' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#3a2620'}
+            onMouseLeave={e => e.currentTarget.style.background = '#241512'}
+          >
             <Plus size={16} /> Nouvelle tâche
           </button>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <select className="select w-auto text-xs" value={filterAssignee} onChange={e => setFilterAssignee(e.target.value)}>
-          <option value="tous">Toutes assignées</option>
-          <option value="Sheryn">Sheryn</option>
-          <option value="Chainez">Chainez</option>
-          <option value="Les deux">Les deux</option>
-        </select>
-        <select className="select w-auto text-xs" value={filterPriorite} onChange={e => setFilterPriorite(e.target.value)}>
-          <option value="tous">Toutes priorités</option>
-          <option value="urgente">Urgente</option>
-          <option value="haute">Haute</option>
-          <option value="moyenne">Moyenne</option>
-          <option value="basse">Basse</option>
-        </select>
-        <div className="hidden sm:flex items-center gap-3 ml-2 text-xs text-gray-500">
-          {COLUMNS.map(col => (
-            <span key={col.id} className="flex items-center gap-1.5">
-              <span className={`w-2 h-2 rounded-full ${col.color}`} />
-              {filtered.filter(t => t.statut === col.id).length} {col.label.toLowerCase()}
-            </span>
-          ))}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="flex-1 relative">
+            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#a89b8c' }} />
+            <input
+              value={desktopSearch}
+              onChange={e => setDesktopSearch(e.target.value)}
+              placeholder="Rechercher..."
+              className="w-full pl-11 pr-4 py-3 rounded-full text-sm"
+              style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
+            />
+          </div>
+          <select
+            value={desktopProjetFilter}
+            onChange={e => setDesktopProjetFilter(e.target.value)}
+            className="px-4 py-3 rounded-full text-sm flex-shrink-0"
+            style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
+          >
+            <option value="tous">Tous les projets</option>
+            {projets.map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
+          </select>
         </div>
-      </div>
 
-      {/* Kanban view */}
-      {view === 'kanban' && (
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {COLUMNS.map(col => {
-            const colTaches = filtered.filter(t => t.statut === col.id)
+        <div className="flex items-center gap-2 mb-6">
+          {['Toutes', 'Sheryn', 'Chainez', 'Communes'].map(w => {
+            const active = desktopWho === w
             return (
-              <div
-                key={col.id}
-                className="kanban-col w-72 sm:w-64 flex-shrink-0"
-                onDragOver={handleDragOver}
-                onDrop={e => handleDrop(e, col.id)}
+              <button
+                key={w}
+                onClick={() => setDesktopWho(w)}
+                className="px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
+                style={active ? { background: '#241512', color: '#FDFCF8' } : { background: '#f5f4f1', color: '#241512' }}
               >
-                <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${col.color}`} />
-                    <span className="text-xs font-semibold text-gray-700">{col.label}</span>
-                  </div>
-                  <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full font-medium">{colTaches.length}</span>
-                </div>
-                <div className="p-2 space-y-2 flex-1">
-                  {colTaches.map(t => <TacheCard key={t.id} t={t} />)}
-                  <button
-                    onClick={() => { setForm({ ...emptyTache, statut: col.id }); setModal(true) }}
-                    className="w-full text-xs text-gray-400 hover:text-gray-600 hover:bg-gray-100 py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
-                  >
-                    <Plus size={12} /> Ajouter
-                  </button>
-                </div>
-              </div>
+                {w === 'Chainez' ? 'Chaïnez' : w}
+              </button>
             )
           })}
         </div>
-      )}
 
-      {/* Liste view */}
-      {view === 'liste' && (
-        <div className="card overflow-hidden">
-          <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px]">
-            <thead>
-              <tr>
-                <th className="table-header">Tâche</th>
-                <th className="table-header">Client</th>
-                <th className="table-header">Assignée</th>
-                <th className="table-header">Priorité</th>
-                <th className="table-header">Deadline</th>
-                <th className="table-header">Statut</th>
-                <th className="table-header w-16"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 && <tr><td colSpan={7} className="text-center py-10 text-gray-400 text-sm">Aucune tâche</td></tr>}
-              {filtered.map(t => {
-                const client = getClient(t.clientId)
-                const isLate = t.deadline && t.deadline < today && t.statut !== 'termine'
-                return (
-                  <tr key={t.id} className="table-row">
-                    <td className="table-cell">
-                      <p className="font-medium text-gray-900">{t.titre}</p>
-                      {t.description && <p className="text-xs text-gray-400 truncate max-w-xs">{t.description}</p>}
-                    </td>
-                    <td className="table-cell text-sm text-gray-600">{client?.nom || '—'}</td>
-                    <td className="table-cell">{assigneeBadge(t.assignee)}</td>
-                    <td className="table-cell">{prioriteBadge(t.priorite)}</td>
-                    <td className="table-cell">
-                      <span className={`text-xs ${isLate ? 'text-red-600 font-semibold' : 'text-gray-600'}`}>
-                        {t.deadline ? new Date(t.deadline).toLocaleDateString('fr-FR') : '—'}
-                      </span>
-                    </td>
-                    <td className="table-cell">{statutBadge(t.statut)}</td>
-                    <td className="table-cell">
-                      <div className="flex gap-1">
-                        <button onClick={() => openEdit(t)} className="p-1 text-gray-400 hover:text-indigo-600"><Edit size={14} /></button>
-                        <button onClick={() => { if (confirm('Supprimer ?')) deleteTache(t.id) }} className="p-1 text-gray-400 hover:text-red-500"><Trash2 size={14} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-          </div>
-        </div>
-      )}
+        <DesktopGroup title="Urgentes" titleColor="#a1402d" items={desktopUrgentes}
+          open={desktopOpenUrgentes} setOpen={setDesktopOpenUrgentes}
+          today={today} getAssoc={getAssoc} onDone={t => moveTache(t.id, 'termine')} onOpen={openEdit}
+          onDoneAll={() => handleDoneAllDesktop(desktopUrgentes)} assigneeLabel={assigneeLabelDesktop} />
+        <DesktopGroup title="Secondaires" titleColor="#5c5c58" items={desktopSecondaires}
+          open={desktopOpenSecondaires} setOpen={setDesktopOpenSecondaires}
+          today={today} getAssoc={getAssoc} onDone={t => moveTache(t.id, 'termine')} onOpen={openEdit}
+          onDoneAll={() => handleDoneAllDesktop(desktopSecondaires)} assigneeLabel={assigneeLabelDesktop} />
       </div>
 
       {/* Create Modal */}
@@ -525,9 +484,19 @@ export default function Taches() {
             <FormField label="Notes">
               <textarea className="input resize-none" rows={2} value={editForm.notes || ''} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} />
             </FormField>
-            <div className="flex justify-end gap-2 mt-5">
-              <button type="button" className="btn-secondary" onClick={() => setEditModal(null)}>Annuler</button>
-              <button type="submit" className="btn-primary">Enregistrer</button>
+            <div className="flex justify-between items-center gap-2 mt-5">
+              <button
+                type="button"
+                onClick={() => { if (confirm('Supprimer cette tâche ?')) { deleteTache(editModal); setEditModal(null) } }}
+                className="text-sm font-medium"
+                style={{ color: '#b3452e' }}
+              >
+                Supprimer
+              </button>
+              <div className="flex gap-2">
+                <button type="button" className="btn-secondary" onClick={() => setEditModal(null)}>Annuler</button>
+                <button type="submit" className="btn-primary">Enregistrer</button>
+              </div>
             </div>
           </form>
         </Modal>
