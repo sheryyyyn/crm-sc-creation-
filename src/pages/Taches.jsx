@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
-import { Plus, List, Columns, Check, X, Trash2, Edit } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Plus, List, Columns, Check, X, Trash2, Edit, ChevronLeft, Bell, ChevronDown, ChevronUp } from 'lucide-react'
 import useStore from '../store/useStore'
 import { statutBadge, prioriteBadge, assigneeBadge } from '../components/ui/Badge'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
@@ -15,7 +16,87 @@ const COLUMNS = [
 
 const emptyTache = { titre: '', description: '', clientId: '', projetId: '', assignee: 'Sheryn', deadline: '', priorite: 'moyenne', statut: 'a_faire', notes: '' }
 
+// ─── Groupement priorités → Urgentes/Secondaires, réutilisé pour la vue mobile ──
+function groupForPrioriteMobile(priorite) {
+  if (priorite === 'urgente' || priorite === 'haute') return 'urgentes'
+  return 'secondaires'
+}
+function sortTachesMobile(list, todayStr) {
+  return [...list].sort((a, b) => {
+    const rank = (t) => {
+      const overdue = t.deadline && t.deadline < todayStr
+      if (overdue) return 0
+      if (groupForPrioriteMobile(t.priorite) === 'urgentes' && t.deadline === todayStr) return 1
+      if (groupForPrioriteMobile(t.priorite) === 'urgentes') return 2
+      return 3
+    }
+    return rank(a) - rank(b) || (a.deadline || '').localeCompare(b.deadline || '')
+  })
+}
+
+// ─── Section repliable Urgentes/Secondaires (vue mobile) ────────────────────────
+function MobileGroup({ title, items, open, setOpen, dark, today, getAssoc, onDone, onOpen }) {
+  return (
+    <div className="mb-4">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl"
+        style={{ background: dark ? '#241512' : '#fcf7cf' }}
+      >
+        {open ? <ChevronUp size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} /> : <ChevronDown size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} />}
+        <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: dark ? '#FDFCF8' : '#241512' }}>{title}</span>
+        <span
+          className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+          style={{ background: dark ? 'rgba(253,251,244,.15)' : 'rgba(36,21,18,.08)', color: dark ? '#FDFCF8' : '#241512' }}
+        >
+          {items.length}
+        </span>
+      </button>
+      {open && (
+        <div className="bg-white rounded-2xl mt-1.5 overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+          {items.length === 0 ? (
+            <p className="text-sm px-4 py-4" style={{ color: '#a89b8c' }}>Aucune tâche</p>
+          ) : (
+            items.map((t, i) => {
+              const overdue = t.deadline && t.deadline < today
+              const isToday = t.deadline === today
+              const assoc = getAssoc(t)
+              return (
+                <div
+                  key={t.id}
+                  onClick={() => onOpen(t)}
+                  className="flex items-start gap-3 px-4 py-3.5 cursor-pointer active:bg-[#faf9f6] transition-colors"
+                  style={i > 0 ? { borderTop: '1px solid #f0eee9' } : undefined}
+                >
+                  <button
+                    onClick={(e) => { e.stopPropagation(); onDone(t) }}
+                    className="mt-0.5 w-[22px] h-[22px] rounded-[6px] border-2 flex-shrink-0 active:scale-90 transition-transform"
+                    style={{ borderColor: '#d4c9b0', background: '#fff' }}
+                    title="Marquer comme terminée"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[15px] font-bold" style={{ color: '#241512' }}>{t.titre}</p>
+                    <p className="text-[13px] mt-0.5" style={{ color: '#a89b8c' }}>
+                      {assoc || '—'}
+                      {t.deadline && (
+                        <span className="font-bold" style={{ color: overdue || isToday ? '#b3452e' : '#241512' }}>
+                          {' '}· {overdue ? 'En retard' : isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                        </span>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              )
+            })
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Taches() {
+  const navigate = useNavigate()
   const { taches, clients, projets, addTache, updateTache, deleteTache, moveTache } = useStore()
   const [view, setView] = useState('kanban')
   const [modal, setModal] = useState(false)
@@ -25,16 +106,29 @@ export default function Taches() {
   const [filterAssignee, setFilterAssignee] = useState('tous')
   const [filterPriorite, setFilterPriorite] = useState('tous')
   const [dragId, setDragId] = useState(null)
+  const [mobileProfil, setMobileProfil] = useState('Sheryn')
+  const [openUrgentes, setOpenUrgentes] = useState(true)
+  const [openSecondaires, setOpenSecondaires] = useState(true)
 
   const today = new Date().toISOString().split('T')[0]
   const getClient = (id) => clients.find(c => c.id === id)
   const getProjets = (clientId) => projets.filter(p => p.clientId === clientId)
+  const getAssoc = (t) => getClient(t.clientId)?.nom || projets.find(p => p.id === t.projetId)?.nom || null
 
   const filtered = taches.filter(t => {
     const a = filterAssignee === 'tous' || t.assignee === filterAssignee
     const p = filterPriorite === 'tous' || t.priorite === filterPriorite
     return a && p
   })
+
+  // ── Vue mobile : tâches groupées par personne puis par priorité ──
+  const mineFor = (profil) => taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
+  const sherynCount = mineFor('Sheryn').length
+  const chainezCount = mineFor('Chainez').length
+  const mobileMine = mineFor(mobileProfil)
+  const mobileUrgentes = sortTachesMobile(mobileMine.filter(t => groupForPrioriteMobile(t.priorite) === 'urgentes'), today)
+  const mobileSecondaires = sortTachesMobile(mobileMine.filter(t => groupForPrioriteMobile(t.priorite) === 'secondaires'), today)
+  const handleMobileDone = (t) => moveTache(t.id, 'termine')
 
   function handleSubmit(e) {
     e.preventDefault()
@@ -115,6 +209,72 @@ export default function Taches() {
 
   return (
     <div>
+      {/* ── Mobile : back + bell, alignés avec le hamburger global fixe (Topbar.jsx) ── */}
+      <div
+        className="lg:hidden fixed top-0 left-0 right-0 z-20 flex items-end justify-between px-4 pb-2 pointer-events-none"
+        style={{ height: 'calc(56px + env(safe-area-inset-top))' }}
+      >
+        <button
+          onClick={() => navigate(-1)}
+          className="w-12 h-12 rounded-full flex items-center justify-center pointer-events-auto flex-shrink-0"
+          style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512', marginLeft: '60px' }}
+        >
+          <ChevronLeft size={20} />
+        </button>
+        <div
+          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+          style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
+        >
+          <Bell size={18} />
+        </div>
+      </div>
+
+      {/* ── Mobile : to-do repensée, plus de kanban ── */}
+      <div className="lg:hidden">
+        <p className="font-display text-[26px] font-bold mb-4" style={{ color: '#241512' }}>To-do du jour</p>
+
+        <div className="flex p-1 rounded-full mb-4" style={{ background: '#fff', border: '1px solid #e7e5e1' }}>
+          {['Sheryn', 'Chainez'].map(p => {
+            const active = mobileProfil === p
+            const count = p === 'Sheryn' ? sherynCount : chainezCount
+            return (
+              <button
+                key={p}
+                onClick={() => setMobileProfil(p)}
+                className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-full transition-colors"
+                style={{ background: active ? '#241512' : 'transparent' }}
+              >
+                <span
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
+                  style={{ background: active ? 'rgba(253,251,244,.2)' : '#f5f4f1', color: active ? '#FDFCF8' : '#241512' }}
+                >
+                  {count}
+                </span>
+                <span className="text-sm font-bold" style={{ color: active ? '#FDFCF8' : '#241512' }}>
+                  {p === 'Chainez' ? 'Chaïnez' : p}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+
+        <MobileGroup title="Urgentes" items={mobileUrgentes} open={openUrgentes} setOpen={setOpenUrgentes}
+          dark today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+        <MobileGroup title="Secondaires" items={mobileSecondaires} open={openSecondaires} setOpen={setOpenSecondaires}
+          dark={false} today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+
+        <button
+          onClick={() => { setForm({ ...emptyTache, assignee: mobileProfil }); setModal(true) }}
+          className="fixed z-20 rounded-full flex items-center justify-center"
+          style={{ width: '56px', height: '56px', background: '#241512', color: '#FDFCF8', right: '20px', bottom: 'calc(env(safe-area-inset-bottom) + 84px)', boxShadow: '0 4px 16px rgba(36,21,18,.25)' }}
+          title="Ajouter une tâche"
+        >
+          <Plus size={24} />
+        </button>
+      </div>
+
+      {/* ── Desktop : kanban / liste inchangés ── */}
+      <div className="hidden lg:block">
       <div className="page-header">
         <div>
           <h1 className="page-title">Tâches</h1>
@@ -244,6 +404,7 @@ export default function Taches() {
           </div>
         </div>
       )}
+      </div>
 
       {/* Create Modal */}
       <Modal isOpen={modal} onClose={() => setModal(false)} title="Nouvelle tâche" size="lg">
