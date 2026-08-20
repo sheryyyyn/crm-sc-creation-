@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, Users, CalendarDays, Handshake, Lock, X,
+  FolderOpen, Users, UserPlus, CalendarDays, Handshake, Lock, X,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 
@@ -23,6 +23,7 @@ const navCategories = [
       { label: 'Rendez-vous', icon: Calendar, to: '/rdv' },
       { label: 'Projets', icon: FolderOpen, to: '/projets' },
       { label: 'Base client', icon: Users, to: '/base-client' },
+      { label: 'Prospects', icon: UserPlus, to: '/clients' },
     ],
   },
   {
@@ -42,13 +43,13 @@ function NavItem({ label, icon: Icon, to, isActive, onClose, badge }) {
     <NavLink key={to} to={to} onClick={onClose}
       className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150 cursor-pointer"
       style={isActive
-        ? { background: '#fcf7cf', color: '#1b0b09' }
+        ? { background: '#fcf7cf', color: '#241512' }
         : { color: 'rgba(253,251,244,.62)' }}
     >
-      <Icon size={16} style={{ color: isActive ? '#1b0b09' : 'rgba(253,251,244,.4)' }} />
+      <Icon size={16} style={{ color: isActive ? '#241512' : 'rgba(253,251,244,.4)' }} />
       <span className="flex-1">{label}</span>
       {badge > 0 && (
-        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${isActive ? 'bg-[#1b0b09] text-[#fdfbf4]' : 'bg-amber-500 text-white'}`}>
+        <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${isActive ? 'bg-[#241512] text-[#FDFCF8]' : 'bg-amber-500 text-white'}`}>
           {badge}
         </span>
       )}
@@ -72,16 +73,16 @@ export default function Sidebar({ isOpen, onClose }) {
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
       `}
-      style={{ background: '#1b0b09' }}
+      style={{ background: '#241512' }}
     >
       {/* Logo */}
       <div className="px-5 pt-6 pb-5" style={{ borderBottom: '1px solid rgba(253,251,244,.08)' }}>
         <div className="flex items-center gap-3 pb-5">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fdfbf4' }}>
-            <span className="font-label text-[11px] tracking-wide" style={{ color: '#1b0b09' }}>SC</span>
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#FDFCF8' }}>
+            <span className="font-label text-[11px] tracking-wide" style={{ color: '#241512' }}>SC</span>
           </div>
           <div className="flex-1">
-            <p className="font-label text-[12px] tracking-wide leading-tight" style={{ color: '#fdfbf4' }}>SC CRÉATION</p>
+            <p className="font-label text-[12px] tracking-wide leading-tight" style={{ color: '#FDFCF8' }}>SC CRÉATION</p>
             <p className="text-[10px] font-display italic" style={{ color: '#b8a508' }}>agence créative</p>
           </div>
           {/* Bouton fermer — mobile uniquement */}

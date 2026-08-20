@@ -61,7 +61,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wide mb-1.5"
         style={dark
-          ? { background: '#1b0b09', color: '#fdfbf4' }
+          ? { background: '#241512', color: '#FDFCF8' }
           : { background: '#fcf7cf', color: '#8a7a1f' }}
       >
         <span>{title}</span>
@@ -92,7 +92,7 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
                   <div className="w-2 h-2 rounded-[2px] opacity-0 group-hover:opacity-100 transition-opacity" style={{ background: '#b8a508' }} />
                 </button>
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-[14px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                  <p className="font-display text-[14px] font-bold truncate" style={{ color: '#241512' }}>{t.titre}</p>
                   <p className="text-[11px] mt-0.5" style={{ color: '#a89b8c' }}>
                     {assoc || '—'}
                     {t.deadline && (
@@ -114,10 +114,10 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 mb-3">
         <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#1b0b09', color: '#fdfbf4' }}>
+          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#241512', color: '#FDFCF8' }}>
           {profil[0]}
         </div>
-        <span className="text-sm font-bold tracking-wide uppercase" style={{ color: '#1b0b09' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
+        <span className="text-sm font-bold tracking-wide uppercase" style={{ color: '#241512' }}>{profil === 'Chainez' ? 'Chaïnez' : profil}</span>
       </div>
 
       <Group title="Urgentes" items={urgentes} open={openUrgentes} setOpen={setOpenUrgentes} dark />
@@ -161,7 +161,7 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wide"
         style={dark
-          ? { background: '#1b0b09', color: '#fdfbf4' }
+          ? { background: '#241512', color: '#FDFCF8' }
           : { background: '#fcf7cf', color: '#8a7a1f' }}
       >
         <span>{title}</span>
@@ -188,7 +188,7 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
                   title="Marquer comme terminée"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="font-display text-[13px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                  <p className="font-display text-[13px] font-bold truncate" style={{ color: '#241512' }}>{t.titre}</p>
                   <p className="text-[10.5px] mt-0.5 truncate" style={{ color: '#a89b8c' }}>
                     {assoc || '—'}
                     {t.deadline && (
@@ -207,13 +207,13 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
   )
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+    <div className="rounded-2xl overflow-hidden" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
       <div className="flex items-center gap-2.5 px-4 py-3.5" style={{ borderBottom: '1px solid #eeece7' }}>
         <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#1b0b09', color: '#fdfbf4' }}>
+          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#241512', color: '#FDFCF8' }}>
           {profil[0]}
         </div>
-        <span className="font-display text-[15px] font-bold flex-1" style={{ color: '#1b0b09' }}>
+        <span className="font-display text-[15px] font-bold flex-1" style={{ color: '#241512' }}>
           To-do {profil === 'Chainez' ? 'Chaïnez' : profil}
         </span>
         <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
@@ -314,7 +314,7 @@ export default function Dashboard() {
     <div>
       {/* Titre — toujours en tout premier */}
       <div className="mb-4">
-        <h1 className="font-display text-2xl sm:text-[1.7rem] font-bold" style={{ color: '#1b0b09' }}>Dashboard</h1>
+        <h1 className="font-display text-2xl sm:text-[1.7rem] font-bold" style={{ color: '#241512' }}>Dashboard</h1>
         <p className="text-sm capitalize" style={{ color: '#a89b8c' }}>{dateLabelCap}</p>
       </div>
 
@@ -325,10 +325,10 @@ export default function Dashboard() {
             <button
               onClick={() => navigate('/espace-partenaire')}
               className="flex items-center gap-3 px-5 py-3.5 rounded-2xl text-left transition-opacity hover:opacity-90"
-              style={{ background: '#1b0b09' }}
+              style={{ background: '#241512' }}
             >
               <Handshake size={16} style={{ color: '#b8a508' }} className="flex-shrink-0" />
-              <span className="text-sm font-semibold flex-1" style={{ color: '#fdfbf4' }}>
+              <span className="text-sm font-semibold flex-1" style={{ color: '#FDFCF8' }}>
                 {newPartnerCount === 1 ? '1 nouveau projet' : `${newPartnerCount} nouveaux projets`} transmis par {partnerName}
               </span>
               <ArrowRight size={14} style={{ color: 'rgba(253,251,244,.5)' }} />
@@ -341,7 +341,7 @@ export default function Dashboard() {
               style={{ background: '#fcf7cf' }}
             >
               <ClipboardList size={16} style={{ color: '#8a7a1f' }} className="flex-shrink-0" />
-              <span className="text-sm font-semibold flex-1" style={{ color: '#1b0b09' }}>
+              <span className="text-sm font-semibold flex-1" style={{ color: '#241512' }}>
                 {newFormCount === 1 ? '1 nouveau formulaire' : `${newFormCount} nouveaux formulaires`}
               </span>
               <ArrowRight size={14} style={{ color: '#8a7a1f' }} />
@@ -365,7 +365,7 @@ export default function Dashboard() {
         {/* Prochaines échéances */}
         <div className="bg-white rounded-3xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-6 py-5" style={{ borderBottom: '1px solid #eeece7' }}>
-            <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochaines échéances</span>
+            <span className="font-display text-base font-bold" style={{ color: '#241512' }}>Prochaines échéances</span>
           </div>
           {upcomingEcheances.length === 0 ? (
             <p className="text-sm text-center py-6" style={{ color: '#a89b8c' }}>Aucune échéance à venir</p>
@@ -382,11 +382,11 @@ export default function Dashboard() {
                       <p className="text-[10px] font-bold uppercase tracking-wide" style={{ color: '#8a7a1f' }}>
                         {isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                       </p>
-                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#1b0b09' }}>{t.titre}</p>
+                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#241512' }}>{t.titre}</p>
                       {getAssoc(t) && <p className="text-xs truncate" style={{ color: '#a89b8c' }}>{getAssoc(t)}</p>}
                     </div>
                     <span className="text-[11px] font-bold px-2.5 py-1 rounded-lg flex-shrink-0"
-                      style={{ background: overdue ? '#eeece7' : '#fdfbf4', color: overdue ? '#8a5a2b' : '#7e7e7e', border: '1px solid #e7e5e1' }}>
+                      style={{ background: overdue ? '#eeece7' : '#FDFCF8', color: overdue ? '#8a5a2b' : '#7e7e7e', border: '1px solid #e7e5e1' }}>
                       {overdue ? 'En retard' : isToday ? "J-0" : `J-${jours}`}
                     </span>
                   </div>
@@ -399,7 +399,7 @@ export default function Dashboard() {
         {/* Prochains rendez-vous */}
         <div className="bg-white rounded-3xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
           <div className="px-6 py-5" style={{ borderBottom: '1px solid #eeece7' }}>
-            <span className="font-display text-base font-bold" style={{ color: '#1b0b09' }}>Prochains rendez-vous</span>
+            <span className="font-display text-base font-bold" style={{ color: '#241512' }}>Prochains rendez-vous</span>
           </div>
           {upcomingRDVs.length === 0 ? (
             <p className="text-sm text-center py-6" style={{ color: '#a89b8c' }}>Aucun rendez-vous à venir</p>
@@ -413,13 +413,13 @@ export default function Dashboard() {
                       <p className="text-xs" style={{ color: '#a89b8c' }}>
                         {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : ''}{r.heure ? ` · ${r.heure}` : ''}
                       </p>
-                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#1b0b09' }}>{r.sujet || 'Rendez-vous'}</p>
+                      <p className="font-display text-[15px] font-bold truncate" style={{ color: '#241512' }}>{r.sujet || 'Rendez-vous'}</p>
                       {client && <p className="text-xs truncate" style={{ color: '#a89b8c' }}>{client.nom}</p>}
                     </div>
                     {r.lienMeet && (
                       <a href={r.lienMeet} target="_blank" rel="noreferrer"
                         className="flex items-center gap-1.5 text-xs font-bold px-3 py-2 rounded-xl flex-shrink-0"
-                        style={{ background: '#1b0b09', color: '#fdfbf4' }}>
+                        style={{ background: '#241512', color: '#FDFCF8' }}>
                         <Video size={12} /> Rejoindre
                       </a>
                     )}
@@ -434,9 +434,9 @@ export default function Dashboard() {
 
       {/* ── Colonne droite : To-do du jour (desktop uniquement, remplacée par MobileTodoCard sur mobile) ── */}
       <div className="hidden lg:block order-1 lg:order-2 w-full lg:flex-1 min-w-0">
-        <div className="rounded-3xl p-6 sm:p-8 h-full" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+        <div className="rounded-3xl p-6 sm:p-8 h-full" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
           <div className="flex items-center gap-2.5 mb-8">
-            <span className="font-display text-xl font-bold" style={{ color: '#1b0b09' }}>TO-DO DU JOUR</span>
+            <span className="font-display text-xl font-bold" style={{ color: '#241512' }}>TO-DO DU JOUR</span>
             <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
               {totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''}
             </span>

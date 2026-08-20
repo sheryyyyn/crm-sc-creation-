@@ -6,7 +6,7 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
 
   return (
-    <div className="min-h-screen" style={{ background: '#ffffff' }}>
+    <div className="min-h-screen" style={{ background: '#FDFCF8' }}>
       {/* Overlay mobile */}
       {sidebarOpen && (
         <div
@@ -16,13 +16,15 @@ export default function Layout({ children }) {
       )}
 
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
 
-      <main className="lg:ml-60 pt-14 lg:pt-0 min-h-screen">
-        <div className="p-4 lg:p-7 max-w-screen-2xl">
-          {children}
-        </div>
-      </main>
+      <div className="lg:ml-60 min-h-screen flex flex-col">
+        <Topbar onMenuToggle={() => setSidebarOpen(o => !o)} />
+        <main className="flex-1 pt-14 lg:pt-0">
+          <div className="p-4 lg:px-8 lg:pb-8 lg:pt-0 max-w-screen-2xl">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }
