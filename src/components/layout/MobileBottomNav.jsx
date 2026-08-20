@@ -19,12 +19,12 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex bg-white"
-      style={{ borderTop: '1px solid #eeece7', paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-20 flex"
+      style={{ background: '#241512', borderTop: '1px solid rgba(253,251,244,.08)', paddingBottom: 'calc(env(safe-area-inset-bottom) + 14px)' }}
     >
       {ITEMS.map(({ label, to, icon: Icon }) => {
         const active = isActive(to)
-        const color = active ? '#241512' : '#a89b8c'
+        const color = active ? '#FDFCF8' : 'rgba(253,251,244,.55)'
         return (
           <NavLink
             key={to}
@@ -36,7 +36,7 @@ export default function MobileBottomNav() {
               {label === 'Formulaires' && newFormCount > 0 && (
                 <span
                   className="absolute -top-1.5 -right-2 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[10px] font-bold"
-                  style={{ background: '#241512', color: '#FDFCF8' }}
+                  style={{ background: '#fcf7cf', color: '#241512' }}
                 >
                   {newFormCount}
                 </span>

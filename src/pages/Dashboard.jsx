@@ -390,33 +390,6 @@ export default function Dashboard() {
       </button>
     </div>
 
-    {/* Projets en cours (mobile) */}
-    <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
-      <p className="font-display text-[21px] font-bold mb-4" style={{ color: '#241512' }}>Projets en cours</p>
-      {projetsEnCours.length === 0 ? (
-        <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun projet en cours</p>
-      ) : (
-        <div className="flex flex-col gap-4">
-          {projetsEnCours.map(p => (
-            <div key={p.id}>
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
-                <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
-              </div>
-              <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
-                <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-      <button onClick={() => navigate('/projets')}
-        className="w-full mt-5 py-3 rounded-xl text-sm font-bold text-center"
-        style={{ background: '#f5f4f1', color: '#241512', border: '1px solid #e7e5e1' }}>
-        Voir tous les projets
-      </button>
-    </div>
-
     {/* Prochains posts de la semaine (mobile) */}
     <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
       <p className="font-display text-[21px] font-bold mb-4" style={{ color: '#241512' }}>Prochains posts de la semaine</p>
@@ -443,6 +416,33 @@ export default function Dashboard() {
           })}
         </div>
       )}
+    </div>
+
+    {/* Projets en cours (mobile) */}
+    <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
+      <p className="font-display text-[21px] font-bold mb-4" style={{ color: '#241512' }}>Projets en cours</p>
+      {projetsEnCours.length === 0 ? (
+        <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun projet en cours</p>
+      ) : (
+        <div className="flex flex-col gap-4">
+          {projetsEnCours.map(p => (
+            <div key={p.id}>
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
+                <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
+              </div>
+              <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
+                <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+      <button onClick={() => navigate('/projets')}
+        className="w-full mt-5 py-3 rounded-xl text-sm font-bold text-center"
+        style={{ background: '#f5f4f1', color: '#241512', border: '1px solid #e7e5e1' }}>
+        Voir tous les projets
+      </button>
     </div>
 
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
