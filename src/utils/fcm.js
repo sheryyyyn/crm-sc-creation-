@@ -27,11 +27,27 @@ function urlB64ToUint8Array(base64String) {
   return outputArray
 }
 
+// Identifiant Firestore stable dérivé de l'endpoint (au lieu de Date.now(),
+// qui créait un nouveau document à chaque ouverture de l'app et a fini par
+// accumuler des centaines d'abonnements périmés).
+function stableIdFromEndpoint(endpoint) {
+  let hash = 0
+  for (let i = 0; i < endpoint.length; i++) {
+    hash = (hash * 31 + endpoint.charCodeAt(i)) | 0
+  }
+  return Math.abs(hash).toString(36)
+}
+
 // Enregistrement Web Push natif (iOS Safari PWA)
 async function registerNativeWebPush(profil) {
   try {
     const swReg = await navigator.serviceWorker.register('/firebase-messaging-sw.js')
     await navigator.serviceWorker.ready
+
+    // Un abonnement existant signé avec une ancienne clé VAPID fait échouer
+    // subscribe() (InvalidStateError) — on le retire avant de recréer.
+    const existing = await swReg.pushManager.getSubscription()
+    if (existing) await existing.unsubscribe()
 
     const sub = await swReg.pushManager.subscribe({
       userVisibleOnly: true,
@@ -39,7 +55,7 @@ async function registerNativeWebPush(profil) {
     })
 
     const subJson = sub.toJSON()
-    await setDoc(doc(db, 'fcmTokens', `${profil}_native_${Date.now()}`), {
+    await setDoc(doc(db, 'fcmTokens', `${profil}_native_${stableIdFromEndpoint(subJson.endpoint)}`), {
       endpoint: subJson.endpoint,
       keys: subJson.keys,
       profil,

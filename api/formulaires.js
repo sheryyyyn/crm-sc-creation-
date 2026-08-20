@@ -1,4 +1,5 @@
 const admin = require('firebase-admin')
+const { sendPushToAllDevices } = require('./_push-helper')
 
 function generateId(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
@@ -97,7 +98,7 @@ module.exports = async function handler(req, res) {
     const tache = {
       id: generateId('t'),
       titre: `Répondre au formulaire de ${reponse.nomEntreprise}`,
-      description: `Formulaire reçu le ${now.toLocaleDateString('fr-FR')} — Budget : ${budget || '—'} — Type : ${type_projet || '—'}`,
+      description: `Formulaire reçu le ${now.toLocaleDateString('fr-FR')} — Budget : ${budget || '—'}`,
       assignee: 'Les deux',
       priorite: 'haute',
       statut: 'a_faire',
@@ -111,6 +112,19 @@ module.exports = async function handler(req, res) {
     }
 
     await db.collection('taches').doc(tache.id).set(tache)
+
+    // Notification push vers tous les appareils enregistrés (Sheryn + Chaïnez).
+    // Ne doit jamais faire échouer la réponse au webhook si l'envoi échoue.
+    try {
+      await sendPushToAllDevices(
+        db,
+        '📋 Nouveau formulaire reçu !',
+        `${reponse.nomEntreprise} vient de remplir le formulaire de contact.`,
+        '/formulaires'
+      )
+    } catch (pushErr) {
+      console.error('Formulaire webhook: push notification failed:', pushErr.message)
+    }
 
     return res.status(200).json({ result: 'success', id })
   } catch (err) {

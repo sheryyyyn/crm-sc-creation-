@@ -11,9 +11,12 @@ function initAdmin() {
 }
 
 function initWebPush() {
+  // Doit être la même clé publique que celle utilisée côté client pour
+  // pushManager.subscribe() (src/utils/fcm.js) — sinon Apple/le navigateur
+  // rejette l'envoi car la signature VAPID ne correspond pas à l'abonnement.
   webpush.setVapidDetails(
     'mailto:sheryn.ait@icloud.com',
-    process.env.VITE_FIREBASE_VAPID_KEY,
+    process.env.VITE_VAPID_PUBLIC_KEY || process.env.VITE_FIREBASE_VAPID_KEY,
     process.env.VAPID_PRIVATE_KEY
   )
 }
