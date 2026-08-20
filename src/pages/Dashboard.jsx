@@ -562,6 +562,61 @@ export default function Dashboard() {
           )}
         </div>
 
+        {/* Projets en cours — desktop uniquement (même carte que sur mobile) */}
+        <div className="hidden lg:flex bg-white rounded-2xl p-7 flex-col" style={{ border: '1px solid #e7e5e1' }}>
+          <span className="font-display text-lg font-bold mb-4" style={{ color: '#241512' }}>Projets en cours</span>
+          {projetsEnCours.length === 0 ? (
+            <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun projet en cours</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {projetsEnCours.map(p => (
+                <div key={p.id}>
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
+                    <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
+                  </div>
+                  <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
+                    <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <button onClick={() => navigate('/projets')}
+            className="w-full mt-5 py-3 rounded-xl text-sm font-bold text-center"
+            style={{ background: '#f5f4f1', color: '#241512', border: '1px solid #e7e5e1' }}>
+            Voir tous les projets
+          </button>
+        </div>
+
+        {/* Prochains posts de la semaine — desktop uniquement (même carte que sur mobile) */}
+        <div className="hidden lg:flex bg-white rounded-2xl p-7 flex-col" style={{ border: '1px solid #e7e5e1' }}>
+          <span className="font-display text-lg font-bold mb-4" style={{ color: '#241512' }}>Prochains posts de la semaine</span>
+          {upcomingContenus.length === 0 ? (
+            <p className="text-sm" style={{ color: '#a89b8c' }}>Aucun post prévu cette semaine</p>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {upcomingContenus.map(c => {
+                const Icon = c.plateforme === 'Instagram' ? Instagram : Music2
+                return (
+                  <button key={c.id} onClick={() => navigate('/calendrier-editorial')}
+                    className="w-full flex items-center gap-3 px-4 py-3.5 rounded-xl text-left" style={{ background: '#fcf7cf' }}>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#fff' }}>
+                      <Icon size={15} style={{ color: '#8a7a1f' }} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{c.titre}</p>
+                      <p className="text-[13px] truncate" style={{ color: '#a89b8c' }}>
+                        {c.client || 'SC Création'} · {jourLabel(c.datePublication)}
+                      </p>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
       </div>
 
       {/* ── Colonne droite : To-do du jour (desktop uniquement, remplacée par MobileTodoCard sur mobile) ──
