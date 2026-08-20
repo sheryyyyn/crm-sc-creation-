@@ -109,11 +109,11 @@ const useStore = create((set, get) => ({
   // ─── Tâches ─────────────────────────────────────────────────────────────
   addTache: (data) => {
     const item = { ...data, id: generateId('t'), checklist: [], createdAt: new Date().toISOString() }
-    fsSet('taches', item.id, item)
     const profil = typeof localStorage !== 'undefined' ? localStorage.getItem('sc-crm-profil') || 'Sheryn' : 'Sheryn'
     if (data.assignee && data.assignee !== 'Les deux' && data.assignee === profil) {
       notify('📌 Nouvelle tâche assignée', `"${data.titre}" t'a été assignée.`)
     }
+    return fsSet('taches', item.id, item)
   },
   updateTache: (id, data) => {
     const prev = get().taches.find((t) => t.id === id)

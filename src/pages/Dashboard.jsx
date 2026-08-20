@@ -1,10 +1,105 @@
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp,
+  Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp, Plus, Check,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
+import Modal, { FormRow, FormField } from '../components/ui/Modal'
+
+// ─── Ajout rapide de tâche depuis le Dashboard ────────────────────────────────
+// Réutilise exactement le même store.addTache() et les mêmes valeurs que la page
+// complète des tâches (src/pages/Taches.jsx) — aucune structure de données parallèle.
+const emptyQuickTache = { titre: '', description: '', clientId: '', projetId: '', assignee: 'Sheryn', deadline: '', priorite: 'moyenne', statut: 'a_faire', notes: '' }
+
+function QuickAddTaskModal({ isOpen, onClose, clients, projets, addTache, onAdded }) {
+  const [form, setForm] = useState(emptyQuickTache)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+
+  const getProjets = (clientId) => projets.filter(p => p.clientId === clientId)
+  const canSubmit = form.titre.trim().length > 0 && !saving
+
+  function close() {
+    setForm(emptyQuickTache)
+    setError('')
+    onClose()
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!canSubmit) return
+    setSaving(true)
+    setError('')
+    try {
+      await addTache(form)
+      setForm(emptyQuickTache)
+      onAdded()
+      onClose()
+    } catch (err) {
+      setError("Impossible d'ajouter la tâche. Vérifie ta connexion et réessaie.")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <Modal isOpen={isOpen} onClose={close} title="Ajouter une tâche" size="lg">
+      <form onSubmit={handleSubmit}>
+        <FormField label="Titre" required>
+          <input className="input mb-4" autoFocus value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required />
+        </FormField>
+        <FormRow cols={2}>
+          <FormField label="Assignée">
+            <select className="select" value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
+              <option value="Sheryn">Sheryn</option>
+              <option value="Chainez">Chaïnez</option>
+              <option value="Les deux">Les deux</option>
+            </select>
+          </FormField>
+          <FormField label="Priorité">
+            <select className="select" value={form.priorite} onChange={e => setForm({ ...form, priorite: e.target.value })}>
+              <option value="urgente">Urgente</option>
+              <option value="moyenne">Secondaire</option>
+            </select>
+          </FormField>
+        </FormRow>
+        <FormRow cols={2}>
+          <FormField label="Client">
+            <select className="select" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
+              <option value="">— Aucun —</option>
+              {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+            </select>
+          </FormField>
+          <FormField label="Projet">
+            <select className="select" value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
+              <option value="">— Aucun —</option>
+              {getProjets(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
+            </select>
+          </FormField>
+        </FormRow>
+        <FormField label="Deadline">
+          <input type="date" className="input mb-4" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
+        </FormField>
+        <FormField label="Notes (facultatif)">
+          <textarea className="input resize-none" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+        </FormField>
+
+        {error && (
+          <p className="text-sm font-medium mt-3" style={{ color: '#b3261e' }}>{error}</p>
+        )}
+
+        <div className="flex justify-end gap-2 mt-5">
+          <button type="button" className="btn-secondary" onClick={close}>Annuler</button>
+          <button type="submit" className="btn-primary" disabled={!canSubmit}
+            style={!canSubmit ? { opacity: .5, cursor: 'not-allowed' } : undefined}>
+            {saving ? 'Ajout…' : 'Ajouter la tâche'}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
 
 // ─── Correspondance priorités existantes → groupes d'affichage ───────────────
 // Centralisé ici pour pouvoir faire évoluer la correspondance plus tard
@@ -222,8 +317,18 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 export default function Dashboard() {
   const navigate = useNavigate()
-  const { taches, clients, projets, rdvs, formReponses, partenaireItems, moveTache, addNotification } = useStore()
+  const { taches, clients, projets, rdvs, formReponses, partenaireItems, moveTache, addTache, addNotification } = useStore()
   const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
+
+  const [quickAddOpen, setQuickAddOpen] = useState(false)
+  const [taskAddedToast, setTaskAddedToast] = useState(false)
+  const taskAddedTimer = useRef(null)
+
+  function handleTaskAdded() {
+    setTaskAddedToast(true)
+    if (taskAddedTimer.current) clearTimeout(taskAddedTimer.current)
+    taskAddedTimer.current = setTimeout(() => setTaskAddedToast(false), 3000)
+  }
 
   const today = new Date().toISOString().split('T')[0]
   const dateLabel = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
@@ -466,12 +571,26 @@ export default function Dashboard() {
            quel que soit le nombre de tâches affichées. */}
       <div className="hidden lg:flex lg:flex-col order-1 lg:order-2 w-full lg:flex-1 min-w-0">
         <div className="rounded-3xl p-8 flex flex-col lg:min-h-[calc(100vh-64px)]" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
-          <div className="flex items-center gap-2.5 mb-8 flex-shrink-0">
+          <div className="flex items-center justify-between gap-2.5 mb-8 flex-shrink-0">
             <span className="font-display text-xl font-bold" style={{ color: '#241512' }}>TO-DO DU JOUR</span>
-            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
-              {totalTodoCount} tâche{totalTodoCount > 1 ? 's' : ''}
-            </span>
+            <button
+              onClick={() => setQuickAddOpen(true)}
+              className="flex items-center gap-1.5 font-bold rounded-full transition-colors flex-shrink-0 px-2.5 py-2.5 sm:px-4"
+              style={{ background: '#241512', color: '#FDFCF8' }}
+              onMouseEnter={e => e.currentTarget.style.background = '#3a2620'}
+              onMouseLeave={e => e.currentTarget.style.background = '#241512'}
+              title="Ajouter une tâche"
+            >
+              <Plus size={15} />
+              <span className="hidden sm:inline text-sm">Ajouter une tâche</span>
+            </button>
           </div>
+
+          {taskAddedToast && (
+            <div className="flex items-center gap-2 mb-4 px-4 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0" style={{ background: '#e6f6ee', color: '#1a9a5b' }}>
+              <Check size={15} /> Tâche ajoutée avec succès
+            </div>
+          )}
 
           <div className="flex-1 flex flex-col sm:flex-row gap-8 sm:gap-10">
             <TodoColumn profil="Sheryn" taches={taches} clients={clients} projets={projets}
@@ -489,6 +608,15 @@ export default function Dashboard() {
         </div>
       </div>
     </div>
+
+    <QuickAddTaskModal
+      isOpen={quickAddOpen}
+      onClose={() => setQuickAddOpen(false)}
+      clients={clients}
+      projets={projets}
+      addTache={addTache}
+      onAdded={handleTaskAdded}
+    />
     </div>
   )
 }
