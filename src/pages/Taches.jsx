@@ -35,19 +35,19 @@ function sortTachesMobile(list, todayStr) {
 }
 
 // ─── Section repliable Urgentes/Secondaires (vue mobile) ────────────────────────
-function MobileGroup({ title, items, open, setOpen, dark, today, getAssoc, onDone, onOpen }) {
+function MobileGroup({ title, items, open, setOpen, bg, fg, today, getAssoc, onDone, onOpen }) {
   return (
     <div className="mb-4">
       <button
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center gap-2 px-4 py-3.5 rounded-2xl"
-        style={{ background: dark ? '#241512' : '#fcf7cf' }}
+        style={{ background: bg }}
       >
-        {open ? <ChevronUp size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} /> : <ChevronDown size={16} style={{ color: dark ? '#FDFCF8' : '#8a7a1f' }} />}
-        <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: dark ? '#FDFCF8' : '#241512' }}>{title}</span>
+        {open ? <ChevronUp size={16} style={{ color: fg }} /> : <ChevronDown size={16} style={{ color: fg }} />}
+        <span className="text-sm font-bold uppercase tracking-wide flex-1 text-left" style={{ color: fg }}>{title}</span>
         <span
           className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-          style={{ background: dark ? 'rgba(253,251,244,.15)' : 'rgba(36,21,18,.08)', color: dark ? '#FDFCF8' : '#241512' }}
+          style={{ background: '#fff', color: fg }}
         >
           {items.length}
         </span>
@@ -259,9 +259,9 @@ export default function Taches() {
         </div>
 
         <MobileGroup title="Urgentes" items={mobileUrgentes} open={openUrgentes} setOpen={setOpenUrgentes}
-          dark today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          bg="#f5e6e3" fg="#a1402d" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
         <MobileGroup title="Secondaires" items={mobileSecondaires} open={openSecondaires} setOpen={setOpenSecondaires}
-          dark={false} today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
+          bg="#eeece9" fg="#5c5c58" today={today} getAssoc={getAssoc} onDone={handleMobileDone} onOpen={openEdit} />
 
         <button
           onClick={() => { setForm({ ...emptyTache, assignee: mobileProfil }); setModal(true) }}
