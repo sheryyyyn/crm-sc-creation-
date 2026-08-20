@@ -214,13 +214,17 @@ function TodoColumn({ profil, taches, clients, projets, moveTache, addNotificati
 }
 
 // ─── Carte to-do mobile : mêmes groupes repliables URGENTES/SECONDAIRES que le desktop ──
-function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotification, todayStr, currentProfil, navigate }) {
-  const [openUrgentes, setOpenUrgentes] = useState(true)
-  const [openSecondaires, setOpenSecondaires] = useState(false)
+// ─── Carte to-do mobile : une seule carte, onglets Sheryn / Chaïnez ───────────
+function MobileTodoTabs({ taches, clients, projets, moveTache, addNotification, todayStr, currentProfil, navigate, onAddClick, showToast }) {
+  const [activeProfil, setActiveProfil] = useState('Sheryn')
 
-  const mine = taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
+  const mineFor = (profil) => taches.filter(t => t.statut !== 'termine' && (t.assignee === profil || t.assignee === 'Les deux'))
+  const mine = mineFor(activeProfil)
   const urgentes = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'urgentes'), todayStr)
   const secondaires = sortTaches(mine.filter(t => groupForPriorite(t.priorite) === 'secondaires'), todayStr)
+
+  // Total distinct = union des tâches assignées à Sheryn, Chaïnez ou aux deux (sans double-compte)
+  const totalCount = taches.filter(t => t.statut !== 'termine' && (t.assignee === 'Sheryn' || t.assignee === 'Chainez' || t.assignee === 'Les deux')).length
 
   const getAssocLabel = (t) => {
     const client = clients.find(c => c.id === t.clientId)
@@ -242,37 +246,33 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
     }
   }
 
-  const Group = ({ title, items, open, setOpen }) => (
-    <div className="mb-2">
-      <button
-        onClick={() => setOpen(o => !o)}
-        className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wide bg-white"
-        style={{ color: '#241512', border: '1px solid #eeece7' }}
-      >
-        <span>{title} · {items.length}</span>
-        {open ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
-      </button>
-      {open && items.length > 0 && (
-        <div className="mt-1">
+  const Section = ({ title, items }) => (
+    <div className="mb-4">
+      <p className="text-[11px] font-bold uppercase tracking-wide mb-2" style={{ color: '#a89b8c' }}>{title}</p>
+      {items.length === 0 ? (
+        <p className="text-xs px-0.5" style={{ color: '#a89b8c' }}>Aucune tâche</p>
+      ) : (
+        <div className="flex flex-col gap-3">
           {items.map(t => {
             const overdue = t.deadline && t.deadline < todayStr
+            const isToday = t.deadline === todayStr
             const assoc = getAssocLabel(t)
             return (
               <div key={t.id} onClick={() => navigate('/taches')}
-                className="flex items-start gap-2.5 px-3 py-2.5 cursor-pointer active:bg-[#f7f6f3] transition-colors rounded-lg">
+                className="flex items-start gap-3 cursor-pointer active:opacity-70 transition-opacity">
                 <button
                   onClick={(e) => handleDone(e, t)}
-                  className="mt-0.5 w-[16px] h-[16px] rounded-[4px] border-2 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
+                  className="mt-0.5 w-[22px] h-[22px] rounded-[6px] border-2 flex items-center justify-center flex-shrink-0 active:scale-90 transition-transform"
                   style={{ borderColor: '#d4c9b0', background: '#fff' }}
                   title="Marquer comme terminée"
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-[13px] font-semibold truncate" style={{ color: '#241512' }}>{t.titre}</p>
-                  <p className="text-[10.5px] mt-0.5 truncate" style={{ color: '#a89b8c' }}>
+                  <p className="text-[15px] font-bold truncate" style={{ color: '#241512' }}>{t.titre}</p>
+                  <p className="text-[13px] mt-0.5 truncate" style={{ color: '#a89b8c' }}>
                     {assoc || '—'}
                     {t.deadline && (
                       <span style={{ color: overdue ? '#8a5a2b' : '#a89b8c' }}>
-                        {' '}· {overdue ? 'En retard · ' : ''}{new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                        {' '}· {overdue ? 'En retard' : isToday ? "Aujourd'hui" : new Date(t.deadline).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                       </span>
                     )}
                   </p>
@@ -286,29 +286,50 @@ function MobileTodoCard({ profil, taches, clients, projets, moveTache, addNotifi
   )
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
-      <div className="flex items-center gap-2.5 px-4 py-3.5" style={{ borderBottom: '1px solid #eeece7' }}>
-        <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold"
-          style={{ background: profil === 'Chainez' ? '#6f4e3d' : '#241512', color: '#FDFCF8' }}>
-          {profil[0]}
-        </div>
-        <span className="font-display text-[15px] font-bold flex-1" style={{ color: '#241512' }}>
-          To-do {profil === 'Chainez' ? 'Chaïnez' : profil}
+    <div className="rounded-3xl p-4" style={{ background: '#F4F2EC', border: '1px solid #e7e5e1' }}>
+      <div className="flex items-center gap-2 mb-3.5">
+        <span className="font-display text-lg font-bold flex-1" style={{ color: '#241512' }}>TO-DO DU JOUR</span>
+        <span className="text-sm font-semibold px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
+          {totalCount}
         </span>
-        <span className="text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: '#ffffff', color: '#a89b8c', border: '1px solid #e7e5e1' }}>
-          {urgentes.length + secondaires.length}
-        </span>
+        <button
+          onClick={onAddClick}
+          className="flex items-center justify-center rounded-full flex-shrink-0 w-9 h-9 transition-colors active:scale-95"
+          style={{ background: '#241512', color: '#FDFCF8' }}
+          title="Ajouter une tâche"
+        >
+          <Plus size={16} />
+        </button>
       </div>
 
-      <div className="p-3">
-        <Group title="Urgentes" items={urgentes} open={openUrgentes} setOpen={setOpenUrgentes} />
-        <Group title="Secondaires" items={secondaires} open={openSecondaires} setOpen={setOpenSecondaires} />
+      {showToast && (
+        <div className="flex items-center gap-2 mb-3.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold" style={{ background: '#e6f6ee', color: '#1a9a5b' }}>
+          <Check size={15} /> Tâche ajoutée avec succès
+        </div>
+      )}
+
+      <div className="flex p-1 rounded-full mb-4" style={{ background: '#ffffff', border: '1px solid #e7e5e1' }}>
+        {['Sheryn', 'Chainez'].map(p => (
+          <button
+            key={p}
+            onClick={() => setActiveProfil(p)}
+            className="flex-1 text-sm font-bold py-2.5 rounded-full transition-colors"
+            style={activeProfil === p
+              ? { background: '#241512', color: '#FDFCF8' }
+              : { background: 'transparent', color: '#241512' }}
+          >
+            {p === 'Chainez' ? 'Chaïnez' : p}
+          </button>
+        ))}
       </div>
+
+      <Section title="Urgentes" items={urgentes} />
+      <Section title="Secondaires" items={secondaires} />
 
       <button onClick={() => navigate('/taches')}
-        className="w-full flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-3"
+        className="w-full flex items-center justify-center gap-1.5 text-sm font-semibold pt-3"
         style={{ color: '#8a7a1f', borderTop: '1px solid #eeece7' }}>
-        Ouvrir la to-do <ArrowRight size={12} />
+        Ouvrir la to-do <ArrowRight size={13} />
       </button>
     </div>
   )
@@ -439,12 +460,11 @@ export default function Dashboard() {
         </div>
       )}
 
-    {/* ── Mobile : to-do de chacune (aperçu) ── */}
-    <div className="lg:hidden flex flex-col gap-3 mb-5">
-      <MobileTodoCard profil="Sheryn" taches={taches} clients={clients} projets={projets}
-        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
-      <MobileTodoCard profil="Chainez" taches={taches} clients={clients} projets={projets}
-        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
+    {/* ── Mobile : to-do avec onglets Sheryn / Chaïnez ── */}
+    <div className="lg:hidden mb-5">
+      <MobileTodoTabs taches={taches} clients={clients} projets={projets}
+        moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate}
+        onAddClick={() => setQuickAddOpen(true)} showToast={taskAddedToast} />
     </div>
 
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
