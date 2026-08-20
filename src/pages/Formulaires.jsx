@@ -7,6 +7,18 @@ import {
 import useStore from '../store/useStore'
 import { getCalendlyUrl } from './Parametres'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
+import Modal from '../components/ui/Modal'
+
+// Même grille tarifaire indicative que celle affichée aux visiteurs sur le
+// formulaire public (src/pages/FormulairePublic.jsx) — pas de nouveau champ,
+// juste réaffichée ici en face du type de prestation choisi.
+const BUDGET_INDICATIF = {
+  'Landing page': 'à partir de 950 € HT',
+  'Site vitrine': 'à partir de 1 900 € HT',
+  'E-commerce Shopify': 'à partir de 2 500 € HT',
+  'Refonte de site existant': 'sur devis uniquement',
+  'Je ne sais pas encore': '—',
+}
 
 // ─── Champs du formulaire (structure pour l'aperçu) ─────────────────────────
 const FORM_FIELDS = [
@@ -707,7 +719,7 @@ function ApercuFormulaire() {
 
 // ─── Page principale ──────────────────────────────────────────────────────────
 export default function Formulaires() {
-  const { formReponses, taches, updateTache } = useStore()
+  const { formReponses, taches, updateTache, markFormReponseRead } = useStore()
 
   // Escalade en urgente si +24h sans mail envoyé
   useEffect(() => {
@@ -724,42 +736,60 @@ export default function Formulaires() {
   }, [formReponses, taches])
   const [tab, setTab] = useState('reponses')
   const [openId, setOpenId] = useState(null)
+  const [detailId, setDetailId] = useState(null)
   const [filtre, setFiltre] = useState('tous')
 
   const nonLus = formReponses.filter(r => !r.lu).length
-  const mailEnvoyes = formReponses.filter(r => r.mailEnvoye).length
+  const lus = formReponses.filter(r => r.lu).length
   const filtered = filtre === 'nouveau'
     ? formReponses.filter(r => !r.lu)
-    : filtre === 'mail_envoye'
-      ? formReponses.filter(r => r.mailEnvoye)
+    : filtre === 'lu'
+      ? formReponses.filter(r => r.lu)
       : formReponses
   const sorted = [...filtered].sort((a, b) => b.horodateur.localeCompare(a.horodateur))
 
   const toggle = (id) => setOpenId(prev => prev === id ? null : id)
+
+  // Assignée = celle du tâche auto-créée pour ce formulaire (src/store/useStore.js
+  // → addFormReponse), qui peut avoir été réassignée depuis la page To-do.
+  const getAssignee = (rep) => {
+    const t = taches.find(t => t.formReponseId === rep.id)
+    if (!t) return null
+    return t.assignee === 'Chainez' ? 'Chaïnez' : t.assignee === 'Les deux' ? 'Communes' : t.assignee
+  }
+
+  const openDetail = (rep) => {
+    if (!rep.lu) markFormReponseRead(rep.id)
+    setDetailId(rep.id)
+  }
+  const detailRep = detailId ? formReponses.find(r => r.id === detailId) : null
+
+  const emptyLabel = filtre === 'nouveau' ? 'Aucun nouveau formulaire' : filtre === 'lu' ? 'Aucun formulaire lu' : 'Aucun formulaire'
 
   return (
     <div>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Formulaires</h1>
-          <p className="text-sm text-gray-500 mt-0.5">Formulaire client & réponses reçues</p>
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Formulaires</h1>
+          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>Formulaire client & réponses reçues</p>
         </div>
-        <div className="flex gap-1 p-1 bg-white rounded-xl" style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.06)' }}>
+        <div className="flex gap-1 p-1 rounded-full flex-shrink-0" style={{ background: '#f5f4f1' }}>
           <button onClick={() => setTab('reponses')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'reponses' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            style={tab === 'reponses' ? { background: 'linear-gradient(135deg,#6366f1,#4f46e5)' } : {}}>
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
+            style={tab === 'reponses' ? { background: '#241512', color: '#FDFCF8' } : { color: '#241512' }}>
             <Inbox size={14} />
             Réponses reçues
             {nonLus > 0 && (
-              <span className={`text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none ${tab === 'reponses' ? 'bg-white/25 text-white' : 'bg-amber-500 text-white'}`}>
+              <span className="text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none"
+                style={tab === 'reponses' ? { background: 'rgba(253,251,244,.2)', color: '#FDFCF8' } : { background: '#a1402d', color: '#FDFCF8' }}>
                 {nonLus}
               </span>
             )}
           </button>
           <button onClick={() => setTab('formulaire')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all ${tab === 'formulaire' ? 'text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
-            style={tab === 'formulaire' ? { background: 'linear-gradient(135deg,#6366f1,#4f46e5)' } : {}}>
+            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
+            style={tab === 'formulaire' ? { background: '#241512', color: '#FDFCF8' } : { color: '#241512' }}>
             <Eye size={14} />
             Aperçu formulaire
           </button>
@@ -770,26 +800,72 @@ export default function Formulaires() {
 
       {tab === 'reponses' && (
         <div>
-          {/* Filtres + stats */}
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex gap-2">
-              {[
-                { key: 'nouveau', label: `Nouveaux (${nonLus})` },
-                { key: 'mail_envoye', label: `Mail envoyé (${mailEnvoyes})` },
-                { key: 'tous', label: `Toutes (${formReponses.length})` },
-              ].map(({ key, label }) => (
+          {/* Filtres */}
+          <div className="flex items-center gap-2 mb-6">
+            {[
+              { key: 'tous', label: 'Tous' },
+              { key: 'nouveau', label: 'Nouveaux' },
+              { key: 'lu', label: 'Lus' },
+            ].map(({ key, label }) => {
+              const active = filtre === key
+              return (
                 <button key={key} onClick={() => setFiltre(key)}
-                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all ${filtre === key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-white text-gray-500 hover:bg-gray-50'}`}
-                  style={filtre === key ? {} : { boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                  className="px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
+                  style={active ? { background: '#241512', color: '#FDFCF8' } : { background: '#f5f4f1', color: '#241512' }}>
                   {label}
                 </button>
-              ))}
-            </div>
-            <p className="text-xs text-gray-400">{sorted.length} réponse{sorted.length > 1 ? 's' : ''}</p>
+              )
+            })}
           </div>
 
-          {/* Liste */}
-          <div className="space-y-3">
+          {/* ── Desktop : tableau ── */}
+          <div className="hidden lg:block">
+            {sorted.length === 0 ? (
+              <div className="bg-white rounded-2xl px-7 py-16 text-center flex flex-col items-center" style={{ border: '1px solid #e7e5e1' }}>
+                <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: '#f5f4f1' }}>
+                  <Inbox size={22} style={{ color: '#a89b8c' }} />
+                </div>
+                <p className="font-display text-xl font-bold" style={{ color: '#241512' }}>{emptyLabel}</p>
+                <p className="text-sm mt-1.5" style={{ color: '#a89b8c' }}>Les prochaines demandes reçues depuis votre site apparaîtront ici.</p>
+              </div>
+            ) : (
+              <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+                <div className="grid px-7 py-3.5" style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr .8fr', borderBottom: '1px solid #eeece7' }}>
+                  {['Date', 'Marque', 'Type', 'Budget', 'Statut', 'Assigné'].map(h => (
+                    <span key={h} className="text-xs font-bold uppercase tracking-wide" style={{ color: '#a89b8c' }}>{h}</span>
+                  ))}
+                </div>
+                {sorted.map(rep => {
+                  const assignee = getAssignee(rep)
+                  return (
+                    <div
+                      key={rep.id}
+                      onClick={() => openDetail(rep)}
+                      className="grid items-center px-7 py-4 cursor-pointer hover:bg-[#faf9f6] transition-colors"
+                      style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr .8fr', borderBottom: '1px solid #f0eee9' }}
+                    >
+                      <span className="text-sm" style={{ color: '#a89b8c' }}>
+                        {new Date(rep.horodateur).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                      </span>
+                      <span className="text-sm font-bold truncate pr-2" style={{ color: '#241512' }}>{rep.nomEntreprise || '—'}</span>
+                      <span className="text-sm truncate pr-2" style={{ color: '#241512' }}>{rep.budget || '—'}</span>
+                      <span className="text-sm" style={{ color: '#a89b8c' }}>{BUDGET_INDICATIF[rep.budget] || '—'}</span>
+                      <span>
+                        <span className="text-xs font-semibold px-2.5 py-1 rounded-full"
+                          style={rep.lu ? { background: '#f5f4f1', color: '#241512' } : { background: '#f5e6e3', color: '#a1402d' }}>
+                          {rep.lu ? 'Lu' : 'Nouveau'}
+                        </span>
+                      </span>
+                      <span className="text-sm truncate" style={{ color: assignee ? '#241512' : '#a89b8c' }}>{assignee || '—'}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* ── Mobile : cartes existantes inchangées ── */}
+          <div className="lg:hidden space-y-3">
             {sorted.length === 0 && (
               <div className="bg-white rounded-2xl p-12 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
                 <Inbox size={32} className="text-gray-300 mx-auto mb-3" />
@@ -800,6 +876,13 @@ export default function Formulaires() {
               <CarteReponse key={rep.id} rep={rep} open={openId === rep.id} onToggle={() => toggle(rep.id)} />
             ))}
           </div>
+
+          {/* ── Détail (desktop) : réutilise exactement le même contenu que la carte mobile ── */}
+          {detailRep && (
+            <Modal isOpen={!!detailRep} onClose={() => setDetailId(null)} title={detailRep.nomEntreprise || 'Formulaire'} size="lg">
+              <CarteReponse rep={detailRep} open onToggle={() => setDetailId(null)} />
+            </Modal>
+          )}
         </div>
       )}
     </div>
