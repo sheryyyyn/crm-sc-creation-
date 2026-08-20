@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Plus, List, Columns, Check, X, Trash2, Edit, ChevronLeft, Bell, ChevronDown, ChevronUp } from 'lucide-react'
+import { Plus, List, Columns, Check, X, Trash2, Edit, ChevronLeft, ChevronDown, ChevronUp } from 'lucide-react'
 import useStore from '../store/useStore'
 import { statutBadge, prioriteBadge, assigneeBadge } from '../components/ui/Badge'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
@@ -209,9 +209,9 @@ export default function Taches() {
 
   return (
     <div>
-      {/* ── Mobile : back + bell, alignés avec le hamburger global fixe (Topbar.jsx) ── */}
+      {/* ── Mobile : back, aligné avec le hamburger global fixe (Topbar.jsx) ── */}
       <div
-        className="lg:hidden fixed top-0 left-0 right-0 z-20 flex items-end justify-between px-4 pb-2 pointer-events-none"
+        className="lg:hidden fixed top-0 left-0 right-0 z-20 flex items-end px-4 pb-2 pointer-events-none"
         style={{ height: 'calc(56px + env(safe-area-inset-top))' }}
       >
         <button
@@ -221,12 +221,6 @@ export default function Taches() {
         >
           <ChevronLeft size={20} />
         </button>
-        <div
-          className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
-        >
-          <Bell size={18} />
-        </div>
       </div>
 
       {/* ── Mobile : to-do repensée, plus de kanban ── */}
