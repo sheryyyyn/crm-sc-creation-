@@ -311,28 +311,6 @@ export default function Taches() {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-1 relative">
-            <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#a89b8c' }} />
-            <input
-              value={desktopSearch}
-              onChange={e => setDesktopSearch(e.target.value)}
-              placeholder="Rechercher..."
-              className="w-full pl-11 pr-4 py-3 rounded-full text-sm"
-              style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
-            />
-          </div>
-          <select
-            value={desktopProjetFilter}
-            onChange={e => setDesktopProjetFilter(e.target.value)}
-            className="px-4 py-3 rounded-full text-sm flex-shrink-0"
-            style={{ background: '#fff', border: '1px solid #e7e5e1', color: '#241512' }}
-          >
-            <option value="tous">Tous les projets</option>
-            {projets.map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-          </select>
-        </div>
-
         <div className="flex items-center gap-2 mb-6">
           {['Toutes', 'Sheryn', 'Chainez', 'Communes'].map(w => {
             const active = desktopWho === w
