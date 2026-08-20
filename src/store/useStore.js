@@ -229,7 +229,7 @@ const useStore = create((set, get) => ({
     const item = { ...data, id: generateId('fr'), lu: false, horodateur: new Date().toISOString() }
     fsSet('formReponses', item.id, item)
     const title = '📋 Nouveau formulaire reçu !'
-    const body = `${data.nomEntreprise || 'Un prospect'} vient de remplir le formulaire de contact.`
+    const body = `Vous avez reçu un nouveau formulaire de ${data.nomEntreprise || 'un prospect'}.`
     notify(title, body)
     sendPushNotification(title, body, '/formulaires')
     const tache = {
