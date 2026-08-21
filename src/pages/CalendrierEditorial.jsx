@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Plus, Edit, Trash2, Calendar, List, Columns, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
+import { Plus, Edit, Trash2, Calendar, List, Columns, ChevronLeft, ChevronRight, Eye, Instagram } from 'lucide-react'
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 
@@ -50,16 +50,26 @@ const PRIORITE_COLORS = {
   urgente: 'bg-red-100 text-red-600',
 }
 
-// Filtre "format" affiché sur la vue calendrier (regroupe plateforme + type)
-const FORMATS = ['TikTok', 'Instagram', 'Stories', 'Reels', 'Autre']
+// Filtre "format" affiché sur la vue calendrier (par plateforme uniquement)
+const FORMATS = ['TikTok', 'Instagram']
 function matchesFormat(c, f) {
   if (f === 'tous') return true
-  if (f === 'Stories') return c.type === 'Story'
-  if (f === 'Reels') return c.type === 'Reel'
-  if (f === 'TikTok') return c.plateforme === 'TikTok' && c.type !== 'Story' && c.type !== 'Reel'
-  if (f === 'Instagram') return c.plateforme === 'Instagram' && c.type !== 'Story' && c.type !== 'Reel'
-  if (f === 'Autre') return c.type !== 'Story' && c.type !== 'Reel' && c.plateforme !== 'TikTok' && c.plateforme !== 'Instagram'
-  return true
+  return c.plateforme === f
+}
+
+// Logo TikTok (absent de lucide-react) en SVG inline
+function TikTokIcon({ size = 12, color = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+      <path d="M16.6 5.82a4.28 4.28 0 0 1-3.05-3.05h-3.1v13.4a2.6 2.6 0 1 1-1.83-2.48V10.6a5.7 5.7 0 1 0 4.93 5.65V9.3a7.2 7.2 0 0 0 4.15 1.3V7.5a4.26 4.26 0 0 1-1.1-1.68z" />
+    </svg>
+  )
+}
+
+function PlatformIcon({ plateforme, size = 12, color }) {
+  if (plateforme === 'TikTok') return <TikTokIcon size={size} color={color} />
+  if (plateforme === 'Instagram') return <Instagram size={size} color={color} />
+  return null
 }
 
 // Palette des pastilles d'événement du calendrier, attribuée par thème
@@ -206,7 +216,7 @@ function DetailModal({ c, onClose, onEdit, onDelete }) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.plateforme}</span>
+            <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}><PlatformIcon plateforme={c.plateforme} size={11} />{c.plateforme}</span>
             <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#f5f4f1] text-[#241512]">{c.type}</span>
             <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUT_COLORS[c.statut] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.statut.replace('_', ' ')}</span>
             {c.priorite && c.priorite !== 'normale' && <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PRIORITE_COLORS[c.priorite]}`}>{c.priorite}</span>}
@@ -468,10 +478,13 @@ export default function CalendrierEditorial() {
                             const tc = themeColor(c.theme, themes)
                             return (
                               <button key={c.id} onClick={() => setDetailId(c.id)}
-                                className="w-full text-left truncate text-xs font-medium px-2 py-1 rounded-lg hover:opacity-80 transition-opacity"
+                                className="w-full flex items-center gap-1 text-left px-2 py-1 rounded-lg hover:opacity-80 transition-opacity"
                                 style={{ background: tc.bg, color: tc.text }}>
-                                {c.heurePublication && <span className="font-semibold">{c.heurePublication} </span>}
-                                {c.titre}
+                                <PlatformIcon plateforme={c.plateforme} size={11} color={tc.text} />
+                                <span className="truncate text-xs font-medium">
+                                  {c.heurePublication && <span className="font-semibold">{c.heurePublication} </span>}
+                                  {c.titre}
+                                </span>
                               </button>
                             )
                           })}
@@ -516,7 +529,7 @@ export default function CalendrierEditorial() {
                     {c.client && <p className="text-[10px]" style={{ color: '#a89b8c' }}>{c.client}</p>}
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.plateforme}</span>
+                    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}><PlatformIcon plateforme={c.plateforme} size={11} />{c.plateforme}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-xs font-medium" style={{ color: '#241512' }}>{c.type}</span>
@@ -579,7 +592,7 @@ export default function CalendrierEditorial() {
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-1 mb-1">
-                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${PLAT_COLORS[c.plateforme] || 'bg-[#eeece7] text-[#241512]'}`}>{c.plateforme}</span>
+                        <span className={`inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded ${PLAT_COLORS[c.plateforme] || 'bg-[#eeece7] text-[#241512]'}`}><PlatformIcon plateforme={c.plateforme} size={9} />{c.plateforme}</span>
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#eeece7]" style={{ color: '#241512' }}>{c.type}</span>
                         {c.priorite && c.priorite !== 'normale' && (
                           <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${PRIORITE_COLORS[c.priorite]}`}>{c.priorite}</span>
