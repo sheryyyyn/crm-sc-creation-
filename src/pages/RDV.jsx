@@ -195,34 +195,34 @@ L'équipe SC Création`
       {/* Drawer */}
       <div className="fixed right-0 top-0 h-full w-full max-w-lg bg-white z-50 flex flex-col shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 flex-shrink-0"
-          style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e7e5e1] flex-shrink-0"
+          style={{ background: '#f5f4f1' }}>
           <div>
             <div className="flex items-center gap-2">
-              <MessageSquare size={16} className="text-indigo-600" />
-              <p className="font-bold text-gray-900 text-sm">Questions · {rdv.sujet || 'RDV'}</p>
+              <MessageSquare size={16} className="text-[#241512]" />
+              <p className="font-bold text-[#241512] text-sm">Questions · {rdv.sujet || 'RDV'}</p>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
               {synced
                 ? <><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse inline-block" /><span className="text-[11px] text-emerald-600 font-medium">Synchronisé en temps réel</span></>
-                : <><span className="w-1.5 h-1.5 rounded-full bg-gray-300 inline-block" /><span className="text-[11px] text-gray-400">Connexion...</span></>
+                : <><span className="w-1.5 h-1.5 rounded-full bg-[#e7e5e1] inline-block" /><span className="text-[11px] text-[#a89b8c]">Connexion...</span></>
               }
               {derniereMAJ && (
-                <span className="text-[11px] text-gray-400 ml-2">
+                <span className="text-[11px] text-[#a89b8c] ml-2">
                   · modifié à {derniereMAJ.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
                 </span>
               )}
             </div>
           </div>
           <button onClick={onClose} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/80 transition-colors">
-            <X size={16} className="text-gray-500" />
+            <X size={16} className="text-[#a89b8c]" />
           </button>
         </div>
 
         {/* Contenu scrollable */}
         <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5">
           {questions.length === 0 && (
-            <div className="text-center py-8 text-gray-400">
+            <div className="text-center py-8 text-[#a89b8c]">
               <MessageSquare size={28} className="mx-auto mb-2 opacity-40" />
               <p className="text-sm">Aucune question préparée pour ce RDV.</p>
               <p className="text-xs mt-1">Modifie le RDV pour en ajouter.</p>
@@ -234,7 +234,7 @@ L'équipe SC Création`
             <div className="flex flex-wrap gap-2 pb-1">
               {categories.map(cat => (
                 <button key={cat} onClick={() => setCategorieActive(cat)}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${categorieActive === cat ? 'bg-indigo-600 text-white border-indigo-600' : 'border-gray-200 bg-white text-gray-500 hover:border-indigo-300 hover:text-indigo-600'}`}>
+                  className={`text-xs font-bold px-3 py-1.5 rounded-full border transition-all ${categorieActive === cat ? 'bg-[#241512] text-white border-[#241512]' : 'border-[#e7e5e1] bg-white text-[#a89b8c] hover:border-[#e7e5e1] hover:text-[#241512]'}`}>
                   {cat}
                   {cat !== 'Voir tout' && (
                     <span className={`ml-1.5 text-[10px] font-semibold ${categorieActive === cat ? 'opacity-80' : 'opacity-50'}`}>
@@ -252,13 +252,13 @@ L'équipe SC Création`
               return questionsFiltrees.map((q, idx) => {
                 const globalIdx = questions.indexOf(q)
                 return (
-                  <div key={globalIdx} className="rounded-2xl border border-gray-100 overflow-hidden">
-                    <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
-                      <p className="text-sm font-semibold text-indigo-800 leading-snug">{q.texte}</p>
+                  <div key={globalIdx} className="rounded-2xl border border-[#e7e5e1] overflow-hidden">
+                    <div className="px-4 py-3 bg-[#f5f4f1] border-b border-[#e7e5e1]">
+                      <p className="text-sm font-semibold text-[#241512] leading-snug">{q.texte}</p>
                     </div>
                     <div className="px-3 py-2">
                       <textarea
-                        className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                        className="w-full text-sm text-[#241512] bg-transparent outline-none resize-none placeholder-[#d5cfc4] leading-relaxed"
                         rows={3}
                         placeholder="Réponse..."
                         value={reponses[globalIdx] || ''}
@@ -289,19 +289,19 @@ L'équipe SC Création`
               sections.push(
                 <div key={`cat-${cat}`} className="space-y-3">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-500 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-100">
+                    <span className="text-[11px] font-bold uppercase tracking-widest text-[#a89b8c] bg-[#f5f4f1] px-3 py-1 rounded-full border border-[#e7e5e1]">
                       {cat}
                     </span>
-                    <div className="flex-1 h-px bg-indigo-100" />
+                    <div className="flex-1 h-px bg-[#f5f4f1]" />
                   </div>
                   {qs.map(({ texte, idx }) => (
-                    <div key={idx} className="rounded-2xl border border-gray-100 overflow-hidden">
-                      <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
-                        <p className="text-sm font-semibold text-indigo-800 leading-snug">{texte}</p>
+                    <div key={idx} className="rounded-2xl border border-[#e7e5e1] overflow-hidden">
+                      <div className="px-4 py-3 bg-[#f5f4f1] border-b border-[#e7e5e1]">
+                        <p className="text-sm font-semibold text-[#241512] leading-snug">{texte}</p>
                       </div>
                       <div className="px-3 py-2">
                         <textarea
-                          className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                          className="w-full text-sm text-[#241512] bg-transparent outline-none resize-none placeholder-[#d5cfc4] leading-relaxed"
                           rows={3}
                           placeholder="Réponse..."
                           value={reponses[idx] || ''}
@@ -321,20 +321,20 @@ L'équipe SC Création`
                 <div key="cat-autres" className="space-y-3">
                   {Object.keys(groupes).length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold uppercase tracking-widest text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+                      <span className="text-[11px] font-bold uppercase tracking-widest text-[#a89b8c] bg-[#f5f4f1] px-3 py-1 rounded-full border border-[#e7e5e1]">
                         Autres
                       </span>
-                      <div className="flex-1 h-px bg-gray-100" />
+                      <div className="flex-1 h-px bg-[#f5f4f1]" />
                     </div>
                   )}
                   {sansCat.map(({ texte, idx }) => (
-                    <div key={idx} className="rounded-2xl border border-gray-100 overflow-hidden">
-                      <div className="px-4 py-3 bg-indigo-50/60 border-b border-indigo-100/60">
-                        <p className="text-sm font-semibold text-indigo-800 leading-snug">{texte}</p>
+                    <div key={idx} className="rounded-2xl border border-[#e7e5e1] overflow-hidden">
+                      <div className="px-4 py-3 bg-[#f5f4f1] border-b border-[#e7e5e1]">
+                        <p className="text-sm font-semibold text-[#241512] leading-snug">{texte}</p>
                       </div>
                       <div className="px-3 py-2">
                         <textarea
-                          className="w-full text-sm text-gray-700 bg-transparent outline-none resize-none placeholder-gray-300 leading-relaxed"
+                          className="w-full text-sm text-[#241512] bg-transparent outline-none resize-none placeholder-[#d5cfc4] leading-relaxed"
                           rows={3}
                           placeholder="Réponse..."
                           value={reponses[idx] || ''}
@@ -354,9 +354,9 @@ L'équipe SC Création`
 
           {/* Notes libres */}
           <div>
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes libres pendant l'appel</p>
+            <p className="text-xs font-bold text-[#a89b8c] uppercase tracking-wider mb-2">Notes libres pendant l'appel</p>
             <textarea
-              className="w-full input resize-none text-sm"
+              className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }}
               rows={5}
               placeholder="Tout ce qui vient pendant l'appel..."
               value={notesLibres}
@@ -369,8 +369,8 @@ L'équipe SC Création`
           {/* À demander au client */}
           <div className="pt-1">
             <div className="flex items-center gap-2 mb-3">
-              <PackageOpen size={13} className="text-violet-500" />
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">À demander au client</p>
+              <PackageOpen size={13} className="text-[#241512]" />
+              <p className="text-xs font-bold text-[#a89b8c] uppercase tracking-wider">À demander au client</p>
             </div>
 
             {/* Tags */}
@@ -379,7 +379,7 @@ L'équipe SC Création`
                 const active = selectedTags.includes(label)
                 return (
                   <button key={id} onClick={() => toggleTag(label)}
-                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${active ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-gray-200 bg-white text-gray-500 hover:border-violet-300 hover:text-violet-600'}`}>
+                    className={`text-xs font-semibold px-3 py-1.5 rounded-full border transition-all ${active ? 'border-[#241512] bg-[#f5f4f1] text-[#241512]' : 'border-[#e7e5e1] bg-white text-[#a89b8c] hover:border-[#241512] hover:text-[#241512]'}`}>
                     {active && <span className="mr-1">✓</span>}{label}
                   </button>
                 )
@@ -390,7 +390,7 @@ L'équipe SC Création`
             {autresChamps.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
                 {autresChamps.map(val => (
-                  <span key={val} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-violet-500 bg-violet-50 text-violet-700">
+                  <span key={val} className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full border border-[#241512] bg-[#f5f4f1] text-[#241512]">
                     ✓ {val}
                     <button onClick={() => supprimerAutre(val)} className="hover:text-red-500 transition-colors ml-0.5">
                       <X size={10} />
@@ -408,11 +408,11 @@ L'équipe SC Création`
                 onChange={e => setAutreInput(e.target.value)}
                 onKeyDown={e => e.key === 'Enter' && ajouterAutre()}
                 placeholder="Autre élément à demander…"
-                className="flex-1 text-xs px-3 py-2 rounded-xl border border-gray-200 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300 placeholder-gray-300"
+                className="flex-1 text-xs px-3 py-2 rounded-xl border border-[#e7e5e1] bg-white focus:outline-none focus:ring-2 focus:ring-[#241512]/30 placeholder-[#d5cfc4]"
               />
               <button onClick={ajouterAutre}
                 disabled={!autreInput.trim()}
-                className="text-xs font-semibold px-3 py-2 rounded-xl bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+                className="text-xs font-semibold px-3 py-2 rounded-xl bg-[#f5f4f1] text-[#241512] hover:bg-[#eeece7] transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
                 + Ajouter
               </button>
             </div>
@@ -420,7 +420,7 @@ L'équipe SC Création`
             {tousLesElements.length > 0 && (
               <button onClick={() => setDemandeModal(true)}
                 className="flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl text-white w-full justify-center"
-                style={{ background: 'linear-gradient(135deg,#7c3aed,#6d28d9)' }}>
+                style={{ background: '#241512' }}>
                 <Send size={12} />
                 Préparer le mail · {tousLesElements.length} élément{tousLesElements.length > 1 ? 's' : ''}
               </button>
@@ -432,36 +432,36 @@ L'équipe SC Création`
         {demandeModal && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.45)' }}>
             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100"
-                style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#e7e5e1]"
+                style={{ background: '#f5f4f1' }}>
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#7c3aed,#6d28d9)' }}>
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: '#241512' }}>
                     <PackageOpen size={15} className="text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-sm text-gray-900">Demande d'éléments</p>
-                    <p className="text-[11px] text-gray-400">{clientEmail || 'Aucun email renseigné'}</p>
+                    <p className="font-bold text-sm text-[#241512]">Demande d'éléments</p>
+                    <p className="text-[11px] text-[#a89b8c]">{clientEmail || 'Aucun email renseigné'}</p>
                   </div>
                 </div>
-                <button onClick={() => setDemandeModal(false)} className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors">
-                  <X size={14} className="text-gray-500" />
+                <button onClick={() => setDemandeModal(false)} className="w-8 h-8 rounded-lg bg-[#f5f4f1] flex items-center justify-center hover:bg-[#eeece7] transition-colors">
+                  <X size={14} className="text-[#a89b8c]" />
                 </button>
               </div>
 
               {/* Toggle vouvoiement / tutoiement */}
               <div className="flex gap-2 px-6 pt-4">
                 <button onClick={() => setTutoiement(false)}
-                  className={`flex-1 text-xs font-bold py-2 rounded-xl border transition-all ${!tutoiement ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-gray-200 text-gray-400 hover:border-violet-300'}`}>
+                  className={`flex-1 text-xs font-bold py-2 rounded-xl border transition-all ${!tutoiement ? 'border-[#241512] bg-[#f5f4f1] text-[#241512]' : 'border-[#e7e5e1] text-[#a89b8c] hover:border-[#241512]'}`}>
                   Vouvoiement
                 </button>
                 <button onClick={() => setTutoiement(true)}
-                  className={`flex-1 text-xs font-bold py-2 rounded-xl border transition-all ${tutoiement ? 'border-violet-500 bg-violet-50 text-violet-700' : 'border-gray-200 text-gray-400 hover:border-violet-300'}`}>
+                  className={`flex-1 text-xs font-bold py-2 rounded-xl border transition-all ${tutoiement ? 'border-[#241512] bg-[#f5f4f1] text-[#241512]' : 'border-[#e7e5e1] text-[#a89b8c] hover:border-[#241512]'}`}>
                   Tutoiement
                 </button>
               </div>
 
               <div className="px-6 py-4">
-                <div className="bg-gray-50 rounded-xl p-4 text-gray-700 whitespace-pre-wrap font-mono leading-relaxed border border-gray-200" style={{ fontSize: '11.5px', maxHeight: '320px', overflowY: 'auto' }}>
+                <div className="bg-[#f5f4f1] rounded-xl p-4 text-[#241512] whitespace-pre-wrap font-mono leading-relaxed border border-[#e7e5e1]" style={{ fontSize: '11.5px', maxHeight: '320px', overflowY: 'auto' }}>
                   {demandeCorps}
                 </div>
               </div>
@@ -469,7 +469,7 @@ L'équipe SC Création`
                 {clientEmail ? (
                   <a href={`mailto:${clientEmail}?subject=${encodeURIComponent('SC Création — Éléments à nous transmettre pour votre projet')}&body=${encodeURIComponent(buildCorps(tutoiement))}`}
                     className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl text-white"
-                    style={{ background: 'linear-gradient(135deg,#7c3aed,#6d28d9)' }}
+                    style={{ background: '#241512' }}
                     onClick={() => {
                       updateRDV(rdv.id, { documentDemande: true })
                       addTache({
@@ -488,12 +488,12 @@ L'équipe SC Création`
                     <Mail size={14} />Ouvrir dans la messagerie
                   </a>
                 ) : (
-                  <div className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl bg-gray-100 text-gray-400">
+                  <div className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold py-2.5 rounded-xl bg-[#f5f4f1] text-[#a89b8c]">
                     Aucun email client renseigné
                   </div>
                 )}
                 <button onClick={() => { navigator.clipboard.writeText(buildCorps(tutoiement)); setMailCopied(true); setTimeout(() => setMailCopied(false), 2000) }}
-                  className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">
+                  className="flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl bg-[#f5f4f1] text-[#241512] hover:bg-[#eeece7] transition-colors">
                   {mailCopied ? <><Check size={14} className="text-emerald-600" />Copié !</> : <><Copy size={14} />Copier</>}
                 </button>
               </div>
@@ -502,8 +502,8 @@ L'équipe SC Création`
         )}
 
         {/* Footer info */}
-        <div className="px-6 py-3 border-t border-gray-100 bg-gray-50/50 flex-shrink-0">
-          <p className="text-[11px] text-gray-400 text-center">
+        <div className="px-6 py-3 border-t border-[#e7e5e1] bg-[#f5f4f1] flex-shrink-0">
+          <p className="text-[11px] text-[#a89b8c] text-center">
             Chainez et Sheryn voient les modifications en direct · chaque frappe est sauvegardée automatiquement
           </p>
         </div>
@@ -560,42 +560,42 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
 
   return (
     <div className="flex flex-col lg:flex-row gap-5">
-      <div className="flex-1 bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <button onClick={prevMois} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <ChevronLeft size={16} className="text-gray-500" />
+      <div className="flex-1 bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#e7e5e1]">
+          <button onClick={prevMois} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#f5f4f1] transition-colors">
+            <ChevronLeft size={16} className="text-[#a89b8c]" />
           </button>
-          <h2 className="font-bold text-gray-900">{MOIS[mois]} {annee}</h2>
-          <button onClick={nextMois} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
-            <ChevronRight size={16} className="text-gray-500" />
+          <h2 className="font-bold text-[#241512]">{MOIS[mois]} {annee}</h2>
+          <button onClick={nextMois} className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-[#f5f4f1] transition-colors">
+            <ChevronRight size={16} className="text-[#a89b8c]" />
           </button>
         </div>
-        <div className="grid grid-cols-7 border-b border-gray-100">
+        <div className="grid grid-cols-7 border-b border-[#e7e5e1]">
           {JOURS.map(j => (
-            <div key={j} className="py-2 text-center text-[11px] font-bold text-gray-400 uppercase tracking-wide">{j}</div>
+            <div key={j} className="py-2 text-center text-[11px] font-bold text-[#a89b8c] uppercase tracking-wide">{j}</div>
           ))}
         </div>
         <div className="grid grid-cols-7">
           {cellules.map((jour, i) => {
-            if (!jour) return <div key={`empty-${i}`} className="min-h-[72px] border-b border-r border-gray-50" />
+            if (!jour) return <div key={`empty-${i}`} className="min-h-[72px] border-b border-r border-[#eeece7]" />
             const rdvsJour = rdvParJour[jour] || []
             const selectionne = jourSelectionne === jour
             const aujd = isToday(jour)
             return (
               <button key={jour} onClick={() => setJourSelectionne(selectionne ? null : jour)}
-                className={`min-h-[72px] p-2 border-b border-r border-gray-50 text-left transition-all hover:bg-indigo-50/50 ${selectionne ? 'bg-indigo-50 border-indigo-200' : ''}`}>
-                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold mb-1 ${aujd ? 'bg-indigo-600 text-white' : selectionne ? 'bg-indigo-100 text-indigo-700' : 'text-gray-700'}`}>
+                className={`min-h-[72px] p-2 border-b border-r border-[#eeece7] text-left transition-all hover:bg-[#f5f4f1]/50 ${selectionne ? 'bg-[#f5f4f1] border-[#e7e5e1]' : ''}`}>
+                <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold mb-1 ${aujd ? 'bg-[#241512] text-white' : selectionne ? 'bg-[#f5f4f1] text-[#241512]' : 'text-[#241512]'}`}>
                   {jour}
                 </div>
                 <div className="space-y-0.5">
                   {rdvsJour.slice(0, 2).map(r => (
                     <div key={r.id} className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md truncate"
-                      style={{ background: '#eef2ff', color: '#4f46e5' }}>
+                      style={{ background: '#f5f4f1', color: '#241512' }}>
                       {r.heure ? r.heure.slice(0, 5) + ' ' : ''}{r.sujet || 'RDV'}
                     </div>
                   ))}
                   {rdvsJour.length > 2 && (
-                    <div className="text-[10px] text-gray-400 font-medium pl-1">+{rdvsJour.length - 2} autre{rdvsJour.length - 2 > 1 ? 's' : ''}</div>
+                    <div className="text-[10px] text-[#a89b8c] font-medium pl-1">+{rdvsJour.length - 2} autre{rdvsJour.length - 2 > 1 ? 's' : ''}</div>
                   )}
                 </div>
               </button>
@@ -606,25 +606,25 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
 
       <div className="w-full lg:w-72 flex-shrink-0">
         {jourSelectionne ? (
-          <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-            <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between"
-              style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+            <div className="px-5 py-4 border-b border-[#e7e5e1] flex items-center justify-between"
+              style={{ background: '#f5f4f1' }}>
               <div>
-                <p className="font-bold text-gray-900 text-sm">{jourSelectionne} {MOIS[mois].toLowerCase()}</p>
-                <p className="text-[11px] text-gray-400">{rdvJourSelectionne.length} rendez-vous</p>
+                <p className="font-bold text-[#241512] text-sm">{jourSelectionne} {MOIS[mois].toLowerCase()}</p>
+                <p className="text-[11px] text-[#a89b8c]">{rdvJourSelectionne.length} rendez-vous</p>
               </div>
               <button onClick={() => onNewRDV(dateJourStr)}
                 className="w-8 h-8 rounded-lg flex items-center justify-center text-white"
-                style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
+                style={{ background: '#241512' }}>
                 <Plus size={14} />
               </button>
             </div>
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-[#eeece7]">
               {rdvJourSelectionne.length === 0 && (
                 <div className="px-5 py-8 text-center">
-                  <Calendar size={24} className="text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">Aucun RDV ce jour</p>
-                  <button onClick={() => onNewRDV(dateJourStr)} className="mt-3 text-xs font-semibold text-indigo-600 hover:text-indigo-700">
+                  <Calendar size={24} className="text-[#a89b8c] mx-auto mb-2" />
+                  <p className="text-sm text-[#a89b8c]">Aucun RDV ce jour</p>
+                  <button onClick={() => onNewRDV(dateJourStr)} className="mt-3 text-xs font-semibold text-[#241512] hover:text-[#241512]">
                     + Ajouter un RDV
                   </button>
                 </div>
@@ -635,10 +635,10 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
                   <div key={r.id} className="px-5 py-4">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-gray-900 truncate">{r.sujet || 'Rendez-vous'}</p>
-                        {client && <p className="text-xs text-gray-500 mt-0.5">{client.nom}</p>}
+                        <p className="font-semibold text-sm text-[#241512] truncate">{r.sujet || 'Rendez-vous'}</p>
+                        {client && <p className="text-xs text-[#a89b8c] mt-0.5">{client.nom}</p>}
                         {r.heure && (
-                          <p className="text-xs text-indigo-600 font-medium mt-1 flex items-center gap-1">
+                          <p className="text-xs text-[#241512] font-medium mt-1 flex items-center gap-1">
                             <Clock size={10} />{r.heure}
                           </p>
                         )}
@@ -646,58 +646,58 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
                       <div className="flex gap-1 flex-shrink-0">
                         {r.questionsPreparees && (
                           <button onClick={() => onQuestions(r)}
-                            className="w-7 h-7 rounded-lg flex items-center justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors"
+                            className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#f5f4f1] text-[#241512] hover:bg-[#f5f4f1] transition-colors"
                             title="Questions d'appel">
                             <MessageSquare size={12} />
                           </button>
                         )}
                         {r.lienMeet && (
                           <a href={r.lienMeet} target="_blank" rel="noreferrer"
-                            className="w-7 h-7 rounded-lg flex items-center justify-center bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors">
+                            className="w-7 h-7 rounded-lg flex items-center justify-center bg-[#f5f4f1] text-[#241512] hover:bg-[#f5f4f1] transition-colors">
                             <Video size={12} />
                           </a>
                         )}
-                        <button onClick={() => onEdit(r)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-gray-100 transition-colors">
-                          <Edit size={12} className="text-gray-400" />
+                        <button onClick={() => onEdit(r)} className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-[#f5f4f1] transition-colors">
+                          <Edit size={12} className="text-[#a89b8c]" />
                         </button>
                         <button onClick={() => { if (confirm('Supprimer ce RDV ?')) onDelete(r.id) }}
                           className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-red-50 transition-colors">
-                          <Trash2 size={12} className="text-gray-400" />
+                          <Trash2 size={12} className="text-[#a89b8c]" />
                         </button>
                       </div>
                     </div>
-                    {r.notes && <p className="text-xs text-gray-500 mt-2 line-clamp-2">{r.notes}</p>}
+                    {r.notes && <p className="text-xs text-[#a89b8c] mt-2 line-clamp-2">{r.notes}</p>}
                   </div>
                 )
               })}
             </div>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl p-6 text-center" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-            <Calendar size={28} className="text-indigo-300 mx-auto mb-3" />
-            <p className="text-sm text-gray-500 font-medium">Sélectionne un jour</p>
-            <p className="text-xs text-gray-400 mt-1">pour voir les RDV de la journée</p>
-            <div className="mt-5 pt-4 border-t border-gray-100 text-left">
-              <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wide mb-3">Ce mois-ci</p>
+          <div className="bg-white rounded-2xl p-6 text-center" style={{ border: '1px solid #e7e5e1' }}>
+            <Calendar size={28} className="text-[#a89b8c] mx-auto mb-3" />
+            <p className="text-sm text-[#a89b8c] font-medium">Sélectionne un jour</p>
+            <p className="text-xs text-[#a89b8c] mt-1">pour voir les RDV de la journée</p>
+            <div className="mt-5 pt-4 border-t border-[#e7e5e1] text-left">
+              <p className="text-[11px] font-bold text-[#a89b8c] uppercase tracking-wide mb-3">Ce mois-ci</p>
               {rdvDuMois.length === 0 ? (
-                <p className="text-xs text-gray-400">Aucun RDV ce mois</p>
+                <p className="text-xs text-[#a89b8c]">Aucun RDV ce mois</p>
               ) : (
                 <div className="space-y-2">
                   {rdvDuMois.slice(0, 5).map(r => {
                     const client = getClient(r.clientId)
                     return (
                       <div key={r.id} className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-indigo-600">
+                        <div className="w-7 h-7 rounded-lg bg-[#f5f4f1] flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-[#241512]">
                           {r.date?.split('-')[2]}
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-semibold text-gray-700 truncate">{r.sujet || 'RDV'}</p>
-                          {client && <p className="text-[10px] text-gray-400 truncate">{client.nom}</p>}
+                          <p className="text-xs font-semibold text-[#241512] truncate">{r.sujet || 'RDV'}</p>
+                          {client && <p className="text-[10px] text-[#a89b8c] truncate">{client.nom}</p>}
                         </div>
                       </div>
                     )
                   })}
-                  {rdvDuMois.length > 5 && <p className="text-[11px] text-gray-400">+{rdvDuMois.length - 5} autres</p>}
+                  {rdvDuMois.length > 5 && <p className="text-[11px] text-[#a89b8c]">+{rdvDuMois.length - 5} autres</p>}
                 </div>
               )}
             </div>
@@ -716,7 +716,7 @@ function RecapFormulaire({ formReponse }) {
   function badge(val) {
     if (!val || val === 'Non' || val === 'Non souhaité') return { icon: '✕', cls: 'text-red-500' }
     if (val === 'Oui' || val === 'Disponible') return { icon: '✓', cls: 'text-emerald-600' }
-    return { icon: null, cls: 'text-gray-700' }
+    return { icon: null, cls: 'text-[#241512]' }
   }
 
   const champs = [
@@ -734,30 +734,30 @@ function RecapFormulaire({ formReponse }) {
   ]
 
   return (
-    <div className="mb-5 rounded-2xl border border-indigo-100 overflow-hidden">
+    <div className="mb-5 rounded-2xl border border-[#e7e5e1] overflow-hidden">
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
         className="w-full flex items-center justify-between px-4 py-3 text-left"
-        style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}
+        style={{ background: '#f5f4f1' }}
       >
         <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-md bg-indigo-600 flex items-center justify-center">
+          <div className="w-5 h-5 rounded-md bg-[#241512] flex items-center justify-center">
             <span className="text-white text-[10px] font-bold">F</span>
           </div>
-          <span className="text-xs font-bold text-indigo-800 uppercase tracking-wider">Récap formulaire — {formReponse.nomEntreprise}</span>
+          <span className="text-xs font-bold text-[#241512] uppercase tracking-wider">Récap formulaire — {formReponse.nomEntreprise}</span>
         </div>
-        <span className="text-indigo-400 text-xs">{open ? '▲' : '▼'}</span>
+        <span className="text-[#a89b8c] text-xs">{open ? '▲' : '▼'}</span>
       </button>
 
       {open && (
-        <div className="grid grid-cols-2 divide-x divide-y divide-gray-100 border-t border-indigo-100">
+        <div className="grid grid-cols-2 divide-x divide-y divide-[#eeece7] border-t border-[#e7e5e1]">
           {champs.map(({ label, val }) => {
             const b = badge(val)
             return (
               <div key={label} className="px-4 py-3 bg-white">
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-                <p className={`text-xs font-medium leading-snug ${b.icon ? b.cls : 'text-gray-700'}`}>
+                <p className="text-[10px] font-bold text-[#a89b8c] uppercase tracking-wider mb-1">{label}</p>
+                <p className={`text-xs font-medium leading-snug ${b.icon ? b.cls : 'text-[#241512]'}`}>
                   {b.icon && <span className="mr-1">{b.icon}</span>}{val}
                 </p>
               </div>
@@ -813,23 +813,23 @@ export default function RDV() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="page-title">Rendez-vous</h1>
-          <p className="text-sm text-gray-500 mt-1">{aVenir.length} à venir · {passes.length} passé{passes.length > 1 ? 's' : ''}</p>
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Rendez-vous</h1>
+          <p className="text-sm text-[#a89b8c] mt-1">{aVenir.length} à venir · {passes.length} passé{passes.length > 1 ? 's' : ''}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex gap-1 p-1 bg-white border border-gray-200 rounded-lg">
+          <div className="flex gap-1 p-1 bg-white border border-[#e7e5e1] rounded-lg">
             <button onClick={() => setVue('liste')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${vue === 'liste' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}>
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${vue === 'liste' ? 'bg-[#241512] text-white' : 'text-[#a89b8c] hover:bg-[#f5f4f1]'}`}>
               <List size={13} /> Liste
             </button>
             <button onClick={() => setVue('calendrier')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${vue === 'calendrier' ? 'bg-indigo-600 text-white' : 'text-gray-500 hover:bg-gray-100'}`}>
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${vue === 'calendrier' ? 'bg-[#241512] text-white' : 'text-[#a89b8c] hover:bg-[#f5f4f1]'}`}>
               <Calendar size={13} /> Calendrier
             </button>
           </div>
-          <button className="btn-primary" onClick={() => setModal(true)}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ background: '#241512', color: '#FDFCF8' }} onClick={() => setModal(true)}>
             <Plus size={16} /><span className="hidden sm:inline">Nouveau RDV</span><span className="sm:hidden">RDV</span>
           </button>
         </div>
@@ -851,10 +851,10 @@ export default function RDV() {
       {/* Vue liste */}
       {vue === 'liste' && (
         <>
-          <div className="flex gap-1 mb-5 bg-white border border-gray-200 rounded-lg p-1 w-fit">
+          <div className="flex gap-1 mb-5 bg-white border border-[#e7e5e1] rounded-lg p-1 w-fit">
             {[['a_venir', `À venir (${aVenir.length})`], ['passes', `Passés (${passes.length})`]].map(([k, l]) => (
               <button key={k} onClick={() => setTab(k)}
-                className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${tab === k ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+                className={`px-4 py-1.5 text-xs font-medium rounded-md transition-all ${tab === k ? 'bg-[#241512] text-white' : 'text-[#a89b8c] hover:bg-[#f5f4f1]'}`}>
                 {l}
               </button>
             ))}
@@ -862,34 +862,34 @@ export default function RDV() {
 
           <div className="space-y-3">
             {displayed.length === 0 && (
-              <div className="card p-12 text-center text-gray-400">Aucun rendez-vous {tab === 'a_venir' ? 'à venir' : 'passé'}</div>
+              <div className="bg-white rounded-2xl p-12 text-center text-[#a89b8c]" style={{ border: '1px solid #e7e5e1' }}>Aucun rendez-vous {tab === 'a_venir' ? 'à venir' : 'passé'}</div>
             )}
             {displayed.map(r => {
               const client = getClient(r.clientId)
               const isToday = r.date === today
               return (
-                <div key={r.id} className={`card p-5 ${isToday ? 'border-indigo-300 bg-indigo-50/30' : ''}`}>
+                <div key={r.id} className={`card p-5 ${isToday ? 'border-[#e7e5e1] bg-[#f5f4f1]/30' : ''}`}>
                   <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                     <div className="flex gap-4">
-                      <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isToday ? 'bg-indigo-600 text-white' : 'bg-gray-100'}`}>
-                        <span className={`text-lg font-bold leading-none ${isToday ? 'text-white' : 'text-gray-800'}`}>
+                      <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center flex-shrink-0 ${isToday ? 'bg-[#241512] text-white' : 'bg-[#f5f4f1]'}`}>
+                        <span className={`text-lg font-bold leading-none ${isToday ? 'text-white' : 'text-[#241512]'}`}>
                           {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { day: '2-digit' }) : '?'}
                         </span>
-                        <span className={`text-[10px] uppercase font-semibold ${isToday ? 'text-indigo-200' : 'text-gray-500'}`}>
+                        <span className={`text-[10px] uppercase font-semibold ${isToday ? 'text-[#a89b8c]' : 'text-[#a89b8c]'}`}>
                           {r.date ? new Date(r.date).toLocaleDateString('fr-FR', { month: 'short' }) : ''}
                         </span>
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1 flex-wrap">
-                          <p className="font-semibold text-gray-900">{r.sujet || 'Rendez-vous'}</p>
-                          {isToday && <span className="text-[10px] font-bold bg-indigo-600 text-white px-2 py-0.5 rounded-full">AUJOURD'HUI</span>}
+                          <p className="font-semibold text-[#241512]">{r.sujet || 'Rendez-vous'}</p>
+                          {isToday && <span className="text-[10px] font-bold bg-[#241512] text-white px-2 py-0.5 rounded-full">AUJOURD'HUI</span>}
                           {r.documentDemande
                             ? <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">✓ Document demandé</span>
                             : tab === 'passes' && <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">Document à fournir</span>
                           }
                         </div>
-                        {client && <p className="text-sm text-gray-600 mb-1">{client.nom}</p>}
-                        <div className="flex items-center gap-3 text-xs text-gray-400">
+                        {client && <p className="text-sm text-[#a89b8c] mb-1">{client.nom}</p>}
+                        <div className="flex items-center gap-3 text-xs text-[#a89b8c]">
                           {r.heure && <span className="flex items-center gap-1"><Clock size={11} />{r.heure}</span>}
                           {r.objectif && <span>{r.objectif}</span>}
                         </div>
@@ -899,50 +899,50 @@ export default function RDV() {
                     <div className="flex items-center gap-2 flex-wrap flex-shrink-0">
                       {r.questionsPreparees && (
                         <button onClick={() => setPanneauRDV(r)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-indigo-50 text-indigo-600 hover:bg-indigo-100 transition-colors border border-indigo-100">
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#f5f4f1] text-[#241512] hover:bg-[#f5f4f1] transition-colors border border-[#e7e5e1]">
                           <MessageSquare size={13} /> Questions
                         </button>
                       )}
                       {r.lienMeet ? (
                         <a href={r.lienMeet} target="_blank" rel="noreferrer"
                           className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg text-white transition-colors"
-                          style={{ background: '#111827' }}>
+                          style={{ background: '#241512' }}>
                           <Video size={13} /> Rejoindre
                         </a>
                       ) : (
                         <span
                           className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg cursor-not-allowed"
-                          style={{ background: '#e5e7eb', color: '#9ca3af' }}
+                          style={{ background: '#f5f4f1', color: '#a89b8c' }}
                           title="Aucun lien de visio renseigné"
                         >
                           <Video size={13} /> Rejoindre
                         </span>
                       )}
-                      <button onClick={() => openEdit(r)} className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-gray-100"><Edit size={15} /></button>
-                      <button onClick={() => { if (confirm('Supprimer ce RDV ?')) deleteRDV(r.id) }} className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-gray-100"><Trash2 size={15} /></button>
+                      <button onClick={() => openEdit(r)} className="p-1.5 text-[#a89b8c] hover:text-[#241512] rounded-lg hover:bg-[#f5f4f1]"><Edit size={15} /></button>
+                      <button onClick={() => { if (confirm('Supprimer ce RDV ?')) deleteRDV(r.id) }} className="p-1.5 text-[#a89b8c] hover:text-red-500 rounded-lg hover:bg-[#f5f4f1]"><Trash2 size={15} /></button>
                     </div>
                   </div>
 
                   {(r.notes || r.compteRendu || r.prochainesActions?.length > 0) && (
-                    <div className="mt-4 pt-4 border-t border-gray-100 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="mt-4 pt-4 border-t border-[#e7e5e1] grid grid-cols-1 md:grid-cols-3 gap-4">
                       {r.notes && (
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 mb-1">Notes</p>
-                          <p className="text-sm text-gray-700">{r.notes}</p>
+                          <p className="text-xs font-semibold text-[#a89b8c] mb-1">Notes</p>
+                          <p className="text-sm text-[#241512]">{r.notes}</p>
                         </div>
                       )}
                       {r.compteRendu && (
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 mb-1">Compte rendu</p>
-                          <p className="text-sm text-gray-700">{r.compteRendu}</p>
+                          <p className="text-xs font-semibold text-[#a89b8c] mb-1">Compte rendu</p>
+                          <p className="text-sm text-[#241512]">{r.compteRendu}</p>
                         </div>
                       )}
                       {r.prochainesActions?.length > 0 && (
                         <div>
-                          <p className="text-xs font-semibold text-gray-500 mb-1">Prochaines actions</p>
+                          <p className="text-xs font-semibold text-[#a89b8c] mb-1">Prochaines actions</p>
                           <ul className="space-y-1">
                             {r.prochainesActions.map((a, i) => (
-                              <li key={i} className="text-sm text-gray-700 flex items-start gap-1"><span className="text-indigo-400 mt-0.5">→</span>{a}</li>
+                              <li key={i} className="text-sm text-[#241512] flex items-start gap-1"><span className="text-[#a89b8c] mt-0.5">→</span>{a}</li>
                             ))}
                           </ul>
                         </div>
@@ -958,39 +958,39 @@ export default function RDV() {
           <Modal isOpen={modal} onClose={() => setModal(false)} title="Nouveau rendez-vous" size="lg">
             <form onSubmit={handleSubmit}>
               <FormField label="Client" required>
-                <select className="select mb-4" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })} required>
+                <select className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })} required>
                   <option value="">— Choisir un client —</option>
                   {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
                 </select>
               </FormField>
               <FormRow cols={2}>
                 <FormField label="Date">
-                  <input type="date" className="input" value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
+                  <input type="date" className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.date} onChange={e => setForm({ ...form, date: e.target.value })} />
                 </FormField>
                 <FormField label="Heure">
-                  <input type="time" className="input" value={form.heure} onChange={e => setForm({ ...form, heure: e.target.value })} />
+                  <input type="time" className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.heure} onChange={e => setForm({ ...form, heure: e.target.value })} />
                 </FormField>
               </FormRow>
               <FormField label="Sujet">
-                <input className="input mb-4" value={form.sujet} onChange={e => setForm({ ...form, sujet: e.target.value })} />
+                <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.sujet} onChange={e => setForm({ ...form, sujet: e.target.value })} />
               </FormField>
               <FormField label="Objectif">
-                <input className="input mb-4" value={form.objectif} onChange={e => setForm({ ...form, objectif: e.target.value })} />
+                <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.objectif} onChange={e => setForm({ ...form, objectif: e.target.value })} />
               </FormField>
               <FormField label="Lien Google Meet">
-                <input className="input mb-4" value={form.lienMeet} onChange={e => setForm({ ...form, lienMeet: e.target.value })} placeholder="https://meet.google.com/..." />
+                <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.lienMeet} onChange={e => setForm({ ...form, lienMeet: e.target.value })} placeholder="https://meet.google.com/..." />
               </FormField>
               <FormField label="Notes de préparation">
-                <textarea className="input resize-none mb-4" rows={3} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+                <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={3} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
               </FormField>
               <FormField label="Questions préparées pour l'appel">
-                <textarea className="input resize-none" rows={5} value={form.questionsPreparees} onChange={e => setForm({ ...form, questionsPreparees: e.target.value })}
+                <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={5} value={form.questionsPreparees} onChange={e => setForm({ ...form, questionsPreparees: e.target.value })}
                   placeholder={"[Design] Quels sont tes couleurs préférées ?\n[Design] As-tu un logo existant ?\n[Marketing] Qui est ta cible ?\n[Marketing] Quel est ton budget ?\nUne question sans catégorie..."} />
-                <p className="text-[11px] text-gray-400 mt-1">Une question par ligne · Ajoute <span className="font-mono bg-gray-100 px-1 rounded">[Catégorie]</span> au début pour grouper par onglet</p>
+                <p className="text-[11px] text-[#a89b8c] mt-1">Une question par ligne · Ajoute <span className="font-mono bg-[#f5f4f1] px-1 rounded">[Catégorie]</span> au début pour grouper par onglet</p>
               </FormField>
               <div className="flex justify-end gap-2 mt-5">
-                <button type="button" className="btn-secondary" onClick={() => setModal(false)}>Annuler</button>
-                <button type="submit" className="btn-primary">Créer le RDV</button>
+                <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => setModal(false)}>Annuler</button>
+                <button type="submit" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ background: '#241512', color: '#FDFCF8' }}>Créer le RDV</button>
               </div>
             </form>
           </Modal>
@@ -1009,32 +1009,32 @@ export default function RDV() {
                 })()}
                 <FormRow cols={2}>
                   <FormField label="Date">
-                    <input type="date" className="input" value={editForm.date || ''} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
+                    <input type="date" className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={editForm.date || ''} onChange={e => setEditForm({ ...editForm, date: e.target.value })} />
                   </FormField>
                   <FormField label="Heure">
-                    <input type="time" className="input" value={editForm.heure || ''} onChange={e => setEditForm({ ...editForm, heure: e.target.value })} />
+                    <input type="time" className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={editForm.heure || ''} onChange={e => setEditForm({ ...editForm, heure: e.target.value })} />
                   </FormField>
                 </FormRow>
                 <FormField label="Sujet">
-                  <input className="input mb-4" value={editForm.sujet || ''} onChange={e => setEditForm({ ...editForm, sujet: e.target.value })} />
+                  <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={editForm.sujet || ''} onChange={e => setEditForm({ ...editForm, sujet: e.target.value })} />
                 </FormField>
                 <FormField label="Lien Meet">
-                  <input className="input mb-4" value={editForm.lienMeet || ''} onChange={e => setEditForm({ ...editForm, lienMeet: e.target.value })} />
+                  <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={editForm.lienMeet || ''} onChange={e => setEditForm({ ...editForm, lienMeet: e.target.value })} />
                 </FormField>
                 <FormField label="Notes">
-                  <textarea className="input resize-none mb-4" rows={2} value={editForm.notes || ''} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} />
+                  <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={2} value={editForm.notes || ''} onChange={e => setEditForm({ ...editForm, notes: e.target.value })} />
                 </FormField>
                 <FormField label="Questions préparées pour l'appel">
-                  <textarea className="input resize-none mb-4" rows={5} value={editForm.questionsPreparees || ''} onChange={e => setEditForm({ ...editForm, questionsPreparees: e.target.value })}
+                  <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={5} value={editForm.questionsPreparees || ''} onChange={e => setEditForm({ ...editForm, questionsPreparees: e.target.value })}
                     placeholder={"[Design] Quels sont tes couleurs ?\n[Marketing] Qui est ta cible ?\nUne question sans catégorie..."} />
-                  <p className="text-[11px] text-gray-400 -mt-3 mb-1">Une question par ligne · <span className="font-mono bg-gray-100 px-1 rounded">[Catégorie]</span> au début pour grouper</p>
+                  <p className="text-[11px] text-[#a89b8c] -mt-3 mb-1">Une question par ligne · <span className="font-mono bg-[#f5f4f1] px-1 rounded">[Catégorie]</span> au début pour grouper</p>
                 </FormField>
                 <FormField label="Compte rendu">
-                  <textarea className="input resize-none mb-4" rows={3} value={editForm.compteRendu || ''} onChange={e => setEditForm({ ...editForm, compteRendu: e.target.value })} />
+                  <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={3} value={editForm.compteRendu || ''} onChange={e => setEditForm({ ...editForm, compteRendu: e.target.value })} />
                 </FormField>
                 <div className="flex justify-end gap-2 mt-5">
-                  <button type="button" className="btn-secondary" onClick={() => setEditModal(null)}>Annuler</button>
-                  <button type="submit" className="btn-primary">Enregistrer</button>
+                  <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => setEditModal(null)}>Annuler</button>
+                  <button type="submit" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ background: '#241512', color: '#FDFCF8' }}>Enregistrer</button>
                 </div>
               </form>
             </Modal>
