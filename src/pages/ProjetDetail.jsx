@@ -1,11 +1,13 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Edit, Trash2, Calendar, ExternalLink, Check, Plus, Copy, Eye, EyeOff, KeyRound } from 'lucide-react'
+import { ArrowLeft, Edit, Trash2, Calendar, ExternalLink, Check, Plus, Copy, Eye, EyeOff, KeyRound, Upload, FileText, Image, Video, FileArchive, Loader2, Download } from 'lucide-react'
 import useStore from '../store/useStore'
 import { statutBadge, prioriteBadge, assigneeBadge } from '../components/ui/Badge'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 import { RecapFormulaire } from './RDV'
 import { getJoursRestants } from '../utils/joursRestants'
+import { storage } from '../firebase'
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage'
 
 const ETAPES = ['Appel', 'Devis', 'Signature', 'Paiement', 'Brief', 'Maquettes', 'Validation', 'Développement', 'Mise en ligne', 'Suivi 1 mois', 'Terminé']
 const TABS = ['Aperçu', 'Tâches', 'Documents', 'Accès', 'Formulaire', 'Client']
@@ -21,8 +23,21 @@ const statutColor = {
   annule: '#ef4444',
 }
 
-const genId = () => `acc_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`
+const genId = () => `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`
 const emptyAcces = { service: '', identifiant: '', motDePasse: '', url: '', notes: '' }
+
+function fileIcon(mimeType, nom = '') {
+  if (mimeType?.startsWith('image/')) return Image
+  if (mimeType?.startsWith('video/')) return Video
+  if (/\.(zip|rar|7z)$/i.test(nom)) return FileArchive
+  return FileText
+}
+function formatFileSize(bytes) {
+  if (!bytes) return '—'
+  if (bytes < 1024) return `${bytes} o`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} Ko`
+  return `${(bytes / 1024 / 1024).toFixed(1)} Mo`
+}
 
 // ─── Carte "code d'accès" (Shopify, hébergeur, etc.) ────────────────────────
 function AccesCard({ acces, onEdit, onDelete }) {
@@ -88,12 +103,15 @@ function AccesCard({ acces, onEdit, onDelete }) {
 export default function ProjetDetail() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { projets, clients, documents, formReponses, updateProjet, deleteProjet, getTachesByProjet } = useStore()
+  const { projets, clients, formReponses, updateProjet, deleteProjet, getTachesByProjet } = useStore()
   const [tab, setTab] = useState('Aperçu')
   const [editModal, setEditModal] = useState(false)
   const [form, setForm] = useState(null)
   const [accesModal, setAccesModal] = useState(false)
   const [accesForm, setAccesForm] = useState(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const fileInputRef = useRef(null)
 
   const projet = projets.find(p => p.id === id)
   if (!projet) return (
@@ -105,11 +123,42 @@ export default function ProjetDetail() {
 
   const client = clients.find(c => c.id === projet.clientId)
   const taches = getTachesByProjet(id)
-  const docs = documents.filter(d => d.clientId === projet.clientId)
+  const fichiers = projet.fichiers || []
   const formReponse = client?.formReponseId ? formReponses.find(r => r.id === client.formReponseId) : null
   const acces = projet.acces || []
   const today = new Date().toISOString().split('T')[0]
   const idxEtape = ETAPES.indexOf(projet.etapeActuelle)
+
+  async function handleFilesSelected(e) {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    setUploading(true)
+    setUploadError('')
+    try {
+      const uploaded = []
+      for (const file of files) {
+        const fileId = genId()
+        const storageRef = ref(storage, `projets/${id}/${fileId}_${file.name}`)
+        await uploadBytes(storageRef, file)
+        const url = await getDownloadURL(storageRef)
+        uploaded.push({ id: fileId, nom: file.name, url, taille: file.size, type: file.type, storagePath: storageRef.fullPath, dateAjout: new Date().toISOString() })
+      }
+      updateProjet(id, { fichiers: [...fichiers, ...uploaded] })
+    } catch (err) {
+      setUploadError("Échec de l'import. Vérifie ta connexion et réessaie.")
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  async function handleFileDelete(fichier) {
+    if (!confirm(`Supprimer "${fichier.nom}" ?`)) return
+    updateProjet(id, { fichiers: fichiers.filter(f => f.id !== fichier.id) })
+    if (fichier.storagePath) {
+      try { await deleteObject(ref(storage, fichier.storagePath)) } catch { /* fichier déjà absent du storage, on ignore */ }
+    }
+  }
 
   function openAccesAdd() {
     setAccesForm({ ...emptyAcces, id: genId() })
@@ -300,34 +349,49 @@ export default function ProjetDetail() {
         </div>
       )}
 
-      {/* Documents */}
+      {/* Documents (import libre de fichiers) */}
       {tab === 'Documents' && (
-        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[420px]">
-              <thead>
-                <tr style={{ background: '#f5f4f1' }}>
-                  <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Numéro</th>
-                  <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Type</th>
-                  <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Montant HT</th>
-                  <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Date</th>
-                  <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Statut</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y" style={{ borderColor: '#eeece7' }}>
-                {docs.length === 0 && <tr><td colSpan={5} className="text-center py-8 text-sm" style={{ color: '#a89b8c' }}>Aucun document lié à ce client</td></tr>}
-                {docs.map(d => (
-                  <tr key={d.id} className="hover:bg-[#faf9f6] transition-colors cursor-pointer" onClick={() => navigate('/documents')}>
-                    <td className="px-4 py-3 text-sm font-medium" style={{ color: '#241512' }}>{d.numero}</td>
-                    <td className="px-4 py-3 text-sm capitalize" style={{ color: '#241512' }}>{d.type}</td>
-                    <td className="px-4 py-3 text-sm font-semibold" style={{ color: '#241512' }}>{(d.montantHT || 0).toLocaleString('fr-FR')} €</td>
-                    <td className="px-4 py-3 text-xs" style={{ color: '#a89b8c' }}>{d.dateEmission && new Date(d.dateEmission).toLocaleDateString('fr-FR')}</td>
-                    <td className="px-4 py-3 text-sm">{statutBadge(d.statut)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <div>
+          <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFilesSelected} />
+          <div className="flex items-center justify-between mb-4 gap-2 flex-wrap">
+            <p className="text-xs" style={{ color: '#a89b8c' }}>{fichiers.length} fichier{fichiers.length > 1 ? 's' : ''}</p>
+            <button onClick={() => fileInputRef.current?.click()} disabled={uploading}
+              className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-xl text-white hover:opacity-90 transition-opacity disabled:opacity-60"
+              style={{ background: '#241512' }}>
+              {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+              {uploading ? 'Import en cours…' : 'Importer des fichiers'}
+            </button>
           </div>
+          {uploadError && <p className="text-xs mb-3" style={{ color: '#ef4444' }}>{uploadError}</p>}
+
+          {fichiers.length === 0 ? (
+            <div className="bg-white rounded-2xl p-8 text-center text-sm" style={{ border: '1px solid #e7e5e1', color: '#a89b8c' }}>
+              Aucun fichier importé pour ce projet.
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+              {fichiers.map(f => {
+                const Icon = fileIcon(f.type, f.nom)
+                return (
+                  <div key={f.id} className="flex items-center gap-3 px-4 py-3.5" style={{ borderBottom: '1px solid #f0eee9' }}>
+                    <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: '#f5f4f1' }}>
+                      <Icon size={16} style={{ color: '#a89b8c' }} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium truncate" style={{ color: '#241512' }}>{f.nom}</p>
+                      <p className="text-xs" style={{ color: '#a89b8c' }}>{formatFileSize(f.taille)} · {new Date(f.dateAjout).toLocaleDateString('fr-FR')}</p>
+                    </div>
+                    <a href={f.url} target="_blank" rel="noreferrer" className="p-2 rounded-lg hover:bg-[#f5f4f1] flex-shrink-0" style={{ color: '#a89b8c' }} title="Télécharger">
+                      <Download size={15} />
+                    </a>
+                    <button onClick={() => handleFileDelete(f)} className="p-2 rounded-lg hover:bg-red-50 hover:text-red-500 flex-shrink-0" style={{ color: '#a89b8c' }} title="Supprimer">
+                      <Trash2 size={15} />
+                    </button>
+                  </div>
+                )
+              })}
+            </div>
+          )}
         </div>
       )}
 
