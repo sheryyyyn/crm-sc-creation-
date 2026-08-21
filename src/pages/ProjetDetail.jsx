@@ -145,7 +145,8 @@ export default function ProjetDetail() {
       }
       updateProjet(id, { fichiers: [...fichiers, ...uploaded] })
     } catch (err) {
-      setUploadError("Échec de l'import. Vérifie ta connexion et réessaie.")
+      console.error('Upload projet échoué :', err)
+      setUploadError(`Échec de l'import (${err.code || err.message || 'erreur inconnue'}).`)
     } finally {
       setUploading(false)
       if (fileInputRef.current) fileInputRef.current.value = ''
