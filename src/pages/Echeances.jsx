@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import useStore from '../store/useStore'
-import Modal, { FormRow, FormField } from '../components/ui/Modal'
+import Modal from '../components/ui/Modal'
+import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskField'
 
 // ─── Échéances = les tâches qui ont une deadline ──────────────────────────────
 // Pas de collection séparée : mêmes données que la carte "Prochaines échéances"
@@ -133,42 +134,42 @@ export default function Echeances() {
       )}
 
       <Modal isOpen={modal} onClose={() => setModal(false)} title="Nouvelle échéance" size="lg">
-        <form onSubmit={handleSubmit}>
-          <FormField label="Titre" required>
-            <input className="input mb-4" autoFocus value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required />
-          </FormField>
-          <FormRow cols={2}>
-            <FormField label="Client">
-              <select className="select" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <TaskField label="Titre" required>
+            <input className={taskInputCls} style={taskInputStyle} autoFocus value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required />
+          </TaskField>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TaskField label="Client">
+              <select className={taskInputCls} style={taskInputStyle} value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
                 <option value="">— Aucun —</option>
                 {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
               </select>
-            </FormField>
-            <FormField label="Projet">
-              <select className="select" value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
+            </TaskField>
+            <TaskField label="Projet">
+              <select className={taskInputCls} style={taskInputStyle} value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
                 <option value="">— Aucun —</option>
                 {getProjetsForClient(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
               </select>
-            </FormField>
-          </FormRow>
-          <FormRow cols={2}>
-            <FormField label="Assignée">
-              <select className="select" value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
+            </TaskField>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TaskField label="Assignée">
+              <select className={taskInputCls} style={taskInputStyle} value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
                 <option value="Sheryn">Sheryn</option>
                 <option value="Chainez">Chaïnez</option>
                 <option value="Les deux">Les deux</option>
               </select>
-            </FormField>
-            <FormField label="Date" required>
-              <input type="date" className="input" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} required />
-            </FormField>
-          </FormRow>
-          <FormField label="Notes">
-            <textarea className="input resize-none" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
-          </FormField>
-          <div className="flex justify-end gap-2 mt-5">
-            <button type="button" className="btn-secondary" onClick={() => setModal(false)}>Annuler</button>
-            <button type="submit" className="btn-primary">Créer l'échéance</button>
+            </TaskField>
+            <TaskField label="Date" required>
+              <input type="date" className={taskInputCls} style={taskInputStyle} value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} required />
+            </TaskField>
+          </div>
+          <TaskField label="Notes">
+            <textarea className={`${taskInputCls} resize-none`} style={taskInputStyle} rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+          </TaskField>
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" className="px-4 py-2 rounded-xl text-sm font-semibold transition-colors hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => setModal(false)}>Annuler</button>
+            <button type="submit" className="px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity" style={{ background: '#241512', color: '#FDFCF8' }}>Créer l'échéance</button>
           </div>
         </form>
       </Modal>

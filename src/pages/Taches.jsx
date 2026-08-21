@@ -3,20 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, X, ChevronLeft, ChevronDown, ChevronUp, Search } from 'lucide-react'
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
-
-// ─── Style local pour le formulaire "Nouvelle tâche" (nouvelle DA) ──────────
-const taskInputCls = "w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
-const taskInputStyle = { background: '#faf9f6', border: '1px solid #e7e5e1', color: '#241512' }
-function TaskField({ label, required, children }) {
-  return (
-    <div>
-      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#241512' }}>
-        {label}{required && <span style={{ color: '#a1402d' }} className="ml-0.5">*</span>}
-      </label>
-      {children}
-    </div>
-  )
-}
+import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskField'
 
 const COLUMNS = [
   { id: 'pas_commence', label: 'Pas commencé', color: 'bg-gray-400' },

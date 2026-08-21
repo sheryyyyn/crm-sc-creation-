@@ -6,7 +6,9 @@ import {
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { notify } from '../utils/notify'
-import Modal, { FormRow, FormField } from '../components/ui/Modal'
+import Modal from '../components/ui/Modal'
+import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskField'
+import { STATUTS_TACHE } from '../data/tacheOptions'
 import { statutBadge } from '../components/ui/Badge'
 
 // ─── Ajout rapide de tâche depuis le Dashboard ────────────────────────────────
@@ -47,54 +49,56 @@ function QuickAddTaskModal({ isOpen, onClose, clients, projets, addTache, onAdde
 
   return (
     <Modal isOpen={isOpen} onClose={close} title="Ajouter une tâche" size="lg">
-      <form onSubmit={handleSubmit}>
-        <FormField label="Titre" required>
-          <input className="input mb-4" autoFocus value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required />
-        </FormField>
-        <FormRow cols={2}>
-          <FormField label="Assignée">
-            <select className="select" value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <TaskField label="Titre" required>
+          <input className={taskInputCls} style={taskInputStyle} autoFocus value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required placeholder="Ex. Finaliser la homepage" />
+        </TaskField>
+        <TaskField label="Client">
+          <select className={taskInputCls} style={taskInputStyle} value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
+            <option value="">— Aucun —</option>
+            {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+          </select>
+        </TaskField>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TaskField label="Assignée à">
+            <select className={taskInputCls} style={taskInputStyle} value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
               <option value="Sheryn">Sheryn</option>
               <option value="Chainez">Chaïnez</option>
               <option value="Les deux">Les deux</option>
             </select>
-          </FormField>
-          <FormField label="Priorité">
-            <select className="select" value={form.priorite} onChange={e => setForm({ ...form, priorite: e.target.value })}>
-              <option value="urgente">Urgente</option>
-              <option value="moyenne">Secondaire</option>
+          </TaskField>
+          <TaskField label="Catégorie">
+            <select className={taskInputCls} style={taskInputStyle} value={form.priorite === 'urgente' ? 'urgente' : 'moyenne'} onChange={e => setForm({ ...form, priorite: e.target.value })}>
+              <option value="urgente">Urgentes</option>
+              <option value="moyenne">Secondaires</option>
             </select>
-          </FormField>
-        </FormRow>
-        <FormRow cols={2}>
-          <FormField label="Client">
-            <select className="select" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
-              <option value="">— Aucun —</option>
-              {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+          </TaskField>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <TaskField label="Date d'échéance">
+            <input type="date" className={taskInputCls} style={taskInputStyle} value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
+          </TaskField>
+          <TaskField label="Statut">
+            <select className={taskInputCls} style={taskInputStyle} value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
+              {STATUTS_TACHE.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}
             </select>
-          </FormField>
-          <FormField label="Projet">
-            <select className="select" value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
-              <option value="">— Aucun —</option>
-              {getProjets(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-            </select>
-          </FormField>
-        </FormRow>
-        <FormField label="Deadline">
-          <input type="date" className="input mb-4" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
-        </FormField>
-        <FormField label="Notes (facultatif)">
-          <textarea className="input resize-none" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
-        </FormField>
+          </TaskField>
+        </div>
+        <TaskField label="Projet associé">
+          <select className={taskInputCls} style={taskInputStyle} value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
+            <option value="">Aucun</option>
+            {getProjets(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
+          </select>
+        </TaskField>
 
         {error && (
-          <p className="text-sm font-medium mt-3" style={{ color: '#b3261e' }}>{error}</p>
+          <p className="text-sm font-medium" style={{ color: '#b3261e' }}>{error}</p>
         )}
 
-        <div className="flex justify-end gap-2 mt-5">
-          <button type="button" className="btn-secondary" onClick={close}>Annuler</button>
-          <button type="submit" className="btn-primary" disabled={!canSubmit}
-            style={!canSubmit ? { opacity: .5, cursor: 'not-allowed' } : undefined}>
+        <div className="flex justify-end gap-2 pt-1">
+          <button type="button" className="px-4 py-2 rounded-xl text-sm font-semibold transition-colors hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={close}>Annuler</button>
+          <button type="submit" className="px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity" disabled={!canSubmit}
+            style={{ background: '#241512', color: '#FDFCF8', opacity: !canSubmit ? .5 : 1, cursor: !canSubmit ? 'not-allowed' : 'pointer' }}>
             {saving ? 'Ajout…' : 'Ajouter la tâche'}
           </button>
         </div>
