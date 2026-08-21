@@ -352,7 +352,7 @@ function CarteReponse({ rep, onToggle, open }) {
   const clientExiste = clients.some(c => c.email === rep.email)
 
   function handleCreerClient() {
-    addClient(buildClientFromForm(rep))
+    addClient(buildClientFromForm(rep, rep.id))
     setClientCree(true)
   }
 

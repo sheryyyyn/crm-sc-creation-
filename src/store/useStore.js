@@ -255,6 +255,7 @@ const useStore = create((set, get) => ({
       formReponseId: item.id,
     }
     fsSet('taches', tache.id, tache)
+    return item.id
   },
   markFormReponseRead: (id) => {
     const updated = { ...get().formReponses.find((r) => r.id === id), lu: true }
@@ -268,7 +269,16 @@ const useStore = create((set, get) => ({
     const updated = { ...get().formReponses.find((r) => r.id === id), rdvBooke: true }
     fsSet('formReponses', id, updated)
   },
-  deleteFormReponse: (id) => fsDel('formReponses', id),
+  // Supprime la réponse, et avec elle la fiche client auto-créée à partir de ce
+  // formulaire (tant qu'elle n'a pas été transformée en vrai client "actif") —
+  // pour éviter d'accumuler des fiches prospects orphelines dans la base client.
+  deleteFormReponse: (id) => {
+    fsDel('formReponses', id)
+    const clientLie = get().clients.find((c) => c.formReponseId === id)
+    if (clientLie && clientLie.statut === 'prospect') fsDel('clients', clientLie.id)
+    const tacheLiee = get().taches.find((t) => t.formReponseId === id)
+    if (tacheLiee) fsDel('taches', tacheLiee.id)
+  },
   updateFormReponse: (id, data) => {
     const updated = { ...get().formReponses.find((r) => r.id === id), ...data }
     fsSet('formReponses', id, updated)

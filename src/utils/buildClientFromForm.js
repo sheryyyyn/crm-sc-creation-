@@ -1,8 +1,9 @@
-export function buildClientFromForm(values) {
+export function buildClientFromForm(values, formReponseId) {
   const pseudo = values.pseudoReseau || ''
   const instagram = values.reseauContact === 'Instagram' ? pseudo : ''
 
   return {
+    formReponseId: formReponseId || '',
     nom: values.nomEntreprise || '',
     contact: values.nomEntreprise || '',
     email: values.email || '',

@@ -348,8 +348,8 @@ export default function FormulairePublic() {
     }
     setLoading(true)
     await new Promise(r => setTimeout(r, 600))
-    addFormReponse(values)
-    addClient(buildClientFromForm(values))
+    const formReponseId = addFormReponse(values)
+    addClient(buildClientFromForm(values, formReponseId))
     setSubmitted(true)
     setLoading(false)
     setShowContactPopup(false)
