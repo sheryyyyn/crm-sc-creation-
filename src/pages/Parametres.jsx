@@ -8,15 +8,20 @@ export const getCalendlyUrl = () => localStorage.getItem('sc_calendly_url') || '
 export const setCalendlyUrl = (url) => localStorage.setItem('sc_calendly_url', url)
 
 const INTEGRATIONS = [
-  { name: 'Google Calendar', icon: '📅', statut: 'Bientôt disponible', color: 'bg-blue-50 border-blue-100' },
-  { name: 'Google Meet', icon: '📹', statut: 'Bientôt disponible', color: 'bg-indigo-50 border-indigo-100' },
-  { name: 'Gmail', icon: '📧', statut: 'Bientôt disponible', color: 'bg-red-50 border-red-100' },
-  { name: 'Stripe', icon: '💳', statut: 'Bientôt disponible', color: 'bg-purple-50 border-purple-100' },
-  { name: 'Google Drive', icon: '📁', statut: 'Bientôt disponible', color: 'bg-yellow-50 border-yellow-100' },
-  { name: 'Shopify', icon: '🛒', statut: 'Bientôt disponible', color: 'bg-green-50 border-green-100' },
+  { name: 'Google Calendar', icon: '📅', statut: 'Bientôt disponible' },
+  { name: 'Google Meet', icon: '📹', statut: 'Bientôt disponible' },
+  { name: 'Gmail', icon: '📧', statut: 'Bientôt disponible' },
+  { name: 'Stripe', icon: '💳', statut: 'Bientôt disponible' },
+  { name: 'Google Drive', icon: '📁', statut: 'Bientôt disponible' },
+  { name: 'Shopify', icon: '🛒', statut: 'Bientôt disponible' },
 ]
 
 const TABS = ['Agence', 'Utilisateurs', 'Apparence', 'Données', 'Intégrations']
+
+const inputCls = "w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
+const inputStyle = { background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }
+const labelCls = "block text-xs font-semibold mb-1.5"
+const labelStyle = { color: '#a89b8c' }
 
 export default function Parametres() {
   const [tab, setTab] = useState('Agence')
@@ -67,8 +72,8 @@ export default function Parametres() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title">Paramètres</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+        <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Paramètres</h1>
       </div>
 
       {notifPermission === 'default' && (
@@ -81,7 +86,7 @@ export default function Parametres() {
             </div>
             <button onClick={handleActiverNotifs}
               className="text-xs font-bold px-4 py-2 rounded-xl flex-shrink-0"
-              style={{ background: '#1b0b09', color: '#fdfbf4' }}>
+              style={{ background: '#241512', color: '#FDFCF8' }}>
               Activer
             </button>
           </div>
@@ -94,7 +99,8 @@ export default function Parametres() {
           <nav className="flex sm:flex-col gap-1 overflow-x-auto pb-1 sm:pb-0">
             {TABS.map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`flex-shrink-0 sm:w-full text-left px-3 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${tab === t ? 'bg-indigo-50 text-indigo-700' : 'text-gray-600 hover:bg-gray-100'}`}>
+                className="flex-shrink-0 sm:w-full text-left px-3 py-2 sm:py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap"
+                style={tab === t ? { background: '#f5f4f1', color: '#241512' } : { color: '#a89b8c' }}>
                 {t}
               </button>
             ))}
@@ -104,8 +110,8 @@ export default function Parametres() {
         {/* Content */}
         <div className="flex-1">
           {tab === 'Agence' && (
-            <div className="card p-6">
-              <h2 className="text-base font-semibold text-gray-900 mb-5">Informations de l'agence</h2>
+            <div className="bg-white rounded-2xl p-6" style={{ border: '1px solid #e7e5e1' }}>
+              <h2 className="text-base font-semibold mb-5" style={{ color: '#241512' }}>Informations de l'agence</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   { label: "Nom de l'agence", key: 'nom' },
@@ -117,22 +123,22 @@ export default function Parametres() {
                   { label: 'TVA par défaut (%)', key: 'tva', type: 'number' },
                 ].map(({ label, key, type = 'text' }) => (
                   <div key={key}>
-                    <label className="label">{label}</label>
-                    <input type={type} className="input" value={agence[key]} onChange={e => setAgence({ ...agence, [key]: e.target.value })} />
+                    <label className={labelCls} style={labelStyle}>{label}</label>
+                    <input type={type} className={inputCls} style={inputStyle} value={agence[key]} onChange={e => setAgence({ ...agence, [key]: e.target.value })} />
                   </div>
                 ))}
                 <div className="col-span-1 sm:col-span-2">
-                  <label className="label">Adresse</label>
-                  <textarea className="input resize-none" rows={2} value={agence.adresse} onChange={e => setAgence({ ...agence, adresse: e.target.value })} />
+                  <label className={labelCls} style={labelStyle}>Adresse</label>
+                  <textarea className={`${inputCls} resize-none`} style={inputStyle} rows={2} value={agence.adresse} onChange={e => setAgence({ ...agence, adresse: e.target.value })} />
                 </div>
                 <div className="col-span-1 sm:col-span-2">
-                  <label className="label">Lien de réservation (Calendly)</label>
-                  <input type="url" className="input" placeholder="https://calendly.com/sc-creation/30min" value={calendlyUrl} onChange={e => setCalendlyUrlState(e.target.value)} />
-                  <p className="text-[11px] text-gray-400 mt-1">Ce lien sera intégré automatiquement dans les mails d'intérêt envoyés depuis les formulaires.</p>
+                  <label className={labelCls} style={labelStyle}>Lien de réservation (Calendly)</label>
+                  <input type="url" className={inputCls} style={inputStyle} placeholder="https://calendly.com/sc-creation/30min" value={calendlyUrl} onChange={e => setCalendlyUrlState(e.target.value)} />
+                  <p className="text-[11px] mt-1" style={{ color: '#a89b8c' }}>Ce lien sera intégré automatiquement dans les mails d'intérêt envoyés depuis les formulaires.</p>
                 </div>
               </div>
               <div className="mt-5 flex items-center gap-3">
-                <button onClick={handleSave} className="btn-primary">
+                <button onClick={handleSave} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ background: '#241512', color: '#FDFCF8' }}>
                   <Save size={15} /> Enregistrer
                 </button>
                 {saved && <span className="text-sm text-emerald-600 font-medium">✓ Enregistré !</span>}
@@ -141,49 +147,50 @@ export default function Parametres() {
           )}
 
           {tab === 'Utilisateurs' && (
-            <div className="card p-6">
-              <h2 className="text-base font-semibold text-gray-900 mb-5">Membres de l'équipe</h2>
+            <div className="bg-white rounded-2xl p-6" style={{ border: '1px solid #e7e5e1' }}>
+              <h2 className="text-base font-semibold mb-5" style={{ color: '#241512' }}>Membres de l'équipe</h2>
               <div className="space-y-3">
                 {[
-                  { nom: 'Sheryn', role: 'Administratrice', email: 'sheryn@sc-creation.fr', color: 'bg-indigo-100 text-indigo-700' },
-                  { nom: 'Chainez', role: 'Designer', email: 'chainez@sc-creation.fr', color: 'bg-pink-100 text-pink-700' },
+                  { nom: 'Sheryn', role: 'Administratrice', email: 'sheryn@sc-creation.fr' },
+                  { nom: 'Chainez', role: 'Designer', email: 'chainez@sc-creation.fr' },
                 ].map(u => (
-                  <div key={u.nom} className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold ${u.color}`}>
+                  <div key={u.nom} className="flex items-center gap-4 p-4 rounded-xl" style={{ background: '#f5f4f1' }}>
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold" style={{ background: '#241512', color: '#FDFCF8' }}>
                       {u.nom[0]}
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold text-gray-900">{u.nom}</p>
-                      <p className="text-xs text-gray-500">{u.email}</p>
+                      <p className="font-semibold" style={{ color: '#241512' }}>{u.nom}</p>
+                      <p className="text-xs" style={{ color: '#a89b8c' }}>{u.email}</p>
                     </div>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${u.color}`}>{u.role}</span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: '#eeece7', color: '#241512' }}>{u.role}</span>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                <p className="text-xs text-indigo-700 font-medium">Gestion multi-utilisateurs avec rôles et permissions — disponible dans la prochaine version.</p>
+              <div className="mt-4 p-4 rounded-xl" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
+                <p className="text-xs font-medium" style={{ color: '#241512' }}>Gestion multi-utilisateurs avec rôles et permissions — disponible dans la prochaine version.</p>
               </div>
             </div>
           )}
 
           {tab === 'Apparence' && (
-            <div className="card p-6">
-              <h2 className="text-base font-semibold text-gray-900 mb-5">Apparence</h2>
+            <div className="bg-white rounded-2xl p-6" style={{ border: '1px solid #e7e5e1' }}>
+              <h2 className="text-base font-semibold mb-5" style={{ color: '#241512' }}>Apparence</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="label">Couleur principale</label>
+                  <label className={labelCls} style={labelStyle}>Couleur principale</label>
                   <div className="flex gap-3 mt-2">
-                    {['#4f46e5', '#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'].map(color => (
+                    {['#241512', '#0ea5e9', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444'].map(color => (
                       <button key={color} className="w-8 h-8 rounded-full border-2 border-white shadow-md transition-transform hover:scale-110"
                         style={{ backgroundColor: color }} />
                     ))}
                   </div>
                 </div>
                 <div>
-                  <label className="label">Thème</label>
+                  <label className={labelCls} style={labelStyle}>Thème</label>
                   <div className="flex gap-3 mt-2">
                     {['Light (actuel)', 'Dark (bientôt)'].map(t => (
-                      <div key={t} className={`px-4 py-2 rounded-lg border text-sm font-medium ${t.includes('actuel') ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-400'}`}>{t}</div>
+                      <div key={t} className="px-4 py-2 rounded-lg border text-sm font-medium"
+                        style={t.includes('actuel') ? { borderColor: '#241512', background: '#f5f4f1', color: '#241512' } : { borderColor: '#e7e5e1', color: '#a89b8c' }}>{t}</div>
                     ))}
                   </div>
                 </div>
@@ -192,9 +199,9 @@ export default function Parametres() {
           )}
 
           {tab === 'Données' && (
-            <div className="card p-6">
-              <h2 className="text-base font-semibold text-gray-900 mb-2">Données</h2>
-              <p className="text-sm text-gray-500 mb-6">Supprime toutes les données de démonstration (clients, projets, tâches, RDVs, documents, leads, contenus, dépenses). Les formulaires clients ne seront pas supprimés.</p>
+            <div className="bg-white rounded-2xl p-6" style={{ border: '1px solid #e7e5e1' }}>
+              <h2 className="text-base font-semibold mb-2" style={{ color: '#241512' }}>Données</h2>
+              <p className="text-sm mb-6" style={{ color: '#a89b8c' }}>Supprime toutes les données de démonstration (clients, projets, tâches, RDVs, documents, leads, contenus, dépenses). Les formulaires clients ne seront pas supprimés.</p>
               {purged ? (
                 <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
                   <p className="text-sm font-semibold text-emerald-700">✓ Données de démo supprimées avec succès.</p>
@@ -209,7 +216,7 @@ export default function Parametres() {
                       {purging ? 'Suppression...' : 'Confirmer la suppression'}
                     </button>
                     <button onClick={() => setConfirmPurge(false)}
-                      className="px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">
+                      className="px-4 py-2 rounded-xl text-sm font-semibold bg-white border border-[#e7e5e1] hover:bg-[#f5f4f1] transition-colors" style={{ color: '#241512' }}>
                       Annuler
                     </button>
                   </div>
@@ -225,17 +232,17 @@ export default function Parametres() {
           )}
 
           {tab === 'Intégrations' && (
-            <div className="card p-6">
-              <h2 className="text-base font-semibold text-gray-900 mb-5">Intégrations</h2>
+            <div className="bg-white rounded-2xl p-6" style={{ border: '1px solid #e7e5e1' }}>
+              <h2 className="text-base font-semibold mb-5" style={{ color: '#241512' }}>Intégrations</h2>
               <div className="grid grid-cols-2 gap-3">
                 {INTEGRATIONS.map(integ => (
-                  <div key={integ.name} className={`flex items-center gap-3 p-4 rounded-xl border ${integ.color}`}>
+                  <div key={integ.name} className="flex items-center gap-3 p-4 rounded-xl" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1' }}>
                     <span className="text-2xl">{integ.icon}</span>
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-800">{integ.name}</p>
-                      <p className="text-xs text-gray-500">{integ.statut}</p>
+                      <p className="text-sm font-semibold" style={{ color: '#241512' }}>{integ.name}</p>
+                      <p className="text-xs" style={{ color: '#a89b8c' }}>{integ.statut}</p>
                     </div>
-                    <button className="text-xs bg-white border border-gray-200 text-gray-500 px-2.5 py-1 rounded-lg" disabled>
+                    <button className="text-xs bg-white border border-[#e7e5e1] px-2.5 py-1 rounded-lg" style={{ color: '#a89b8c' }} disabled>
                       Connecter
                     </button>
                   </div>
