@@ -974,14 +974,8 @@ export default function RDV() {
               <FormField label="Sujet">
                 <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.sujet} onChange={e => setForm({ ...form, sujet: e.target.value })} />
               </FormField>
-              <FormField label="Objectif">
-                <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.objectif} onChange={e => setForm({ ...form, objectif: e.target.value })} />
-              </FormField>
               <FormField label="Lien Google Meet">
                 <input className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} value={form.lienMeet} onChange={e => setForm({ ...form, lienMeet: e.target.value })} placeholder="https://meet.google.com/..." />
-              </FormField>
-              <FormField label="Notes de préparation">
-                <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none mb-4" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={3} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
               </FormField>
               <FormField label="Questions préparées pour l'appel">
                 <textarea className="w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all resize-none" style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }} rows={5} value={form.questionsPreparees} onChange={e => setForm({ ...form, questionsPreparees: e.target.value })}
