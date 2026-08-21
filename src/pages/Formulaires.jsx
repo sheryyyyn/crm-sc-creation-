@@ -423,20 +423,27 @@ function CarteReponse({ rep, onToggle, open }) {
     <div className={`bg-white rounded-2xl overflow-hidden transition-all duration-200 ${!rep.lu ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
       style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center px-4 sm:px-6 py-4 gap-3">
-        <button className="flex items-center gap-3 sm:gap-4 flex-1 text-left min-w-0" onClick={handleOpen}>
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
-            style={{ background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)', color: '#4f46e5' }}>
-            {rep.nomEntreprise?.[0] || '?'}
-          </div>
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="text-sm font-bold text-gray-900 truncate">{rep.nomEntreprise}</p>
-              <LuBadge lu={rep.lu} />
+      <div className="px-4 py-4 flex flex-col gap-3">
+        <div className="flex items-start gap-3">
+          <button className="flex items-center gap-3 flex-1 min-w-0 text-left" onClick={handleOpen}>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
+              style={{ background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)', color: '#4f46e5' }}>
+              {rep.nomEntreprise?.[0] || '?'}
             </div>
-            <p className="text-[11px] text-gray-400 mt-0.5 truncate">{date} · {rep.email}</p>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-gray-900 truncate">{rep.nomEntreprise}</p>
+              <p className="text-[11px] text-gray-400 mt-0.5 truncate">{date}</p>
+              <p className="text-[11px] text-gray-400 truncate">{rep.email}</p>
+            </div>
+          </button>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <LuBadge lu={rep.lu} />
+            <button onClick={handleOpen} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+              {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+            </button>
           </div>
-        </button>
+        </div>
+
         <div className="flex items-center flex-wrap gap-2">
           <span className="text-xs font-semibold px-3 py-1 rounded-lg" style={{ background: '#eef2ff', color: '#4f46e5' }}>
             {rep.budget}
@@ -454,26 +461,28 @@ function CarteReponse({ rep, onToggle, open }) {
               <Clock size={11} />Pas de réservation
             </span>
           )}
-          {confirmDelete ? (
-            <div className="flex items-center gap-1.5">
-              <button onClick={() => deleteFormReponse(rep.id)}
-                className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
-                Confirmer
+
+          {/* Supprimer, poussé à droite */}
+          <div className="ml-auto">
+            {confirmDelete ? (
+              <div className="flex items-center gap-1.5">
+                <button onClick={() => deleteFormReponse(rep.id)}
+                  className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors">
+                  Confirmer
+                </button>
+                <button onClick={() => setConfirmDelete(false)}
+                  className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+                  Annuler
+                </button>
+              </div>
+            ) : (
+              <button onClick={() => setConfirmDelete(true)}
+                className="flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors">
+                <Trash2 size={13} />
+                Supprimer
               </button>
-              <button onClick={() => setConfirmDelete(false)}
-                className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
-                Annuler
-              </button>
-            </div>
-          ) : (
-            <button onClick={() => setConfirmDelete(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors flex-shrink-0">
-              <Trash2 size={14} />
-            </button>
-          )}
-          <button onClick={handleOpen} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0">
-            {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
-          </button>
+            )}
+          </div>
         </div>
       </div>
 
