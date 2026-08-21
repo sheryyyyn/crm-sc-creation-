@@ -95,6 +95,54 @@ function ProspectDetailModal({ prospect, fields, onClose }) {
   )
 }
 
+// ─── Résumé façon Google Forms : répartition des réponses par question ────
+function ResumeQuestionnaire({ fields, prospects }) {
+  if (prospects.length === 0) return null
+  return (
+    <div className="space-y-4">
+      {fields.map(f => {
+        if (f.type === 'single' || f.type === 'multi') {
+          const counts = f.options.map(o => ({
+            option: o,
+            count: prospects.filter(p => f.type === 'multi' ? (p[f.name] || []).includes(o) : p[f.name] === o).length,
+          }))
+          const max = Math.max(1, ...counts.map(c => c.count))
+          return (
+            <div key={f.name} className="bg-white rounded-2xl p-5" style={{ border: '1px solid #e7e5e1' }}>
+              <p className="text-sm font-bold mb-4" style={dark}>{f.label}</p>
+              <div className="space-y-2.5">
+                {counts.map(({ option, count }) => (
+                  <div key={option} className="flex items-center gap-3">
+                    <span className="text-xs w-40 flex-shrink-0 truncate" style={label}>{option}</span>
+                    <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: '#f5f4f1' }}>
+                      <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, background: '#241512' }} />
+                    </div>
+                    <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={dark}>{count}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        }
+        // Champs texte libre : liste des réponses reçues
+        const answers = prospects.map(p => p[f.name]).filter(v => v && v.trim())
+        if (answers.length === 0) return null
+        return (
+          <div key={f.name} className="bg-white rounded-2xl p-5" style={{ border: '1px solid #e7e5e1' }}>
+            <p className="text-sm font-bold mb-3" style={dark}>{f.label}</p>
+            <p className="text-xs mb-3" style={label}>{answers.length} réponse{answers.length > 1 ? 's' : ''}</p>
+            <div className="space-y-2 max-h-64 overflow-y-auto">
+              {answers.map((a, i) => (
+                <p key={i} className="text-sm px-3 py-2 rounded-lg" style={{ background: '#f5f4f1', color: '#241512' }}>{a}</p>
+              ))}
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
+
 const TABS = [
   { key: 'apercu', label: 'Aperçu' },
   { key: 'fonctionnalites', label: 'Fonctionnalités & Roadmap' },
@@ -110,6 +158,7 @@ export default function SaasProduit({ config }) {
   const [openProspectId, setOpenProspectId] = useState(null)
   const [copied, setCopied] = useState(false)
   const [confirmDeleteId, setConfirmDeleteId] = useState(null)
+  const [prospectionView, setProspectionView] = useState('resume')
 
   const produit = saasProduits.find(p => p.id === config.id) || { id: config.id, ...config.defaults }
   const fonctionnalites = produit.fonctionnalites || []
@@ -282,6 +331,20 @@ export default function SaasProduit({ config }) {
               <p className="text-sm" style={label}>Aucune réponse pour l'instant.</p>
             </div>
           ) : (
+            <>
+              <div className="flex items-center gap-1.5 mb-4">
+                {[['resume', 'Résumé'], ['individuel', 'Réponses individuelles']].map(([k, l]) => (
+                  <button key={k} onClick={() => setProspectionView(k)}
+                    className="px-3.5 py-1.5 text-xs font-semibold rounded-full transition-colors"
+                    style={prospectionView === k ? { background: '#241512', color: '#FDFCF8' } : { background: '#f5f4f1', color: '#241512' }}>
+                    {l}
+                  </button>
+                ))}
+              </div>
+
+              {prospectionView === 'resume' ? (
+                <ResumeQuestionnaire fields={config.prospectFields} prospects={prospects} />
+              ) : (
             <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
               {prospects.map(p => (
                 <div key={p.id}>
@@ -318,6 +381,8 @@ export default function SaasProduit({ config }) {
                 </div>
               ))}
             </div>
+              )}
+            </>
           )}
         </div>
       )}
