@@ -445,7 +445,7 @@ function CarteReponse({ rep, onToggle, open }) {
         </div>
 
         <div className="flex items-center flex-wrap gap-2">
-          <span className="text-xs font-semibold px-3 py-1 rounded-lg" style={{ background: '#f5f4f1', color: '#241512' }}>
+          <span className="text-xs font-semibold px-3 py-1 rounded-full" style={{ background: '#241512', color: '#FDFCF8' }}>
             {rep.budget}
           </span>
           {(rep.rdvBooke || rdvAdded) ? (
