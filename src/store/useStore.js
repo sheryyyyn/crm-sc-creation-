@@ -306,9 +306,11 @@ const useStore = create((set, get) => ({
   addSaasProspect: (produitId, data) => {
     const item = { ...data, id: generateId('sp'), produitId, lu: false, horodateur: new Date().toISOString() }
     fsSet('saasProspects', item.id, item)
-    const title = 'Nouvelle réponse de prospection'
-    const body = `${data.nomEtablissement || 'Un prospect'} a répondu au formulaire ${produitId}.`
+    const produitTitre = SAAS_PRODUITS[produitId]?.titre || produitId
+    const title = '📋 Nouvelle réponse de prospection'
+    const body = `${data.nomEtablissement || 'Un prospect'} a répondu au formulaire ${produitTitre}.`
     notify(title, body)
+    sendPushNotification(title, body, `/saas/${produitId}`)
   },
   markSaasProspectRead: (id) => {
     const updated = { ...get().saasProspects.find((p) => p.id === id), lu: true }
