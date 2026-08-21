@@ -96,7 +96,7 @@ function ProspectDetailModal({ prospect, fields, onClose }) {
 }
 
 // ─── Résumé façon Google Forms : répartition des réponses par question ────
-function ResumeQuestionnaire({ fields, prospects }) {
+function ResumeQuestionnaire({ fields, prospects, barColor }) {
   if (prospects.length === 0) return null
   return (
     <div className="space-y-4">
@@ -115,7 +115,7 @@ function ResumeQuestionnaire({ fields, prospects }) {
                   <div key={option} className="flex items-center gap-3">
                     <span className="text-xs w-40 flex-shrink-0 truncate" style={label}>{option}</span>
                     <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: '#f5f4f1' }}>
-                      <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, background: '#241512' }} />
+                      <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, background: barColor }} />
                     </div>
                     <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={dark}>{count}</span>
                   </div>
@@ -343,7 +343,7 @@ export default function SaasProduit({ config }) {
               </div>
 
               {prospectionView === 'resume' ? (
-                <ResumeQuestionnaire fields={config.prospectFields} prospects={prospects} />
+                <ResumeQuestionnaire fields={config.prospectFields} prospects={prospects} barColor={config.dotColor} />
               ) : (
             <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
               {prospects.map(p => (
