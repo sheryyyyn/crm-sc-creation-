@@ -34,9 +34,9 @@ const TYPE_COLORS = {
   Vidéo: 'bg-purple-100 text-purple-700',
   Audio: 'bg-blue-100 text-blue-700',
   Graphique: 'bg-orange-100 text-orange-700',
-  Document: 'bg-slate-100 text-slate-600',
+  Document: 'bg-[#f5f4f1] text-[#241512]',
   Dossier: 'bg-yellow-100 text-yellow-700',
-  Autre: 'bg-gray-100 text-gray-600',
+  Autre: 'bg-[#f5f4f1] text-[#a89b8c]',
 }
 
 function formatSize(bytes) {
@@ -51,7 +51,7 @@ function Thumbnail({ file }) {
   const [imgOk, setImgOk] = useState(true)
   const category = getMimeCategory(file.mimeType)
   const Icon = TYPE_ICONS[category] || FileText
-  const colorClass = TYPE_COLORS[category] || 'bg-gray-100 text-gray-500'
+  const colorClass = TYPE_COLORS[category] || 'bg-[#f5f4f1] text-[#a89b8c]'
 
   const thumbUrl = file.thumbnailLink
     ? file.thumbnailLink.replace('=s220', '=s400')
@@ -77,8 +77,6 @@ function Thumbnail({ file }) {
 
 function FileCard({ file }) {
   const category = getMimeCategory(file.mimeType)
-  const Icon = TYPE_ICONS[category] || FileText
-  const colorClass = TYPE_COLORS[category] || 'bg-gray-100 text-gray-600'
   const size = formatSize(file.size)
 
   return (
@@ -86,22 +84,23 @@ function FileCard({ file }) {
       href={file.webViewLink}
       target="_blank"
       rel="noreferrer"
-      className="card p-3 flex flex-col gap-2 hover:shadow-md transition-all hover:-translate-y-0.5 group cursor-pointer"
+      className="bg-white rounded-2xl p-3 flex flex-col gap-2 transition-all hover:-translate-y-0.5 group cursor-pointer"
+      style={{ border: '1px solid #e7e5e1' }}
     >
       <Thumbnail file={file} />
 
       <div className="flex items-start justify-between gap-1 mt-1">
-        <p className="text-xs font-semibold text-gray-900 line-clamp-2 flex-1">{file.name}</p>
-        <ExternalLink size={11} className="flex-shrink-0 text-gray-300 group-hover:text-indigo-500 mt-0.5 transition-colors" />
+        <p className="text-xs font-semibold text-[#241512] line-clamp-2 flex-1">{file.name}</p>
+        <ExternalLink size={11} className="flex-shrink-0 text-[#e7e5e1] group-hover:text-[#241512] mt-0.5 transition-colors" />
       </div>
 
       <div className="flex items-center justify-between">
-        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>{category}</span>
-        {size && <span className="text-[10px] text-gray-400">{size}</span>}
+        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${TYPE_COLORS[category] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{category}</span>
+        {size && <span className="text-[10px] text-[#a89b8c]">{size}</span>}
       </div>
 
       {file.createdTime && (
-        <p className="text-[10px] text-gray-400">
+        <p className="text-[10px] text-[#a89b8c]">
           {new Date(file.createdTime).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
         </p>
       )}
@@ -112,29 +111,29 @@ function FileCard({ file }) {
 function FileRow({ file }) {
   const category = getMimeCategory(file.mimeType)
   const Icon = TYPE_ICONS[category] || FileText
-  const colorClass = TYPE_COLORS[category] || 'bg-gray-100 text-gray-600'
+  const colorClass = TYPE_COLORS[category] || 'bg-[#f5f4f1] text-[#a89b8c]'
   const size = formatSize(file.size)
 
   return (
-    <tr className="table-row">
-      <td className="table-cell">
+    <tr className="hover:bg-[#f5f4f1]/50 transition-colors">
+      <td className="px-4 py-3">
         <div className="flex items-center gap-2">
           <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 ${colorClass}`}>
             <Icon size={13} />
           </div>
-          <p className="font-medium text-gray-900 text-sm truncate max-w-xs">{file.name}</p>
+          <p className="font-medium text-[#241512] text-sm truncate max-w-xs">{file.name}</p>
         </div>
       </td>
-      <td className="table-cell">
+      <td className="px-4 py-3">
         <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${colorClass}`}>{category}</span>
       </td>
-      <td className="table-cell text-xs text-gray-500">{size || '—'}</td>
-      <td className="table-cell text-xs text-gray-500">
+      <td className="px-4 py-3 text-xs text-[#a89b8c]">{size || '—'}</td>
+      <td className="px-4 py-3 text-xs text-[#a89b8c]">
         {file.createdTime ? new Date(file.createdTime).toLocaleDateString('fr-FR') : '—'}
       </td>
-      <td className="table-cell">
+      <td className="px-4 py-3">
         <a href={file.webViewLink} target="_blank" rel="noreferrer"
-          className="inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-800">
+          className="inline-flex items-center gap-1 text-xs font-medium text-[#241512] hover:opacity-70">
           <ExternalLink size={12} /> Ouvrir
         </a>
       </td>
@@ -187,30 +186,31 @@ export default function Mediatheque() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="page-title">Médiathèque</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Médiathèque</h1>
+          <p className="text-sm text-[#a89b8c] mt-1">
             {loading ? 'Chargement…' : `${stats.total} fichier${stats.total > 1 ? 's' : ''} · ${stats.videos} vidéo${stats.videos > 1 ? 's' : ''} · ${stats.photos} photo${stats.photos > 1 ? 's' : ''}`}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
-            <button onClick={() => setView('grille')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'grille' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+          <div className="flex border rounded-lg overflow-hidden" style={{ borderColor: '#e7e5e1' }}>
+            <button onClick={() => setView('grille')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'grille' ? 'bg-[#241512] text-white' : 'bg-white text-[#a89b8c] hover:bg-[#f5f4f1]'}`}>
               <Grid size={14} /> Grille
             </button>
-            <button onClick={() => setView('liste')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'liste' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+            <button onClick={() => setView('liste')} className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === 'liste' ? 'bg-[#241512] text-white' : 'bg-white text-[#a89b8c] hover:bg-[#f5f4f1]'}`}>
               <List size={14} /> Liste
             </button>
           </div>
-          <button onClick={fetchFiles} className="btn-secondary flex items-center gap-1.5" title="Actualiser">
+          <button onClick={fetchFiles} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} title="Actualiser">
             <RefreshCw size={14} className={loading ? 'animate-spin' : ''} /> Actualiser
           </button>
           <a
             href={`https://drive.google.com/drive/folders/${FOLDER_ID}`}
             target="_blank"
             rel="noreferrer"
-            className="btn-primary flex items-center gap-1.5"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+            style={{ background: '#241512', color: '#FDFCF8' }}
           >
             <ExternalLink size={14} /> Ouvrir Drive
           </a>
@@ -220,14 +220,14 @@ export default function Mediatheque() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
         {[
-          { label: 'Total', val: stats.total, color: 'text-gray-800', bg: 'bg-gray-50' },
+          { label: 'Total', val: stats.total, color: '#241512', bg: '#f5f4f1' },
           { label: 'Vidéos', val: stats.videos, color: 'text-purple-700', bg: 'bg-purple-50' },
           { label: 'Photos', val: stats.photos, color: 'text-pink-700', bg: 'bg-pink-50' },
           { label: 'Graphiques', val: stats.graphiques, color: 'text-orange-700', bg: 'bg-orange-50' },
         ].map(s => (
-          <div key={s.label} className={`${s.bg} rounded-2xl px-5 py-4`}>
-            <p className="text-xs font-semibold text-gray-500 mb-1">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color}`}>{loading ? '—' : s.val}</p>
+          <div key={s.label} className={`rounded-2xl px-5 py-4 ${s.bg && s.bg.startsWith('bg-') ? s.bg : ''}`} style={!s.bg?.startsWith('bg-') ? { background: s.bg } : undefined}>
+            <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>{s.label}</p>
+            <p className={`text-2xl font-bold ${s.color?.startsWith('text-') ? s.color : ''}`} style={!s.color?.startsWith('text-') ? { color: s.color } : undefined}>{loading ? '—' : s.val}</p>
           </div>
         ))}
       </div>
@@ -235,15 +235,16 @@ export default function Mediatheque() {
       {/* Recherche + filtres */}
       <div className="flex flex-col gap-3 mb-5">
         <div className="relative max-w-sm">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#a89b8c]" />
           <input
-            className="input pl-9 text-sm"
+            className="w-full pl-9 pr-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
+            style={{ background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }}
             placeholder="Rechercher un fichier..."
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
           {search && (
-            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#a89b8c] hover:text-[#241512]">
               <X size={13} />
             </button>
           )}
@@ -251,7 +252,8 @@ export default function Mediatheque() {
         <div className="flex gap-1.5 flex-wrap">
           {types.map(t => (
             <button key={t} onClick={() => setFilterType(t)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${filterType === t ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${filterType === t ? 'bg-[#241512] text-white' : 'bg-white border text-[#a89b8c] hover:bg-[#f5f4f1]'}`}
+              style={filterType !== t ? { borderColor: '#e7e5e1' } : undefined}>
               {t === 'tous' ? 'Tous types' : t}
             </button>
           ))}
@@ -260,13 +262,13 @@ export default function Mediatheque() {
 
       {/* Erreur */}
       {error && (
-        <div className="card p-4 mb-5 flex items-center gap-3 border border-red-200 bg-red-50">
+        <div className="bg-white rounded-2xl p-4 mb-5 flex items-center gap-3 border border-red-200 bg-red-50">
           <AlertCircle size={18} className="text-red-500 flex-shrink-0" />
           <div>
             <p className="text-sm font-semibold text-red-700">Impossible de charger les fichiers Drive</p>
             <p className="text-xs text-red-500 mt-0.5">{error}</p>
           </div>
-          <button onClick={fetchFiles} className="ml-auto btn-secondary text-xs">Réessayer</button>
+          <button onClick={fetchFiles} className="ml-auto text-xs px-4 py-2 rounded-xl font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }}>Réessayer</button>
         </div>
       )}
 
@@ -274,10 +276,10 @@ export default function Mediatheque() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="card p-3 animate-pulse">
-              <div className="w-full h-36 bg-gray-200 rounded-xl mb-2" />
-              <div className="h-3 bg-gray-200 rounded w-3/4 mb-1" />
-              <div className="h-3 bg-gray-100 rounded w-1/2" />
+            <div key={i} className="bg-white rounded-2xl p-3 animate-pulse" style={{ border: '1px solid #e7e5e1' }}>
+              <div className="w-full h-36 rounded-xl mb-2" style={{ background: '#f5f4f1' }} />
+              <div className="h-3 rounded w-3/4 mb-1" style={{ background: '#f5f4f1' }} />
+              <div className="h-3 rounded w-1/2" style={{ background: '#eeece7' }} />
             </div>
           ))}
         </div>
@@ -286,7 +288,7 @@ export default function Mediatheque() {
       {/* Grille */}
       {!loading && !error && view === 'grille' && (
         filtered.length === 0
-          ? <div className="card py-16 text-center text-gray-400">
+          ? <div className="bg-white rounded-2xl py-16 text-center text-[#a89b8c]" style={{ border: '1px solid #e7e5e1' }}>
               <Image size={32} className="mx-auto mb-3 opacity-30" />
               <p className="text-sm">{search ? 'Aucun fichier trouvé' : 'Aucun fichier dans ce dossier Drive'}</p>
             </div>
@@ -297,20 +299,20 @@ export default function Mediatheque() {
 
       {/* Liste */}
       {!loading && !error && view === 'liste' && (
-        <div className="card overflow-hidden">
+        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[600px]">
               <thead>
-                <tr>
-                  <th className="table-header">Nom</th>
-                  <th className="table-header">Type</th>
-                  <th className="table-header">Taille</th>
-                  <th className="table-header">Date</th>
-                  <th className="table-header w-20"></th>
+                <tr style={{ background: '#f5f4f1' }}>
+                  <th className="text-left text-xs font-bold text-[#a89b8c] uppercase tracking-wider px-4 py-3">Nom</th>
+                  <th className="text-left text-xs font-bold text-[#a89b8c] uppercase tracking-wider px-4 py-3">Type</th>
+                  <th className="text-left text-xs font-bold text-[#a89b8c] uppercase tracking-wider px-4 py-3">Taille</th>
+                  <th className="text-left text-xs font-bold text-[#a89b8c] uppercase tracking-wider px-4 py-3">Date</th>
+                  <th className="text-left text-xs font-bold text-[#a89b8c] uppercase tracking-wider px-4 py-3 w-20"></th>
                 </tr>
               </thead>
-              <tbody>
-                {filtered.length === 0 && <tr><td colSpan={5} className="text-center py-10 text-gray-400">Aucun fichier</td></tr>}
+              <tbody className="divide-y divide-[#eeece7]">
+                {filtered.length === 0 && <tr><td colSpan={5} className="text-center py-10 text-[#a89b8c]">Aucun fichier</td></tr>}
                 {filtered.map(f => <FileRow key={f.id} file={f} />)}
               </tbody>
             </table>
