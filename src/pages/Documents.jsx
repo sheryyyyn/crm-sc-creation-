@@ -521,7 +521,7 @@ export default function Documents() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 && <tr><td colSpan={8} className="text-center py-10 text-gray-400">Aucun document</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={8} className="py-10 text-gray-400 sticky left-0">Aucun document</td></tr>}
               {filtered.map(d => {
                 const client = getClient(d.clientId)
                 const ttc = (d.montantHT || 0) * (1 + (d.tva || 20) / 100)

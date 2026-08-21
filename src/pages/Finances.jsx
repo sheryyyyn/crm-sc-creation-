@@ -74,6 +74,9 @@ export default function Finances() {
               ))}
             </select>
           </div>
+          {filteredFactures.length === 0 ? (
+            <p className="text-center py-10 text-gray-400 text-sm">Aucune facture</p>
+          ) : (
           <div className="overflow-x-auto">
           <table className="w-full min-w-[540px]">
             <thead>
@@ -87,7 +90,6 @@ export default function Finances() {
               </tr>
             </thead>
             <tbody>
-              {filteredFactures.length === 0 && <tr><td colSpan={6} className="text-center py-10 text-gray-400 text-sm">Aucune facture</td></tr>}
               {filteredFactures.map(d => {
                 const client = getClient(d.clientId)
                 const ttc = (d.montantHT || 0) * (1 + (d.tva || 20) / 100)
@@ -105,6 +107,7 @@ export default function Finances() {
             </tbody>
           </table>
           </div>
+          )}
           {filteredFactures.length > 0 && (
             <div className="flex justify-end px-5 py-3 border-t border-gray-100 bg-gray-50">
               <div className="text-sm text-gray-600">

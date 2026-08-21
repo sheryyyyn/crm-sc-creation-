@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import {
-  ClipboardList, Eye, EyeOff, Copy, Check, ChevronDown, ChevronUp,
+  Copy, Check, ChevronDown, ChevronUp,
   Mail, Phone, Globe, Calendar, Euro, Target, Users, Star, MessageSquare,
   Building2, Inbox, ExternalLink, CheckCircle2, Clock, Send, X, CalendarPlus, Trash2, UserPlus, PackageOpen,
 } from 'lucide-react'
@@ -20,43 +20,6 @@ const BUDGET_INDICATIF = {
   'Je ne sais pas encore': '—',
 }
 
-// ─── Champs du formulaire (structure pour l'aperçu) ─────────────────────────
-const FORM_FIELDS = [
-  { section: 'Votre entreprise', fields: [
-    { label: 'Nom de votre entreprise / marque *', name: 'nomEntreprise', type: 'text', placeholder: 'Ex : SC Création' },
-    { label: 'Adresse e-mail *', name: 'email', type: 'email', placeholder: 'contact@votreentreprise.fr' },
-    { label: 'Numéro de téléphone *', name: 'telephone', type: 'tel', placeholder: '06 00 00 00 00' },
-    { label: "Quel est votre secteur d'activité ? *", name: 'secteurActivite', type: 'select', options: ['Mode & Vêtements', 'Beauté & Cosmétiques', 'Alimentation & Restauration', 'Sport & Bien-être', 'Maison & Décoration', 'Art & Artisanat', 'High-Tech & Informatique', 'Services aux entreprises (B2B)', 'Santé & Médical', 'Éducation & Formation', 'Immobilier', 'Événementiel', 'Conseil & Coaching', 'Autre'] },
-    { label: 'Avez-vous déjà un site web ?', name: 'aSiteWeb', type: 'select', options: ['Non, pas encore', "Oui, j'en ai un"] },
-    { label: 'Adresse de votre site actuel', name: 'siteActuel', type: 'text', placeholder: 'https://... — adresse de votre site actuel' },
-  ]},
-  { section: 'Votre projet', fields: [
-    { label: 'Racontez-nous l\'histoire de votre marque *', name: 'histoire', type: 'textarea', placeholder: 'D\'où vient votre idée ? Quelle est votre histoire ?' },
-    { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services' },
-    { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'select', options: ['Acheter en ligne', 'Me contacter / demander un devis', 'Prendre rendez-vous', 'Découvrir mes réalisations', 'Autre'] },
-    { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
-  ]},
-  { section: 'Votre contenu & identité', fields: [
-    { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'select', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
-    { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
-    { label: 'Avez-vous déjà un nom de domaine ?', name: 'nomDomaine', type: 'select', options: ['Oui', 'Non'] },
-    { label: 'Avez-vous déjà une charte graphique (logo, couleurs, typographies) ?', name: 'logoCharte', type: 'select', options: ['Oui', 'Non, pas encore', 'En cours'] },
-    { label: 'Des sites qui vous inspirent ?', name: 'sitesInspirants', type: 'textarea', placeholder: 'Liens ou noms de sites que vous aimez' },
-  ]},
-  { section: 'Budget & délais', fields: [
-    { label: 'Vers quelle prestation vous orientez-vous ? *', name: 'budget', type: 'select', options: ['Landing page', 'Site vitrine', 'E-commerce Shopify', 'Refonte de site existant', 'Je ne sais pas encore'] },
-    { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
-    { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
-  ]},
-  { section: 'Pour finir', fields: [
-    { label: 'Sur quel réseau nous avez-vous contactés ? *', name: 'reseauContact', type: 'select', options: ['Instagram', 'TikTok', 'Bouche à oreille', 'Google', 'Autre'] },
-    { label: 'Votre pseudo sur ce réseau', name: 'pseudoReseau', type: 'text', placeholder: 'Ex : @votrepseudo' },
-    { label: 'Comment aimeriez-vous être recontacté ? *', name: 'moyenContact', type: 'select', options: ['Par SMS', 'Par e-mail'] },
-    { label: 'Remarques ou précisions', name: 'remarques', type: 'textarea', placeholder: 'Toute information utile à partager avant notre appel de découverte…' },
-  ]},
-]
-
-const FORM_URL = typeof window !== 'undefined' ? `${window.location.origin}/formulaire` : '/formulaire'
 
 // ─── Modal mail d'intérêt ─────────────────────────────────────────────────────
 function MailInteretModal({ rep, onClose, onMailEnvoye }) {
@@ -460,21 +423,21 @@ function CarteReponse({ rep, onToggle, open }) {
     <div className={`bg-white rounded-2xl overflow-hidden transition-all duration-200 ${!rep.lu ? 'ring-2 ring-amber-400 ring-offset-1' : ''}`}
       style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
       {/* Header */}
-      <div className="flex items-center px-6 py-4 gap-3">
-        <button className="flex items-center gap-4 flex-1 text-left" onClick={handleOpen}>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
+      <div className="flex flex-col sm:flex-row sm:items-center px-4 sm:px-6 py-4 gap-3">
+        <button className="flex items-center gap-3 sm:gap-4 flex-1 text-left min-w-0" onClick={handleOpen}>
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center flex-shrink-0 font-bold text-sm"
             style={{ background: 'linear-gradient(135deg,#eef2ff,#e0e7ff)', color: '#4f46e5' }}>
             {rep.nomEntreprise?.[0] || '?'}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-bold text-gray-900">{rep.nomEntreprise}</p>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-sm font-bold text-gray-900 truncate">{rep.nomEntreprise}</p>
               <LuBadge lu={rep.lu} />
             </div>
-            <p className="text-[11px] text-gray-400 mt-0.5">{date} · {rep.email}</p>
+            <p className="text-[11px] text-gray-400 mt-0.5 truncate">{date} · {rep.email}</p>
           </div>
         </button>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center flex-wrap gap-2">
           <span className="text-xs font-semibold px-3 py-1 rounded-lg" style={{ background: '#eef2ff', color: '#4f46e5' }}>
             {rep.budget}
           </span>
@@ -504,18 +467,18 @@ function CarteReponse({ rep, onToggle, open }) {
             </div>
           ) : (
             <button onClick={() => setConfirmDelete(true)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors">
+              className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors flex-shrink-0">
               <Trash2 size={14} />
             </button>
           )}
-          <button onClick={handleOpen} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors">
+          <button onClick={handleOpen} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0">
             {open ? <ChevronUp size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
           </button>
         </div>
       </div>
 
       {/* Note interne */}
-      <div className="px-6 pb-3 -mt-1">
+      <div className="px-4 sm:px-6 pb-3 -mt-1">
         {editingNote ? (
           <div className="flex items-center gap-2">
             <input
@@ -560,7 +523,7 @@ function CarteReponse({ rep, onToggle, open }) {
 
       {/* Détail */}
       {open && (
-        <div className="border-t border-gray-100 px-6 py-5">
+        <div className="border-t border-gray-100 px-4 sm:px-6 py-5">
           <div className="flex flex-col gap-2">
             {rowGroups.map(({ section, rows }) => {
               const isCollapsed = !!collapsedSections[section]
@@ -632,91 +595,6 @@ function CarteReponse({ rep, onToggle, open }) {
   )
 }
 
-// ─── Aperçu formulaire ─────────────────────────────────────────────────────────
-function ApercuFormulaire() {
-  const [copied, setCopied] = useState(false)
-
-  const copyLink = () => {
-    navigator.clipboard.writeText(FORM_URL).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
-  }
-
-  return (
-    <div className="max-w-2xl mx-auto">
-      {/* Bannière lien */}
-      <div className="rounded-2xl p-5 mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-        style={{ background: 'linear-gradient(135deg,#4338ca,#6366f1)', boxShadow: '0 8px 24px rgba(99,102,241,0.28)' }}>
-        <div>
-          <p className="text-white font-bold text-sm mb-1">Lien du formulaire client</p>
-          <p className="text-indigo-200 text-xs">Envoyez ce lien à vos prospects pour qu'ils remplissent le formulaire</p>
-          <p className="text-indigo-100 text-[11px] font-mono mt-2 bg-white/10 px-3 py-1 rounded-lg inline-block">{FORM_URL}</p>
-        </div>
-        <button onClick={copyLink}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl font-semibold text-xs whitespace-nowrap transition-all"
-          style={{ background: copied ? '#10b981' : 'white', color: copied ? 'white' : '#4f46e5' }}>
-          {copied ? <><Check size={13} />Copié !</> : <><Copy size={13} />Copier le lien</>}
-        </button>
-      </div>
-
-      {/* Aperçu des champs */}
-      <div className="bg-white rounded-2xl overflow-hidden" style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.06)' }}>
-        <div className="px-8 py-6 border-b border-gray-100" style={{ background: 'linear-gradient(135deg,#f8f9ff,#eef2ff)' }}>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)' }}>
-              <ClipboardList size={18} className="text-white" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold text-gray-900">Formulaire de prise en charge</h2>
-              <p className="text-xs text-gray-500">SC Création · Création de site web</p>
-            </div>
-          </div>
-          <p className="text-sm text-gray-600 mt-3">
-            Bienvenue ! Pour mieux comprendre votre projet et vous proposer un accompagnement personnalisé,
-            merci de remplir ce formulaire. Nous vous recontacterons sous 24h.
-          </p>
-        </div>
-
-        <div className="px-8 py-6 space-y-8">
-          {FORM_FIELDS.map(({ section, fields }) => (
-            <div key={section}>
-              <h3 className="text-xs font-bold text-indigo-600 uppercase tracking-widest mb-4">{section}</h3>
-              <div className="space-y-4">
-                {fields.map(({ label, name, type, placeholder, options }) => (
-                  <div key={name}>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">{label}</label>
-                    {type === 'textarea' ? (
-                      <textarea disabled rows={3} placeholder={placeholder}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-400 resize-none cursor-not-allowed" />
-                    ) : type === 'select' ? (
-                      <select disabled className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-400 cursor-not-allowed">
-                        <option value="">— Choisir —</option>
-                        {options.map(o => <option key={o}>{o}</option>)}
-                      </select>
-                    ) : (
-                      <input type={type} disabled placeholder={placeholder}
-                        className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm text-gray-400 cursor-not-allowed" />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          <div className="pt-2">
-            <button disabled className="w-full py-3.5 rounded-xl font-bold text-sm text-white cursor-not-allowed"
-              style={{ background: 'linear-gradient(135deg,#6366f1,#4f46e5)', opacity: 0.6 }}>
-              Envoyer ma demande
-            </button>
-            <p className="text-center text-[11px] text-gray-400 mt-2">Aperçu uniquement · Les champs sont désactivés</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ─── Page principale ──────────────────────────────────────────────────────────
 export default function Formulaires() {
   const { formReponses, taches, updateTache, markFormReponseRead } = useStore()
@@ -734,7 +612,6 @@ export default function Formulaires() {
       }
     })
   }, [formReponses, taches])
-  const [tab, setTab] = useState('reponses')
   const [openId, setOpenId] = useState(null)
   const [detailId, setDetailId] = useState(null)
   const [filtre, setFiltre] = useState('tous')
@@ -766,32 +643,9 @@ export default function Formulaires() {
           <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Formulaires</h1>
           <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>Formulaire client & réponses reçues</p>
         </div>
-        <div className="flex gap-1 p-1 rounded-full flex-shrink-0" style={{ background: '#f5f4f1' }}>
-          <button onClick={() => setTab('reponses')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
-            style={tab === 'reponses' ? { background: '#241512', color: '#FDFCF8' } : { color: '#241512' }}>
-            <Inbox size={14} />
-            Réponses reçues
-            {nonLus > 0 && (
-              <span className="text-[10px] font-bold rounded-full px-1.5 py-0.5 min-w-[18px] text-center leading-none"
-                style={tab === 'reponses' ? { background: 'rgba(253,251,244,.2)', color: '#FDFCF8' } : { background: '#a1402d', color: '#FDFCF8' }}>
-                {nonLus}
-              </span>
-            )}
-          </button>
-          <button onClick={() => setTab('formulaire')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-full text-sm font-bold transition-colors"
-            style={tab === 'formulaire' ? { background: '#241512', color: '#FDFCF8' } : { color: '#241512' }}>
-            <Eye size={14} />
-            Aperçu formulaire
-          </button>
-        </div>
       </div>
 
-      {tab === 'formulaire' && <ApercuFormulaire />}
-
-      {tab === 'reponses' && (
-        <div>
+      <div>
           {/* Filtres */}
           <div className="flex items-center gap-2 mb-6">
             {[
@@ -872,7 +726,6 @@ export default function Formulaires() {
             </Modal>
           )}
         </div>
-      )}
     </div>
   )
 }
