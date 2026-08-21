@@ -456,11 +456,7 @@ function CarteReponse({ rep, onToggle, open }) {
             <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full bg-blue-100 text-blue-700">
               <Send size={11} />Mail envoyé
             </span>
-          ) : (
-            <span className="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full" style={{ background: '#f5f4f1', color: '#a89b8c' }}>
-              <Clock size={11} />Pas de réservation
-            </span>
-          )}
+          ) : null}
 
           {/* Supprimer, poussé à droite */}
           <div className="ml-auto">
