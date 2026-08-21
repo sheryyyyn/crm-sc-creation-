@@ -709,7 +709,7 @@ function VueCalendrier({ rdvs, clients, today, onEdit, onDelete, onNewRDV, onQue
 }
 
 // ── Récap formulaire ─────────────────────────────────────────────────────────
-function RecapFormulaire({ formReponse }) {
+export function RecapFormulaire({ formReponse }) {
   const [open, setOpen] = useState(true)
   if (!formReponse) return null
 
