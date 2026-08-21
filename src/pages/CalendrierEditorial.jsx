@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef } from 'react'
-import { Plus, Edit, Trash2, Calendar, List, Columns, ChevronLeft, ChevronRight, Eye, BarChart2 } from 'lucide-react'
+import { Plus, Edit, Trash2, Calendar, List, Columns, ChevronLeft, ChevronRight, Eye } from 'lucide-react'
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 
@@ -48,6 +48,32 @@ const PRIORITE_COLORS = {
   normale: 'bg-blue-100 text-blue-600',
   haute: 'bg-orange-100 text-orange-600',
   urgente: 'bg-red-100 text-red-600',
+}
+
+// Filtre "format" affiché sur la vue calendrier (regroupe plateforme + type)
+const FORMATS = ['TikTok', 'Instagram', 'Stories', 'Reels', 'Autre']
+function matchesFormat(c, f) {
+  if (f === 'tous') return true
+  if (f === 'Stories') return c.type === 'Story'
+  if (f === 'Reels') return c.type === 'Reel'
+  if (f === 'TikTok') return c.plateforme === 'TikTok' && c.type !== 'Story' && c.type !== 'Reel'
+  if (f === 'Instagram') return c.plateforme === 'Instagram' && c.type !== 'Story' && c.type !== 'Reel'
+  if (f === 'Autre') return c.type !== 'Story' && c.type !== 'Reel' && c.plateforme !== 'TikTok' && c.plateforme !== 'Instagram'
+  return true
+}
+
+// Palette des pastilles d'événement du calendrier, attribuée par thème
+const THEME_PALETTE = [
+  { bg: '#fbe3cf', text: '#a1622a' },
+  { bg: '#d7eef0', text: '#2f7a80' },
+  { bg: '#f7dbe6', text: '#a1467a' },
+  { bg: '#e6def7', text: '#5b4a9e' },
+  { bg: '#e2efd6', text: '#4a7a2f' },
+]
+function themeColor(theme, themes) {
+  if (!theme) return { bg: '#f5f4f1', text: '#241512' }
+  const i = themes.indexOf(theme)
+  return THEME_PALETTE[(i < 0 ? 0 : i) % THEME_PALETTE.length]
 }
 
 const JOURS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
@@ -247,6 +273,7 @@ export default function CalendrierEditorial() {
   const [editForm, setEditForm] = useState(null)
   const [filterPlat, setFilterPlat] = useState('tous')
   const [filterStatut, setFilterStatut] = useState('tous')
+  const [filterFormat, setFilterFormat] = useState('tous')
   const [dragId, setDragId] = useState(null)
   const today = new Date()
   const [calYear, setCalYear] = useState(today.getFullYear())
@@ -274,7 +301,7 @@ export default function CalendrierEditorial() {
   function contenusByDay(day) {
     if (!day) return []
     const dateStr = `${calYear}-${String(calMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    return filtered.filter(c => c.datePublication === dateStr)
+    return contenus.filter(c => c.datePublication === dateStr && matchesFormat(c, filterFormat))
   }
 
   function prevMonth() {
@@ -284,6 +311,10 @@ export default function CalendrierEditorial() {
   function nextMonth() {
     if (calMonth === 11) { setCalYear(y => y + 1); setCalMonth(0) }
     else setCalMonth(m => m + 1)
+  }
+  function goToday() {
+    setCalYear(today.getFullYear())
+    setCalMonth(today.getMonth())
   }
 
   function handleSubmit(e) {
@@ -326,8 +357,10 @@ export default function CalendrierEditorial() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Calendrier Éditorial</h1>
-          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>{contenus.length} contenu{contenus.length > 1 ? 's' : ''} · {stats.publie} publié{stats.publie > 1 ? 's' : ''} · {stats.planifie} planifié{stats.planifie > 1 ? 's' : ''}</p>
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Calendrier éditorial</h1>
+          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>
+            {view === 'calendrier' ? 'Communication SC Création' : `${contenus.length} contenu${contenus.length > 1 ? 's' : ''} · ${stats.publie} publié${stats.publie > 1 ? 's' : ''} · ${stats.planifie} planifié${stats.planifie > 1 ? 's' : ''}`}
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
@@ -340,100 +373,118 @@ export default function CalendrierEditorial() {
             ))}
           </div>
           <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={btnPrimary} onClick={() => setModal(true)}>
-            <Plus size={16} /> Nouveau contenu
+            <Plus size={16} /> Nouvelle publication
           </button>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
-        {[
-          { label: 'Total', val: stats.total, color: '#241512', bg: '#f5f4f1' },
-          { label: 'En cours', val: stats.enCours, color: '#241512', bg: '#f5f4f1' },
-          { label: 'Planifiés', val: stats.planifie, color: '#a1402d', bg: '#f5e6e3' },
-          { label: 'Publiés', val: stats.publie, color: '#059669', bg: '#ecfdf5' },
-        ].map(s => (
-          <div key={s.label} className="rounded-2xl px-5 py-4" style={{ background: s.bg }}>
-            <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>{s.label}</p>
-            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.val}</p>
-          </div>
-        ))}
-      </div>
+      {/* Stats — masquées sur la vue calendrier pour ne pas surcharger */}
+      {view !== 'calendrier' && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+          {[
+            { label: 'Total', val: stats.total, color: '#241512', bg: '#f5f4f1' },
+            { label: 'En cours', val: stats.enCours, color: '#241512', bg: '#f5f4f1' },
+            { label: 'Planifiés', val: stats.planifie, color: '#a1402d', bg: '#f5e6e3' },
+            { label: 'Publiés', val: stats.publie, color: '#059669', bg: '#ecfdf5' },
+          ].map(s => (
+            <div key={s.label} className="rounded-2xl px-5 py-4" style={{ background: s.bg }}>
+              <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>{s.label}</p>
+              <p className="text-2xl font-bold" style={{ color: s.color }}>{s.val}</p>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Filters */}
-      <div className="flex gap-2 mb-5 flex-wrap items-center">
-        <div className="flex gap-1.5 flex-wrap">
-          {['tous', ...PLATEFORMES].map(p => (
-            <button key={p} onClick={() => setFilterPlat(p)}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
-              style={filterPlat === p ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
-              {p === 'tous' ? 'Toutes plateformes' : p}
+      {/* Filtres — vue calendrier : un seul rang "format" */}
+      {view === 'calendrier' ? (
+        <div className="flex gap-1.5 mb-5 flex-wrap">
+          {['tous', ...FORMATS].map(f => (
+            <button key={f} onClick={() => setFilterFormat(f)}
+              className="px-4 py-2 text-sm font-semibold rounded-full transition-all"
+              style={filterFormat === f ? { background: '#241512', color: '#FDFCF8' } : { background: '#f5f4f1', color: '#241512' }}>
+              {f === 'tous' ? 'Toutes' : f}
             </button>
           ))}
         </div>
-        <div className="w-px h-5" style={{ background: '#e7e5e1' }} />
-        <div className="flex gap-1.5 flex-wrap">
-          {['tous', ...STATUTS].map(s => (
-            <button key={s} onClick={() => setFilterStatut(s)}
-              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
-              style={filterStatut === s ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
-              {s === 'tous' ? 'Tous statuts' : s.replace('_', ' ')}
-            </button>
-          ))}
+      ) : (
+        <div className="flex gap-2 mb-5 flex-wrap items-center">
+          <div className="flex gap-1.5 flex-wrap">
+            {['tous', ...PLATEFORMES].map(p => (
+              <button key={p} onClick={() => setFilterPlat(p)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+                style={filterPlat === p ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
+                {p === 'tous' ? 'Toutes plateformes' : p}
+              </button>
+            ))}
+          </div>
+          <div className="w-px h-5" style={{ background: '#e7e5e1' }} />
+          <div className="flex gap-1.5 flex-wrap">
+            {['tous', ...STATUTS].map(s => (
+              <button key={s} onClick={() => setFilterStatut(s)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+                style={filterStatut === s ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
+                {s === 'tous' ? 'Tous statuts' : s.replace('_', ' ')}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── CALENDRIER ── */}
       {view === 'calendrier' && (
-        <div className="bg-white rounded-2xl" style={{ border: '1px solid #e7e5e1' }}>
-          <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #e7e5e1' }}>
-            <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }}><ChevronLeft size={18} /></button>
-            <h2 className="text-base font-bold" style={{ color: '#241512' }}>{MOIS_FR[calMonth]} {calYear}</h2>
-            <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }}><ChevronRight size={18} /></button>
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#241512' }}><ChevronLeft size={20} /></button>
+              <h2 className="font-display text-2xl font-bold" style={{ color: '#241512' }}>{MOIS_FR[calMonth]} {calYear}</h2>
+              <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#241512' }}><ChevronRight size={20} /></button>
+            </div>
+            <button onClick={goToday}
+              className="px-4 py-2 text-sm font-semibold rounded-xl transition-colors hover:bg-[#eeece7]"
+              style={{ background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
+              Aujourd'hui
+            </button>
           </div>
-          <div className="grid grid-cols-7" style={{ borderBottom: '1px solid #e7e5e1' }}>
-            {JOURS.map(j => (
-              <div key={j} className="py-2 text-center text-xs font-bold uppercase tracking-wider" style={{ color: '#a89b8c' }}>{j}</div>
-            ))}
-          </div>
-          <div className="grid grid-cols-7 divide-x divide-y" style={{ borderColor: '#eeece7' }}>
-            {monthDays.map((day, i) => {
-              const items = contenusByDay(day)
-              return (
-                <div key={i} className={`min-h-[100px] p-2 ${!day ? '' : 'hover:bg-[#f5f4f1]/50'}`} style={{ background: !day ? '#f5f4f1' : isToday(day) ? '#f5f4f1' : undefined }}>
-                  {day && (
-                    <>
-                      <div className="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold mb-1"
-                        style={isToday(day) ? { background: '#241512', color: '#FDFCF8' } : { color: '#a89b8c' }}>
-                        {day}
-                      </div>
-                      <div className="space-y-1">
-                        {items.slice(0, 3).map(c => (
-                          <button key={c.id} onClick={() => setDetailId(c.id)}
-                            className="w-full text-left flex flex-col gap-0.5 px-1.5 py-1 rounded hover:opacity-80 transition-opacity"
-                            style={{ background: c.statut === 'publie' ? '#d1fae5' : c.statut === 'planifie' ? '#f5e6e3' : '#f5f4f1' }}>
-                            <div className="flex items-center gap-1 flex-wrap">
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${c.plateforme === 'TikTok' ? 'bg-[#241512] text-white' : 'bg-pink-500 text-white'}`}>
-                                {c.plateforme}
-                              </span>
-                              {c.theme && (
-                                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none bg-white/70" style={{ color: '#241512' }}>
-                                  {c.theme}
-                                </span>
-                              )}
-                            </div>
-                            <span className="truncate text-[10px] font-semibold" style={{ color: '#241512' }}>{c.titre}</span>
-                          </button>
-                        ))}
-                        {items.length > 3 && (
-                          <p className="text-[10px] text-center" style={{ color: '#a89b8c' }}>+{items.length - 3} autres</p>
-                        )}
-                      </div>
-                    </>
-                  )}
-                </div>
-              )
-            })}
+
+          <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
+            <div className="grid grid-cols-7" style={{ borderBottom: '1px solid #e7e5e1' }}>
+              {JOURS.map(j => (
+                <div key={j} className="py-3 text-center text-sm font-medium" style={{ color: '#241512' }}>{j}</div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7 divide-x divide-y" style={{ borderColor: '#eeece7' }}>
+              {monthDays.map((day, i) => {
+                const items = contenusByDay(day)
+                return (
+                  <div key={i} className="min-h-[130px] p-2.5" style={{ background: !day ? '#faf9f6' : undefined }}>
+                    {day && (
+                      <>
+                        <div className="w-7 h-7 flex items-center justify-center rounded-full text-sm mb-2"
+                          style={isToday(day) ? { background: '#241512', color: '#FDFCF8', fontWeight: 700 } : { color: '#241512' }}>
+                          {day}
+                        </div>
+                        <div className="space-y-1">
+                          {items.slice(0, 3).map(c => {
+                            const tc = themeColor(c.theme, themes)
+                            return (
+                              <button key={c.id} onClick={() => setDetailId(c.id)}
+                                className="w-full text-left truncate text-xs font-medium px-2 py-1 rounded-lg hover:opacity-80 transition-opacity"
+                                style={{ background: tc.bg, color: tc.text }}>
+                                {c.heurePublication && <span className="font-semibold">{c.heurePublication} </span>}
+                                {c.titre}
+                              </button>
+                            )
+                          })}
+                          {items.length > 3 && (
+                            <p className="text-[10px] text-center" style={{ color: '#a89b8c' }}>+{items.length - 3} autres</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
           </div>
         </div>
       )}
