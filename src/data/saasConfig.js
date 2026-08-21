@@ -1,0 +1,91 @@
+// Configuration des mini-produits SaaS internes (Cake Design Manager, Boulangerie Manager…)
+// Chaque entrée alimente à la fois la page de suivi (SaasProduit) et le formulaire
+// public de prospection associé (SaasProspectionForm).
+
+export const SAAS_PRODUITS = {
+  'cake-design': {
+    id: 'cake-design',
+    slug: 'cake-design',
+    titre: 'Cake Design Manager',
+    sousTitre: "L'outil de gestion pour cake designers",
+    dotColor: '#c98fae',
+    defaults: {
+      statut: 'Conception',
+      modeleTarifaire: 'Abonnement mensuel',
+      prix: '29 €',
+      responsable: 'Sheryn & Chaïnez',
+      publicCible: 'Cake designers et ateliers de gâteaux sur mesure',
+      lancement: '',
+      description: "Plateforme SaaS dédiée aux cake designers : gestion des commandes personnalisées, suivi des clients, planning de production et devis automatisés.",
+      fonctionnalites: [
+        { id: 'f1', label: 'Gestion des commandes personnalisées', statut: 'idee' },
+        { id: 'f2', label: 'Devis automatisés', statut: 'idee' },
+        { id: 'f3', label: 'Planning de production', statut: 'idee' },
+        { id: 'f4', label: 'Suivi clients', statut: 'idee' },
+        { id: 'f5', label: 'Galerie de créations', statut: 'idee' },
+      ],
+    },
+    prospectFields: [
+      { name: 'role', label: 'Quel est votre rôle ?', type: 'single', options: ['Cake designer', 'Assistant(e) / apprenti(e)', "Gérant(e) d'atelier"] },
+      { name: 'appareils', label: 'Sur quels appareils travaillez-vous au quotidien ?', type: 'multi', options: ['Téléphone', 'Tablette', 'Ordinateur'] },
+      { name: 'receptionCommandes', label: 'Comment recevez-vous vos commandes aujourd\'hui ?', type: 'multi', options: ['En atelier', 'Téléphone', 'SMS / WhatsApp', 'Réseaux sociaux', 'Site web / formulaire'] },
+      { name: 'complexitePersonnalisation', label: 'Vos commandes sont-elles très personnalisées (forme, parts, garnitures) ?', type: 'single', options: ['Oui, presque toujours', 'Parfois', 'Rarement'] },
+      { name: 'acompteRequis', label: 'Demandez-vous un acompte à la commande ?', type: 'single', options: ['Oui', 'Non'] },
+      { name: 'delaiCommande', label: "Délai moyen entre la commande et la réalisation ?", type: 'single', options: ['Moins de 3 jours', '3 à 7 jours', '1 à 2 semaines', 'Plus de 2 semaines'] },
+      { name: 'volumeHebdo', label: 'Combien de commandes gérez-vous par semaine en moyenne ?', type: 'single', options: ['Moins de 5', '5 à 15', '15 à 30', 'Plus de 30'] },
+      { name: 'pointsDouleur', label: 'Quelles sont vos principales difficultés aujourd\'hui ?', type: 'multi', options: ['Calcul du prix / devis', 'Suivi des commandes en cours', 'Oublis de détails client', 'Planning de production', 'Relances clients', 'Autre'] },
+      { name: 'infosEssentielles', label: 'Quelles infos sont indispensables sur une commande ?', type: 'multi', options: ['Nom / contact client', 'Date & heure de retrait', 'Détails du gâteau (forme, parts, saveurs)', 'Prix / acompte', 'Allergies', 'Photo de référence'] },
+      { name: 'fonctionnalitesPrioritaires', label: 'Quelles fonctionnalités seraient prioritaires pour vous ? (max 3)', type: 'multi', options: ['Devis automatisé', 'Planning de production visuel', 'Galerie de créations', 'Rappels automatiques', 'Suivi client / historique', 'Autre'] },
+      { name: 'nomEtablissement', label: 'Nom de votre atelier / marque', type: 'text', placeholder: 'Ex : Sucre & Sentiments' },
+      { name: 'email', label: 'Email pour être recontacté(e)', type: 'email', placeholder: 'contact@votreatelier.fr' },
+      { name: 'remarques', label: 'Une remarque à ajouter ?', type: 'textarea', placeholder: 'Tout élément utile…' },
+    ],
+  },
+  boulangerie: {
+    id: 'boulangerie',
+    slug: 'boulangerie',
+    titre: 'Boulangerie Manager',
+    sousTitre: "L'outil de gestion pour boulangers",
+    dotColor: '#c9a06a',
+    defaults: {
+      statut: 'Idée',
+      modeleTarifaire: 'Abonnement mensuel',
+      prix: '35 €',
+      responsable: 'Sheryn & Chaïnez',
+      publicCible: 'Boulangeries et pâtisseries artisanales',
+      lancement: '',
+      description: "Plateforme SaaS dédiée aux boulangeries : gestion des commandes, suivi de production, gestion des stocks et réservation en ligne.",
+      fonctionnalites: [
+        { id: 'f1', label: 'Gestion des commandes', statut: 'idee' },
+        { id: 'f2', label: 'Suivi de production', statut: 'idee' },
+        { id: 'f3', label: 'Gestion des stocks', statut: 'idee' },
+        { id: 'f4', label: 'Réservation en ligne', statut: 'idee' },
+        { id: 'f5', label: 'Programme de fidélité', statut: 'idee' },
+      ],
+    },
+    prospectFields: [
+      { name: 'role', label: 'Quel est votre rôle ?', type: 'single', options: ['Vendeuse / vendeur', 'Pâtissier / production', 'Manager'] },
+      { name: 'appareils', label: 'Sur quels appareils travaillez-vous au quotidien ?', type: 'multi', options: ['Téléphone', 'Tablette', 'Ordinateur'] },
+      { name: 'receptionCommandes', label: 'Comment recevez-vous les commandes aujourd\'hui ?', type: 'multi', options: ['En boutique', 'Téléphone', 'SMS / WhatsApp', 'Réseaux sociaux', 'Site web'] },
+      { name: 'transmissionInterne', label: 'Comment les commandes sont-elles transmises en interne ?', type: 'multi', options: ['Cahier papier', 'WhatsApp', 'Affichage au labo', 'À l\'oral'] },
+      { name: 'acompteRequis', label: 'Demandez-vous un acompte à la commande ?', type: 'single', options: ['Oui', 'Non'] },
+      { name: 'delaiCommande', label: 'Délai moyen de précommande ?', type: 'single', options: ['Jour même', '1 à 2 jours', '3 à 7 jours', 'Plus d\'1 semaine'] },
+      { name: 'fiabiliteSuivi', label: 'Le suivi de vos commandes est-il fiable aujourd\'hui ?', type: 'single', options: ['Très fiable', 'Moyennement fiable', 'Peu fiable'] },
+      { name: 'volumeHebdo', label: 'Combien de commandes gérez-vous par semaine en moyenne ?', type: 'single', options: ['Moins de 20', '20 à 50', '50 à 100', 'Plus de 100'] },
+      { name: 'pointsDouleur', label: 'Quelles sont vos principales difficultés aujourd\'hui ?', type: 'multi', options: ['Temps perdu à chercher une commande', 'Commandes oubliées', 'Gestion des stocks', 'Relances clients', 'Autre'] },
+      { name: 'infosEssentielles', label: 'Quelles infos sont indispensables sur une commande ?', type: 'multi', options: ['Nom / téléphone', 'Date & heure de retrait', 'Détails produit', 'Prix', 'Allergies', 'Qui a pris la commande'] },
+      { name: 'fonctionnalitesPrioritaires', label: 'Quelles fonctionnalités seraient prioritaires pour vous ? (max 3)', type: 'multi', options: ['Vue d\'ensemble en temps réel', 'Indicateurs visuels de statut', 'Rappels automatiques', 'Accès multi-appareils avec rôles', 'Autre'] },
+      { name: 'nomEtablissement', label: 'Nom de votre boulangerie', type: 'text', placeholder: 'Ex : Le Fournil de...' },
+      { name: 'email', label: 'Email pour être recontacté(e)', type: 'email', placeholder: 'contact@votreboulangerie.fr' },
+      { name: 'remarques', label: 'Une remarque à ajouter ?', type: 'textarea', placeholder: 'Tout élément utile…' },
+    ],
+  },
+}
+
+export const ROADMAP_STATUTS = [
+  { key: 'idee', label: 'Idée', color: '#a89b8c' },
+  { key: 'a_faire', label: 'À faire', color: '#a89b8c' },
+  { key: 'en_cours', label: 'En cours', color: '#241512' },
+  { key: 'test', label: 'Test', color: '#b8860b' },
+  { key: 'termine', label: 'Terminé', color: '#1e7a4c' },
+]

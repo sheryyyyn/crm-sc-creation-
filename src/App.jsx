@@ -18,6 +18,9 @@ import Depenses from './pages/Depenses'
 import Parametres from './pages/Parametres'
 import Formulaires from './pages/Formulaires'
 import FormulairePublic from './pages/FormulairePublic'
+import SaasProduit from './pages/SaasProduit'
+import SaasProspectionForm from './pages/SaasProspectionForm'
+import { SAAS_PRODUITS } from './data/saasConfig'
 import CalendrierEditorial from './pages/CalendrierEditorial'
 import Mediatheque from './pages/Mediatheque'
 import MotDePasse from './pages/MotDePasse'
@@ -38,6 +41,8 @@ export default function App() {
     <Routes>
       {/* Page publique — sans sidebar */}
       <Route path="/formulaire" element={<FormulairePublic />} />
+      <Route path="/saas/cake-design/prospection" element={<SaasProspectionForm config={SAAS_PRODUITS['cake-design']} />} />
+      <Route path="/saas/boulangerie/prospection" element={<SaasProspectionForm config={SAAS_PRODUITS['boulangerie']} />} />
 
       {/* CRM — avec sidebar + protection mot de passe */}
       <Route path="*" element={
@@ -56,6 +61,8 @@ export default function App() {
               <Route path="/finances" element={<Finances />} />
               <Route path="/depenses" element={<Depenses />} />
               <Route path="/formulaires" element={<Formulaires />} />
+              <Route path="/saas/cake-design" element={<SaasProduit config={SAAS_PRODUITS['cake-design']} />} />
+              <Route path="/saas/boulangerie" element={<SaasProduit config={SAAS_PRODUITS['boulangerie']} />} />
               <Route path="/calendrier-editorial" element={<CalendrierEditorial />} />
               <Route path="/mediatheque" element={<Mediatheque />} />
               <Route path="/mots-de-passe" element={<MotDePasse />} />

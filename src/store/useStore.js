@@ -19,13 +19,16 @@ import {
   mockNotifications,
   mockFormReponses,
 } from '../data/mockData'
+import { SAAS_PRODUITS } from '../data/saasConfig'
 
 const generateId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 
 const fsSet = (col, id, data) => setDoc(doc(db, col, id), data)
 const fsDel = (col, id) => deleteDoc(doc(db, col, id))
 
-const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems']
+const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems', 'saasProduits', 'saasProspects']
+
+const mockSaasProduits = Object.values(SAAS_PRODUITS).map(({ id, defaults }) => ({ id, ...defaults }))
 
 const SEED_MAP = {
   clients: mockClients,
@@ -41,6 +44,8 @@ const SEED_MAP = {
   notifications: mockNotifications,
   medias: [],
   partenaireItems: [],
+  saasProduits: mockSaasProduits,
+  saasProspects: [],
 }
 
 async function seedIfEmpty() {
@@ -71,6 +76,8 @@ const useStore = create((set, get) => ({
   depenses: [],
   notifications: [],
   partenaireItems: [],
+  saasProduits: [],
+  saasProspects: [],
   loading: true,
 
   // ─── Init Firestore listeners ────────────────────────────────────────────
@@ -270,6 +277,44 @@ const useStore = create((set, get) => ({
     get().formReponses.forEach((r) => fsSet('formReponses', r.id, { ...r, lu: true }))
   },
   getUnreadFormCount: () => get().formReponses.filter((r) => !r.lu).length,
+
+  // ─── Produits SaaS internes ─────────────────────────────────────────────
+  updateSaasProduit: (id, data) => {
+    const prev = get().saasProduits.find((p) => p.id === id) || { id }
+    fsSet('saasProduits', id, { ...prev, ...data })
+  },
+  addSaasFonctionnalite: (produitId, label) => {
+    const prev = get().saasProduits.find((p) => p.id === produitId)
+    if (!prev) return
+    const fonctionnalites = [...(prev.fonctionnalites || []), { id: generateId('feat'), label, statut: 'idee' }]
+    fsSet('saasProduits', produitId, { ...prev, fonctionnalites })
+  },
+  updateSaasFonctionnaliteStatut: (produitId, featureId, statut) => {
+    const prev = get().saasProduits.find((p) => p.id === produitId)
+    if (!prev) return
+    const fonctionnalites = (prev.fonctionnalites || []).map((f) => f.id === featureId ? { ...f, statut } : f)
+    fsSet('saasProduits', produitId, { ...prev, fonctionnalites })
+  },
+  deleteSaasFonctionnalite: (produitId, featureId) => {
+    const prev = get().saasProduits.find((p) => p.id === produitId)
+    if (!prev) return
+    const fonctionnalites = (prev.fonctionnalites || []).filter((f) => f.id !== featureId)
+    fsSet('saasProduits', produitId, { ...prev, fonctionnalites })
+  },
+
+  // ─── Prospection SaaS (formulaires publics) ─────────────────────────────
+  addSaasProspect: (produitId, data) => {
+    const item = { ...data, id: generateId('sp'), produitId, lu: false, horodateur: new Date().toISOString() }
+    fsSet('saasProspects', item.id, item)
+    const title = 'Nouvelle réponse de prospection'
+    const body = `${data.nomEtablissement || 'Un prospect'} a répondu au formulaire ${produitId}.`
+    notify(title, body)
+  },
+  markSaasProspectRead: (id) => {
+    const updated = { ...get().saasProspects.find((p) => p.id === id), lu: true }
+    fsSet('saasProspects', id, updated)
+  },
+  deleteSaasProspect: (id) => fsDel('saasProspects', id),
 
   // ─── Notifications ──────────────────────────────────────────────────────
   markNotifRead: (id) => {

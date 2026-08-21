@@ -1,7 +1,8 @@
+import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, CalendarDays, Handshake, Lock, X,
+  FolderOpen, CalendarDays, Handshake, Lock, X, Package, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 
@@ -31,6 +32,16 @@ const navCategories = [
     ],
   },
 ]
+
+// Section repliable "SaaS" — nos propres logiciels en cours de conception
+const saasSection = {
+  label: 'SaaS',
+  icon: Package,
+  items: [
+    { label: 'Cake Design', to: '/saas/cake-design' },
+    { label: 'Boulangerie', to: '/saas/boulangerie' },
+  ],
+}
 
 // Entrée seule, entre deux séparateurs
 const partnerItem = { label: 'Espace partenaire', icon: Handshake, to: '/espace-partenaire' }
@@ -62,6 +73,8 @@ export default function Sidebar({ isOpen, onClose }) {
   const newFormCount = formReponses.filter(r => !r.lu).length
   const newPartnerCount = partenaireItems.filter(p => !p.lu).length
   const isPathActive = (to) => to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
+  const saasActive = saasSection.items.some(i => isPathActive(i.to))
+  const [saasOpen, setSaasOpen] = useState(saasActive)
 
   return (
     <aside
@@ -114,6 +127,31 @@ export default function Sidebar({ isOpen, onClose }) {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Section repliable — SaaS */}
+        <div className="mt-5">
+          <button
+            onClick={() => setSaasOpen(o => !o)}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-150"
+            style={saasActive ? { background: '#fcf7cf', color: '#241512' } : { color: 'rgba(253,251,244,.62)' }}
+          >
+            <saasSection.icon size={16} style={{ color: saasActive ? '#241512' : 'rgba(253,251,244,.4)' }} />
+            <span className="flex-1 text-left">{saasSection.label}</span>
+            {saasOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          </button>
+          {saasOpen && (
+            <div className="space-y-0.5 mt-1 pl-4" style={{ borderLeft: '1px solid rgba(253,251,244,.1)', marginLeft: '19px' }}>
+              {saasSection.items.map(({ label, to }) => (
+                <NavLink key={to} to={to} onClick={onClose}
+                  className="flex items-center px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150"
+                  style={isPathActive(to) ? { background: '#fcf7cf', color: '#241512' } : { color: 'rgba(253,251,244,.55)' }}
+                >
+                  {label}
+                </NavLink>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Séparateur */}
