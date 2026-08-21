@@ -607,7 +607,7 @@ function CarteReponse({ rep, onToggle, open }) {
 
 // ─── Page principale ──────────────────────────────────────────────────────────
 export default function Formulaires() {
-  const { formReponses, taches, updateTache, markFormReponseRead } = useStore()
+  const { formReponses, taches, updateTache, markFormReponseRead, deleteFormReponse } = useStore()
 
   // Escalade en urgente si +24h sans mail envoyé
   useEffect(() => {
@@ -625,6 +625,7 @@ export default function Formulaires() {
   const [openId, setOpenId] = useState(null)
   const [detailId, setDetailId] = useState(null)
   const [filtre, setFiltre] = useState('tous')
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
 
   const nonLus = formReponses.filter(r => !r.lu).length
   const lus = formReponses.filter(r => r.lu).length
@@ -686,9 +687,9 @@ export default function Formulaires() {
               </div>
             ) : (
               <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
-                <div className="grid px-7 py-3.5" style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr', borderBottom: '1px solid #eeece7' }}>
-                  {['Date', 'Marque', 'Type', 'Budget', 'Statut'].map(h => (
-                    <span key={h} className="text-xs font-bold uppercase tracking-wide" style={{ color: '#a89b8c' }}>{h}</span>
+                <div className="grid px-7 py-3.5" style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr auto', borderBottom: '1px solid #eeece7' }}>
+                  {['Date', 'Marque', 'Type', 'Budget', 'Statut', ''].map((h, i) => (
+                    <span key={h || i} className="text-xs font-bold uppercase tracking-wide" style={{ color: '#a89b8c' }}>{h}</span>
                   ))}
                 </div>
                 {sorted.map(rep => (
@@ -696,7 +697,7 @@ export default function Formulaires() {
                     key={rep.id}
                     onClick={() => openDetail(rep)}
                     className="grid items-center px-7 py-4 cursor-pointer hover:bg-[#faf9f6] transition-colors"
-                    style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr', borderBottom: '1px solid #f0eee9' }}
+                    style={{ gridTemplateColumns: '1fr 1.3fr 1.1fr 1.3fr .8fr auto', borderBottom: '1px solid #f0eee9' }}
                   >
                     <span className="text-sm" style={{ color: '#a89b8c' }}>
                       {new Date(rep.horodateur).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -709,6 +710,25 @@ export default function Formulaires() {
                         style={rep.lu ? { background: '#f5f4f1', color: '#241512' } : { background: '#f5e6e3', color: '#a1402d' }}>
                         {rep.lu ? 'Lu' : 'Nouveau'}
                       </span>
+                    </span>
+                    <span className="pl-3" onClick={e => e.stopPropagation()}>
+                      {confirmDeleteId === rep.id ? (
+                        <div className="flex items-center gap-1.5">
+                          <button onClick={() => { deleteFormReponse(rep.id); setConfirmDeleteId(null) }}
+                            className="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-red-500 text-white hover:bg-red-600 transition-colors whitespace-nowrap">
+                            Confirmer
+                          </button>
+                          <button onClick={() => setConfirmDeleteId(null)}
+                            className="text-xs font-semibold px-2.5 py-1.5 rounded-lg hover:bg-[#eeece7] transition-colors" style={{ background: '#f5f4f1', color: '#241512' }}>
+                            Annuler
+                          </button>
+                        </div>
+                      ) : (
+                        <button onClick={() => setConfirmDeleteId(rep.id)}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-red-50 text-red-400 hover:bg-red-100 hover:text-red-600 transition-colors">
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </span>
                   </div>
                 ))}
