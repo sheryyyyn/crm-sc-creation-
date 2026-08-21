@@ -5,6 +5,7 @@ import useStore from '../store/useStore'
 import { statutBadge, prioriteBadge, assigneeBadge } from '../components/ui/Badge'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 import { RecapFormulaire } from './RDV'
+import { getJoursRestants } from '../utils/joursRestants'
 
 const ETAPES = ['Appel', 'Devis', 'Signature', 'Paiement', 'Brief', 'Maquettes', 'Validation', 'Développement', 'Mise en ligne', 'Suivi 1 mois', 'Terminé']
 const TABS = ['Aperçu', 'Tâches', 'Documents', 'Accès', 'Formulaire', 'Client']
@@ -167,7 +168,17 @@ export default function ProjetDetail() {
               <button onClick={() => navigate(`/clients/${client.id}`)} className="text-sm text-[#a89b8c] hover:text-[#241512] hover:underline transition-colors truncate">{client.nom}</button>
             )}
           </div>
-          <div className="flex-shrink-0">{statutBadge(projet.statut)}</div>
+          <div className="flex items-center gap-2 flex-shrink-0">
+            {statutBadge(projet.statut)}
+            {(() => {
+              const jr = getJoursRestants(projet.timeline?.fin)
+              return jr ? (
+                <span className="text-xs font-bold px-2.5 py-1 rounded-full whitespace-nowrap" style={{ background: jr.bg, color: jr.color }}>
+                  {jr.label}
+                </span>
+              ) : null
+            })()}
+          </div>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
           <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={openEdit}><Edit size={15} /><span className="hidden sm:inline">Modifier</span></button>

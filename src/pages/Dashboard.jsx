@@ -10,6 +10,7 @@ import Modal from '../components/ui/Modal'
 import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskField'
 import { STATUTS_TACHE } from '../data/tacheOptions'
 import { statutBadge } from '../components/ui/Badge'
+import { getJoursRestants } from '../utils/joursRestants'
 
 // ─── Ajout rapide de tâche depuis le Dashboard ────────────────────────────────
 // Réutilise exactement le même store.addTache() et les mêmes valeurs que la page
@@ -272,6 +273,18 @@ export default function Dashboard() {
     .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
     .slice(0, 3)
 
+  // Pastille "jours restants" (deadline projet) affichée à la place du statut,
+  // avec repli sur le badge de statut quand aucune deadline n'est renseignée.
+  function DeadlineOuStatut({ p }) {
+    const jr = getJoursRestants(p.timeline?.fin)
+    if (!jr) return statutBadge(p.statut)
+    return (
+      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: jr.bg, color: jr.color }}>
+        {jr.label}
+      </span>
+    )
+  }
+
   // Prochains posts de la semaine (mobile) — calendrier éditorial réel, non publiés,
   // avec une date de publication future ou du jour, triés du plus proche au plus loin.
   const upcomingContenus = (contenus || [])
@@ -433,7 +446,7 @@ export default function Dashboard() {
             <div key={p.id}>
               <div className="flex items-center justify-between gap-2 mb-2">
                 <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
-                <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
+                <span className="flex-shrink-0"><DeadlineOuStatut p={p} /></span>
               </div>
               <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
                 <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
@@ -577,7 +590,7 @@ export default function Dashboard() {
                 <div key={p.id}>
                   <div className="flex items-center justify-between gap-2 mb-2">
                     <span className="text-[14.5px] font-bold truncate" style={{ color: '#241512' }}>{p.nom}</span>
-                    <span className="flex-shrink-0">{statutBadge(p.statut)}</span>
+                    <span className="flex-shrink-0"><DeadlineOuStatut p={p} /></span>
                   </div>
                   <div className="w-full rounded-full h-1.5" style={{ background: '#eeece7' }}>
                     <div className="h-1.5 rounded-full" style={{ width: `${p.progression || 0}%`, background: '#241512' }} />
