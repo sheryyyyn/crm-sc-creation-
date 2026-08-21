@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, CalendarDays, Handshake, Lock, X, Package, ChevronDown, ChevronUp,
+  FolderOpen, CalendarDays, Handshake, Lock, X, AppWindow, ChevronDown, ChevronUp,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 
@@ -36,7 +36,7 @@ const navCategories = [
 // Section repliable "SaaS" — nos propres logiciels en cours de conception
 const saasSection = {
   label: 'SaaS',
-  icon: Package,
+  icon: AppWindow,
   items: [
     { label: 'Cake Design', to: '/saas/cake-design' },
     { label: 'Boulangerie', to: '/saas/boulangerie' },
