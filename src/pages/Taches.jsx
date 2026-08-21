@@ -4,6 +4,20 @@ import { Plus, X, ChevronLeft, ChevronDown, ChevronUp, Search } from 'lucide-rea
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 
+// ─── Style local pour le formulaire "Nouvelle tâche" (nouvelle DA) ──────────
+const taskInputCls = "w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
+const taskInputStyle = { background: '#faf9f6', border: '1px solid #e7e5e1', color: '#241512' }
+function TaskField({ label, required, children }) {
+  return (
+    <div>
+      <label className="block text-sm font-semibold mb-1.5" style={{ color: '#241512' }}>
+        {label}{required && <span style={{ color: '#a1402d' }} className="ml-0.5">*</span>}
+      </label>
+      {children}
+    </div>
+  )
+}
+
 const COLUMNS = [
   { id: 'pas_commence', label: 'Pas commencé', color: 'bg-gray-400' },
   { id: 'a_faire', label: 'À faire', color: 'bg-blue-500' },
@@ -339,60 +353,50 @@ export default function Taches() {
 
       {/* Create Modal */}
       <Modal isOpen={modal} onClose={() => setModal(false)} title="Nouvelle tâche" size="lg">
-        <form onSubmit={handleSubmit}>
-          <FormField label="Titre" required>
-            <input className="input mb-4" value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required />
-          </FormField>
-          <FormField label="Description">
-            <textarea className="input resize-none mb-4" rows={2} value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} />
-          </FormField>
-          <FormRow cols={2}>
-            <FormField label="Client">
-              <select className="select" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
-                <option value="">— Aucun —</option>
-                {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
-              </select>
-            </FormField>
-            <FormField label="Projet">
-              <select className="select" value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
-                <option value="">— Aucun —</option>
-                {getProjets(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
-              </select>
-            </FormField>
-          </FormRow>
-          <FormRow cols={2}>
-            <FormField label="Assignée">
-              <select className="select" value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <TaskField label="Titre" required>
+            <input className={taskInputCls} style={taskInputStyle} value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required placeholder="Ex. Finaliser la homepage" />
+          </TaskField>
+          <TaskField label="Client">
+            <select className={taskInputCls} style={taskInputStyle} value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value, projetId: '' })}>
+              <option value="">— Aucun —</option>
+              {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
+            </select>
+          </TaskField>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TaskField label="Assignée à">
+              <select className={taskInputCls} style={taskInputStyle} value={form.assignee} onChange={e => setForm({ ...form, assignee: e.target.value })}>
                 <option value="Sheryn">Sheryn</option>
                 <option value="Chainez">Chainez</option>
                 <option value="Les deux">Les deux</option>
               </select>
-            </FormField>
-            <FormField label="Priorité">
-              <select className="select" value={form.priorite} onChange={e => setForm({ ...form, priorite: e.target.value })}>
-                <option value="basse">Basse</option>
-                <option value="moyenne">Moyenne</option>
-                <option value="haute">Haute</option>
-                <option value="urgente">Urgente</option>
+            </TaskField>
+            <TaskField label="Catégorie">
+              <select className={taskInputCls} style={taskInputStyle} value={form.priorite === 'urgente' ? 'urgente' : 'moyenne'} onChange={e => setForm({ ...form, priorite: e.target.value })}>
+                <option value="urgente">Urgentes</option>
+                <option value="moyenne">Secondaires</option>
               </select>
-            </FormField>
-          </FormRow>
-          <FormRow cols={2}>
-            <FormField label="Deadline">
-              <input type="date" className="input" value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
-            </FormField>
-            <FormField label="Statut">
-              <select className="select" value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
+            </TaskField>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <TaskField label="Date d'échéance">
+              <input type="date" className={taskInputCls} style={taskInputStyle} value={form.deadline} onChange={e => setForm({ ...form, deadline: e.target.value })} />
+            </TaskField>
+            <TaskField label="Statut">
+              <select className={taskInputCls} style={taskInputStyle} value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
                 {COLUMNS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
               </select>
-            </FormField>
-          </FormRow>
-          <FormField label="Notes">
-            <textarea className="input resize-none" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
-          </FormField>
-          <div className="flex justify-end gap-2 mt-5">
-            <button type="button" className="btn-secondary" onClick={() => setModal(false)}>Annuler</button>
-            <button type="submit" className="btn-primary">Créer la tâche</button>
+            </TaskField>
+          </div>
+          <TaskField label="Projet associé">
+            <select className={taskInputCls} style={taskInputStyle} value={form.projetId} onChange={e => setForm({ ...form, projetId: e.target.value })}>
+              <option value="">Aucun</option>
+              {getProjets(form.clientId).map(p => <option key={p.id} value={p.id}>{p.nom}</option>)}
+            </select>
+          </TaskField>
+          <div className="flex justify-end gap-2 pt-1">
+            <button type="button" className="px-4 py-2 rounded-xl text-sm font-semibold transition-colors hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => setModal(false)}>Annuler</button>
+            <button type="submit" className="px-4 py-2 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity" style={{ background: '#241512', color: '#FDFCF8' }}>Créer la tâche</button>
           </div>
         </form>
       </Modal>

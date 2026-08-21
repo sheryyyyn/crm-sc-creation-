@@ -22,9 +22,9 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
       <div className={`relative bg-white rounded-2xl shadow-modal w-full ${sizes[size]} max-h-[90vh] flex flex-col overflow-hidden`}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-base font-semibold text-gray-900">{title}</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors">
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid #e7e5e1' }}>
+          <h2 className="font-display text-lg font-bold" style={{ color: '#241512' }}>{title}</h2>
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-[#f5f4f1] transition-colors" style={{ color: '#a89b8c' }}>
             <X size={18} />
           </button>
         </div>
