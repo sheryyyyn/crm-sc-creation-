@@ -73,7 +73,7 @@ export default function Projets() {
           return (
             <div key={p.id} className="bg-white rounded-2xl p-5 hover:border-[#241512]/20 transition-colors cursor-pointer"
               style={{ border: '1px solid #e7e5e1' }}
-              onClick={() => {}}>
+              onClick={() => navigate(`/projets/${p.id}`)}>
               <div className="flex items-start justify-between mb-3">
                 <div>
                   <p className="font-semibold" style={{ color: '#241512' }}>{p.nom}</p>

@@ -8,6 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Clients from './pages/Clients'
 import ClientDetail from './pages/ClientDetail'
 import Projets from './pages/Projets'
+import ProjetDetail from './pages/ProjetDetail'
 import BaseClient from './pages/BaseClient'
 import Taches from './pages/Taches'
 import Echeances from './pages/Echeances'
@@ -53,6 +54,7 @@ export default function App() {
               <Route path="/clients" element={<Clients />} />
               <Route path="/clients/:id" element={<ClientDetail />} />
               <Route path="/projets" element={<Projets />} />
+              <Route path="/projets/:id" element={<ProjetDetail />} />
               <Route path="/base-client" element={<BaseClient />} />
               <Route path="/taches" element={<Taches />} />
               <Route path="/echeances" element={<Echeances />} />
