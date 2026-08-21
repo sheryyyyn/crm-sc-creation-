@@ -5,12 +5,12 @@ import Modal, { FormRow, FormField } from '../components/ui/Modal'
 
 const STATUTS = ['idee', 'a_faire', 'en_cours', 'planifie', 'publie', 'archive']
 const STATUTS_KANBAN = [
-  { id: 'idee', label: 'Idées', color: 'bg-gray-400' },
-  { id: 'a_faire', label: 'À faire', color: 'bg-blue-500' },
-  { id: 'en_cours', label: 'En cours', color: 'bg-indigo-500' },
-  { id: 'planifie', label: 'Planifié', color: 'bg-purple-500' },
-  { id: 'publie', label: 'Publié', color: 'bg-emerald-500' },
-  { id: 'archive', label: 'Archivé', color: 'bg-gray-300' },
+  { id: 'idee', label: 'Idées', color: '#a89b8c' },
+  { id: 'a_faire', label: 'À faire', color: '#3b82f6' },
+  { id: 'en_cours', label: 'En cours', color: '#241512' },
+  { id: 'planifie', label: 'Planifié', color: '#a1402d' },
+  { id: 'publie', label: 'Publié', color: '#10b981' },
+  { id: 'archive', label: 'Archivé', color: '#d5cfc4' },
 ]
 const PLATEFORMES = ['TikTok', 'Instagram']
 const TYPES = ['Reel', 'Carrousel', 'Story', 'Post', 'Article', 'Vidéo', 'Newsletter', 'Infographie', 'Podcast']
@@ -32,23 +32,19 @@ const empty = {
 }
 
 const PLAT_COLORS = {
-  TikTok: 'bg-gray-100 text-gray-700',
+  TikTok: 'bg-[#f5f4f1] text-[#241512]',
   Instagram: 'bg-pink-100 text-pink-700',
 }
-const PLAT_DOT = {
-  TikTok: 'bg-gray-600',
-  Instagram: 'bg-pink-500',
-}
 const STATUT_COLORS = {
-  idee: 'bg-gray-100 text-gray-600',
+  idee: 'bg-[#f5f4f1] text-[#a89b8c]',
   a_faire: 'bg-blue-100 text-blue-700',
-  en_cours: 'bg-indigo-100 text-indigo-700',
-  planifie: 'bg-purple-100 text-purple-700',
+  en_cours: 'bg-[#f5f4f1] text-[#241512]',
+  planifie: 'bg-[#f5e6e3] text-[#a1402d]',
   publie: 'bg-emerald-100 text-emerald-700',
-  archive: 'bg-gray-100 text-gray-400',
+  archive: 'bg-[#f5f4f1] text-[#a89b8c]',
 }
 const PRIORITE_COLORS = {
-  basse: 'bg-gray-100 text-gray-500',
+  basse: 'bg-[#f5f4f1] text-[#a89b8c]',
   normale: 'bg-blue-100 text-blue-600',
   haute: 'bg-orange-100 text-orange-600',
   urgente: 'bg-red-100 text-red-600',
@@ -69,6 +65,11 @@ function getMonthDays(year, month) {
   return cells
 }
 
+const inputCls = "w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
+const inputStyle = { background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }
+const btnPrimary = { background: '#241512', color: '#FDFCF8' }
+const btnSecondary = { background: '#f5f4f1', color: '#241512' }
+
 function ContentForm({ form, setForm, onSubmit, onCancel, label, themes, onAddTheme }) {
   const [newTheme, setNewTheme] = useState('')
   const inputRef = useRef(null)
@@ -84,82 +85,83 @@ function ContentForm({ form, setForm, onSubmit, onCancel, label, themes, onAddTh
   return (
     <form onSubmit={onSubmit}>
       <FormField label="Titre *">
-        <input className="input mb-4" value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required placeholder="Titre du contenu..." />
+        <input className={`${inputCls} mb-4`} style={inputStyle} value={form.titre} onChange={e => setForm({ ...form, titre: e.target.value })} required placeholder="Titre du contenu..." />
       </FormField>
       <FormRow cols={3}>
         <FormField label="Plateforme">
-          <select className="select" value={form.plateforme} onChange={e => setForm({ ...form, plateforme: e.target.value })}>
+          <select className={inputCls} style={inputStyle} value={form.plateforme} onChange={e => setForm({ ...form, plateforme: e.target.value })}>
             {PLATEFORMES.map(p => <option key={p}>{p}</option>)}
           </select>
         </FormField>
         <FormField label="Type">
-          <select className="select" value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
+          <select className={inputCls} style={inputStyle} value={form.type} onChange={e => setForm({ ...form, type: e.target.value })}>
             {TYPES.map(t => <option key={t}>{t}</option>)}
           </select>
         </FormField>
         <FormField label="Thème">
-          <select className="select mb-1.5" value={form.theme} onChange={e => setForm({ ...form, theme: e.target.value })}>
+          <select className={`${inputCls} mb-1.5`} style={inputStyle} value={form.theme} onChange={e => setForm({ ...form, theme: e.target.value })}>
             {themes.map(t => <option key={t}>{t}</option>)}
           </select>
           <div className="flex gap-1">
             <input
               ref={inputRef}
-              className="input text-xs py-1 flex-1"
+              className={`${inputCls} text-xs py-1 flex-1`}
+              style={inputStyle}
               placeholder="Nouveau thème..."
               value={newTheme}
               onChange={e => setNewTheme(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddTheme() } }}
             />
-            <button type="button" onClick={handleAddTheme} className="btn-secondary text-xs px-2 py-1">+ Ajouter</button>
+            <button type="button" onClick={handleAddTheme} className="text-xs px-2 py-1 rounded-lg font-semibold hover:bg-[#eeece7] transition-colors" style={btnSecondary}>+ Ajouter</button>
           </div>
         </FormField>
       </FormRow>
       <FormRow cols={3}>
         <FormField label="Date publication">
-          <input type="date" className="input" value={form.datePublication} onChange={e => setForm({ ...form, datePublication: e.target.value })} />
+          <input type="date" className={inputCls} style={inputStyle} value={form.datePublication} onChange={e => setForm({ ...form, datePublication: e.target.value })} />
         </FormField>
         <FormField label="Heure">
-          <input type="time" className="input" value={form.heurePublication} onChange={e => setForm({ ...form, heurePublication: e.target.value })} />
+          <input type="time" className={inputCls} style={inputStyle} value={form.heurePublication} onChange={e => setForm({ ...form, heurePublication: e.target.value })} />
         </FormField>
         <FormField label="Statut">
-          <select className="select" value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
+          <select className={inputCls} style={inputStyle} value={form.statut} onChange={e => setForm({ ...form, statut: e.target.value })}>
             {STATUTS.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
           </select>
         </FormField>
       </FormRow>
       <FormRow cols={2}>
         <FormField label="Priorité">
-          <select className="select" value={form.priorite} onChange={e => setForm({ ...form, priorite: e.target.value })}>
+          <select className={inputCls} style={inputStyle} value={form.priorite} onChange={e => setForm({ ...form, priorite: e.target.value })}>
             {PRIORITES.map(p => <option key={p}>{p}</option>)}
           </select>
         </FormField>
         <FormField label="Client associé">
-          <input className="input" value={form.client} onChange={e => setForm({ ...form, client: e.target.value })} placeholder="Nom du client (optionnel)" />
+          <input className={inputCls} style={inputStyle} value={form.client} onChange={e => setForm({ ...form, client: e.target.value })} placeholder="Nom du client (optionnel)" />
         </FormField>
       </FormRow>
       <FormField label="Hook (accroche)">
-        <input className="input mb-4" value={form.hook} onChange={e => setForm({ ...form, hook: e.target.value })} placeholder="La phrase d'accroche qui capte l'attention..." />
+        <input className={`${inputCls} mb-4`} style={inputStyle} value={form.hook} onChange={e => setForm({ ...form, hook: e.target.value })} placeholder="La phrase d'accroche qui capte l'attention..." />
       </FormField>
       <FormField label="Script / Contenu">
-        <textarea className="input resize-none mb-4" rows={4} value={form.script} onChange={e => setForm({ ...form, script: e.target.value })} placeholder="Rédige le script ou le texte du contenu..." />
+        <textarea className={`${inputCls} resize-none mb-4`} style={inputStyle} rows={4} value={form.script} onChange={e => setForm({ ...form, script: e.target.value })} placeholder="Rédige le script ou le texte du contenu..." />
       </FormField>
       <FormRow cols={2}>
         <FormField label="Hashtags">
-          <input className="input" value={form.hashtags} onChange={e => setForm({ ...form, hashtags: e.target.value })} placeholder="#webdesign #sccreation" />
+          <input className={inputCls} style={inputStyle} value={form.hashtags} onChange={e => setForm({ ...form, hashtags: e.target.value })} placeholder="#webdesign #sccreation" />
         </FormField>
         <FormField label="CTA (appel à l'action)">
-          <input className="input" value={form.cta} onChange={e => setForm({ ...form, cta: e.target.value })} placeholder="Lien en bio, contacte-moi..." />
+          <input className={inputCls} style={inputStyle} value={form.cta} onChange={e => setForm({ ...form, cta: e.target.value })} placeholder="Lien en bio, contacte-moi..." />
         </FormField>
       </FormRow>
       <FormField label="Visuels / Assets">
-        <input className="input mb-4" value={form.visuel} onChange={e => setForm({ ...form, visuel: e.target.value })} placeholder="Lien Drive, Canva, Notion..." />
+        <input className={`${inputCls} mb-4`} style={inputStyle} value={form.visuel} onChange={e => setForm({ ...form, visuel: e.target.value })} placeholder="Lien Drive, Canva, Notion..." />
       </FormField>
       <FormField label="Notes internes">
-        <textarea className="input resize-none mb-4" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Notes pour toi uniquement..." />
+        <textarea className={`${inputCls} resize-none mb-4`} style={inputStyle} rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} placeholder="Notes pour toi uniquement..." />
       </FormField>
       <div className="flex justify-end gap-2 mt-5">
-        <button type="button" className="btn-secondary" onClick={onCancel}>Annuler</button>
-        <button type="submit" className="btn-primary">{label}</button>
+        <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={btnSecondary} onClick={onCancel}>Annuler</button>
+        <button type="submit" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={btnPrimary}>{label}</button>
       </div>
     </form>
   )
@@ -171,59 +173,59 @@ function DetailModal({ c, onClose, onEdit, onDelete }) {
       {c && (
         <div className="space-y-4">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="text-lg font-bold text-gray-900">{c.titre}</h2>
+            <h2 className="text-lg font-bold" style={{ color: '#241512' }}>{c.titre}</h2>
             <div className="flex gap-1.5 flex-shrink-0">
-              <button onClick={onEdit} className="p-1.5 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50"><Edit size={15} /></button>
-              <button onClick={onDelete} className="p-1.5 text-gray-400 hover:text-red-500 rounded-lg hover:bg-red-50"><Trash2 size={15} /></button>
+              <button onClick={onEdit} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }}><Edit size={15} /></button>
+              <button onClick={onDelete} className="p-1.5 rounded-lg hover:bg-red-50 hover:text-red-500" style={{ color: '#a89b8c' }}><Trash2 size={15} /></button>
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-gray-100 text-gray-600'}`}>{c.plateforme}</span>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">{c.type}</span>
-            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUT_COLORS[c.statut] || 'bg-gray-100 text-gray-500'}`}>{c.statut.replace('_', ' ')}</span>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.plateforme}</span>
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#f5f4f1] text-[#241512]">{c.type}</span>
+            <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${STATUT_COLORS[c.statut] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.statut.replace('_', ' ')}</span>
             {c.priorite && c.priorite !== 'normale' && <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PRIORITE_COLORS[c.priorite]}`}>{c.priorite}</span>}
-            {c.theme && <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">{c.theme}</span>}
+            {c.theme && <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#f5f4f1] text-[#a89b8c]">{c.theme}</span>}
           </div>
           {(c.datePublication || c.heurePublication) && (
-            <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 rounded-xl px-3 py-2">
-              <Calendar size={14} className="text-indigo-500" />
+            <div className="flex items-center gap-2 text-sm rounded-xl px-3 py-2" style={{ background: '#f5f4f1', color: '#241512' }}>
+              <Calendar size={14} style={{ color: '#241512' }} />
               {c.datePublication && <span>{new Date(c.datePublication).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</span>}
               {c.heurePublication && <span className="font-medium">à {c.heurePublication}</span>}
             </div>
           )}
-          {c.client && <p className="text-sm text-gray-600"><span className="font-semibold">Client :</span> {c.client}</p>}
+          {c.client && <p className="text-sm" style={{ color: '#241512' }}><span className="font-semibold">Client :</span> {c.client}</p>}
           {c.hook && (
-            <div className="bg-indigo-50 rounded-xl p-3">
-              <p className="text-xs font-bold text-indigo-600 mb-1">HOOK</p>
-              <p className="text-sm text-gray-800 italic">"{c.hook}"</p>
+            <div className="rounded-xl p-3" style={{ background: '#f5f4f1' }}>
+              <p className="text-xs font-bold mb-1" style={{ color: '#241512' }}>HOOK</p>
+              <p className="text-sm italic" style={{ color: '#241512' }}>"{c.hook}"</p>
             </div>
           )}
           {c.script && (
             <div>
-              <p className="text-xs font-bold text-gray-500 mb-1">SCRIPT / CONTENU</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap bg-gray-50 rounded-xl p-3">{c.script}</p>
+              <p className="text-xs font-bold mb-1" style={{ color: '#a89b8c' }}>SCRIPT / CONTENU</p>
+              <p className="text-sm whitespace-pre-wrap rounded-xl p-3" style={{ background: '#f5f4f1', color: '#241512' }}>{c.script}</p>
             </div>
           )}
           {c.hashtags && (
             <div>
-              <p className="text-xs font-bold text-gray-500 mb-1">HASHTAGS</p>
-              <p className="text-sm text-indigo-600">{c.hashtags}</p>
+              <p className="text-xs font-bold mb-1" style={{ color: '#a89b8c' }}>HASHTAGS</p>
+              <p className="text-sm" style={{ color: '#241512' }}>{c.hashtags}</p>
             </div>
           )}
           {c.cta && (
             <div>
-              <p className="text-xs font-bold text-gray-500 mb-1">CTA</p>
-              <p className="text-sm text-gray-700">{c.cta}</p>
+              <p className="text-xs font-bold mb-1" style={{ color: '#a89b8c' }}>CTA</p>
+              <p className="text-sm" style={{ color: '#241512' }}>{c.cta}</p>
             </div>
           )}
           {c.visuel && (
             <div>
-              <p className="text-xs font-bold text-gray-500 mb-1">VISUELS</p>
-              <a href={c.visuel} target="_blank" rel="noreferrer" className="text-sm text-indigo-600 hover:underline break-all">{c.visuel}</a>
+              <p className="text-xs font-bold mb-1" style={{ color: '#a89b8c' }}>VISUELS</p>
+              <a href={c.visuel} target="_blank" rel="noreferrer" className="text-sm hover:underline break-all" style={{ color: '#241512' }}>{c.visuel}</a>
             </div>
           )}
           {c.notes && (
-            <div className="bg-amber-50 rounded-xl p-3">
+            <div className="rounded-xl p-3 bg-amber-50">
               <p className="text-xs font-bold text-amber-600 mb-1">DESCRIPTION</p>
               <p className="text-sm text-gray-700">{c.notes}</p>
             </div>
@@ -322,21 +324,22 @@ export default function CalendrierEditorial() {
 
   return (
     <div>
-      <div className="page-header">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="page-title">Calendrier Éditorial</h1>
-          <p className="text-sm text-gray-500 mt-1">{contenus.length} contenu{contenus.length > 1 ? 's' : ''} · {stats.publie} publié{stats.publie > 1 ? 's' : ''} · {stats.planifie} planifié{stats.planifie > 1 ? 's' : ''}</p>
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Calendrier Éditorial</h1>
+          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>{contenus.length} contenu{contenus.length > 1 ? 's' : ''} · {stats.publie} publié{stats.publie > 1 ? 's' : ''} · {stats.planifie} planifié{stats.planifie > 1 ? 's' : ''}</p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex border border-gray-200 rounded-lg overflow-hidden">
+          <div className="flex rounded-lg overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
             {[['calendrier', Calendar, 'Calendrier'], ['liste', List, 'Liste'], ['kanban', Columns, 'Kanban']].map(([v, Icon, l]) => (
               <button key={v} onClick={() => setView(v)}
-                className={`px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors ${view === v ? 'bg-indigo-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}>
+                className="px-3 py-2 flex items-center gap-1.5 text-xs font-medium transition-colors"
+                style={view === v ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', color: '#241512' }}>
                 <Icon size={14} />{l}
               </button>
             ))}
           </div>
-          <button className="btn-primary" onClick={() => setModal(true)}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={btnPrimary} onClick={() => setModal(true)}>
             <Plus size={16} /> Nouveau contenu
           </button>
         </div>
@@ -345,14 +348,14 @@ export default function CalendrierEditorial() {
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
         {[
-          { label: 'Total', val: stats.total, color: 'text-gray-800', bg: 'bg-gray-50' },
-          { label: 'En cours', val: stats.enCours, color: 'text-indigo-700', bg: 'bg-indigo-50' },
-          { label: 'Planifiés', val: stats.planifie, color: 'text-purple-700', bg: 'bg-purple-50' },
-          { label: 'Publiés', val: stats.publie, color: 'text-emerald-700', bg: 'bg-emerald-50' },
+          { label: 'Total', val: stats.total, color: '#241512', bg: '#f5f4f1' },
+          { label: 'En cours', val: stats.enCours, color: '#241512', bg: '#f5f4f1' },
+          { label: 'Planifiés', val: stats.planifie, color: '#a1402d', bg: '#f5e6e3' },
+          { label: 'Publiés', val: stats.publie, color: '#059669', bg: '#ecfdf5' },
         ].map(s => (
-          <div key={s.label} className={`${s.bg} rounded-2xl px-5 py-4`}>
-            <p className="text-xs font-semibold text-gray-500 mb-1">{s.label}</p>
-            <p className={`text-2xl font-bold ${s.color}`}>{s.val}</p>
+          <div key={s.label} className="rounded-2xl px-5 py-4" style={{ background: s.bg }}>
+            <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>{s.label}</p>
+            <p className="text-2xl font-bold" style={{ color: s.color }}>{s.val}</p>
           </div>
         ))}
       </div>
@@ -362,16 +365,18 @@ export default function CalendrierEditorial() {
         <div className="flex gap-1.5 flex-wrap">
           {['tous', ...PLATEFORMES].map(p => (
             <button key={p} onClick={() => setFilterPlat(p)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${filterPlat === p ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+              style={filterPlat === p ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
               {p === 'tous' ? 'Toutes plateformes' : p}
             </button>
           ))}
         </div>
-        <div className="w-px h-5 bg-gray-200" />
+        <div className="w-px h-5" style={{ background: '#e7e5e1' }} />
         <div className="flex gap-1.5 flex-wrap">
           {['tous', ...STATUTS].map(s => (
             <button key={s} onClick={() => setFilterStatut(s)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${filterStatut === s ? 'bg-indigo-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
+              className="px-3 py-1.5 text-xs font-medium rounded-lg transition-all"
+              style={filterStatut === s ? { background: '#241512', color: '#FDFCF8' } : { background: '#ffffff', border: '1px solid #e7e5e1', color: '#241512' }}>
               {s === 'tous' ? 'Tous statuts' : s.replace('_', ' ')}
             </button>
           ))}
@@ -380,47 +385,48 @@ export default function CalendrierEditorial() {
 
       {/* ── CALENDRIER ── */}
       {view === 'calendrier' && (
-        <div className="card">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-            <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><ChevronLeft size={18} /></button>
-            <h2 className="text-base font-bold text-gray-800">{MOIS_FR[calMonth]} {calYear}</h2>
-            <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500"><ChevronRight size={18} /></button>
+        <div className="bg-white rounded-2xl" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid #e7e5e1' }}>
+            <button onClick={prevMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }}><ChevronLeft size={18} /></button>
+            <h2 className="text-base font-bold" style={{ color: '#241512' }}>{MOIS_FR[calMonth]} {calYear}</h2>
+            <button onClick={nextMonth} className="p-1.5 rounded-lg hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }}><ChevronRight size={18} /></button>
           </div>
-          <div className="grid grid-cols-7 border-b border-gray-100">
+          <div className="grid grid-cols-7" style={{ borderBottom: '1px solid #e7e5e1' }}>
             {JOURS.map(j => (
-              <div key={j} className="py-2 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">{j}</div>
+              <div key={j} className="py-2 text-center text-xs font-bold uppercase tracking-wider" style={{ color: '#a89b8c' }}>{j}</div>
             ))}
           </div>
-          <div className="grid grid-cols-7 divide-x divide-y divide-gray-100">
+          <div className="grid grid-cols-7 divide-x divide-y" style={{ borderColor: '#eeece7' }}>
             {monthDays.map((day, i) => {
               const items = contenusByDay(day)
               return (
-                <div key={i} className={`min-h-[100px] p-2 ${!day ? 'bg-gray-50/50' : 'hover:bg-gray-50/50'} ${isToday(day) ? 'bg-indigo-50/40' : ''}`}>
+                <div key={i} className={`min-h-[100px] p-2 ${!day ? '' : 'hover:bg-[#f5f4f1]/50'}`} style={{ background: !day ? '#f5f4f1' : isToday(day) ? '#f5f4f1' : undefined }}>
                   {day && (
                     <>
-                      <div className={`w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold mb-1 ${isToday(day) ? 'bg-indigo-600 text-white' : 'text-gray-500'}`}>
+                      <div className="w-6 h-6 flex items-center justify-center rounded-full text-xs font-bold mb-1"
+                        style={isToday(day) ? { background: '#241512', color: '#FDFCF8' } : { color: '#a89b8c' }}>
                         {day}
                       </div>
                       <div className="space-y-1">
                         {items.slice(0, 3).map(c => (
                           <button key={c.id} onClick={() => setDetailId(c.id)}
                             className="w-full text-left flex flex-col gap-0.5 px-1.5 py-1 rounded hover:opacity-80 transition-opacity"
-                            style={{ background: c.statut === 'publie' ? '#d1fae5' : c.statut === 'planifie' ? '#ede9fe' : '#e0e7ff' }}>
+                            style={{ background: c.statut === 'publie' ? '#d1fae5' : c.statut === 'planifie' ? '#f5e6e3' : '#f5f4f1' }}>
                             <div className="flex items-center gap-1 flex-wrap">
-                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${c.plateforme === 'TikTok' ? 'bg-gray-800 text-white' : 'bg-pink-500 text-white'}`}>
+                              <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full leading-none ${c.plateforme === 'TikTok' ? 'bg-[#241512] text-white' : 'bg-pink-500 text-white'}`}>
                                 {c.plateforme}
                               </span>
                               {c.theme && (
-                                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none bg-white/70 text-gray-600">
+                                <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-full leading-none bg-white/70" style={{ color: '#241512' }}>
                                   {c.theme}
                                 </span>
                               )}
                             </div>
-                            <span className="truncate text-[10px] font-semibold text-gray-700">{c.titre}</span>
+                            <span className="truncate text-[10px] font-semibold" style={{ color: '#241512' }}>{c.titre}</span>
                           </button>
                         ))}
                         {items.length > 3 && (
-                          <p className="text-[10px] text-gray-400 text-center">+{items.length - 3} autres</p>
+                          <p className="text-[10px] text-center" style={{ color: '#a89b8c' }}>+{items.length - 3} autres</p>
                         )}
                       </div>
                     </>
@@ -434,56 +440,56 @@ export default function CalendrierEditorial() {
 
       {/* ── LISTE ── */}
       {view === 'liste' && (
-        <div className="card overflow-hidden">
+        <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #e7e5e1' }}>
           <div className="overflow-x-auto">
           <table className="w-full min-w-[700px]">
             <thead>
-              <tr>
-                <th className="table-header">Contenu</th>
-                <th className="table-header">Plateforme</th>
-                <th className="table-header">Type</th>
-                <th className="table-header">Thème</th>
-                <th className="table-header">Date & Heure</th>
-                <th className="table-header">Priorité</th>
-                <th className="table-header">Statut</th>
-                <th className="table-header w-20"></th>
+              <tr style={{ background: '#f5f4f1' }}>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Contenu</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Plateforme</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Type</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Thème</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Date & Heure</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Priorité</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Statut</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3 w-20" style={{ color: '#a89b8c' }}></th>
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 && <tr><td colSpan={8} className="text-center py-10 text-gray-400">Aucun contenu</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={8} className="text-center py-10" style={{ color: '#a89b8c' }}>Aucun contenu</td></tr>}
               {filtered.sort((a, b) => (a.datePublication || '').localeCompare(b.datePublication || '')).map(c => (
-                <tr key={c.id} className="table-row cursor-pointer" onClick={() => setDetailId(c.id)}>
-                  <td className="table-cell" onClick={e => e.stopPropagation()}>
-                    <p className="font-medium text-gray-900">{c.titre}</p>
-                    {c.hook && <p className="text-xs text-gray-400 truncate max-w-xs italic">"{c.hook}"</p>}
-                    {c.client && <p className="text-[10px] text-gray-400">{c.client}</p>}
+                <tr key={c.id} className="cursor-pointer hover:bg-[#f5f4f1]/40" style={{ borderTop: '1px solid #eeece7' }} onClick={() => setDetailId(c.id)}>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <p className="font-medium" style={{ color: '#241512' }}>{c.titre}</p>
+                    {c.hook && <p className="text-xs truncate max-w-xs italic" style={{ color: '#a89b8c' }}>"{c.hook}"</p>}
+                    {c.client && <p className="text-[10px]" style={{ color: '#a89b8c' }}>{c.client}</p>}
                   </td>
-                  <td className="table-cell">
-                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-gray-100 text-gray-600'}`}>{c.plateforme}</span>
+                  <td className="px-4 py-3">
+                    <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PLAT_COLORS[c.plateforme] || 'bg-[#f5f4f1] text-[#a89b8c]'}`}>{c.plateforme}</span>
                   </td>
-                  <td className="table-cell">
-                    <span className="text-xs font-medium text-gray-600">{c.type}</span>
+                  <td className="px-4 py-3">
+                    <span className="text-xs font-medium" style={{ color: '#241512' }}>{c.type}</span>
                   </td>
-                  <td className="table-cell">
-                    <span className="text-xs text-gray-500">{c.theme || '—'}</span>
+                  <td className="px-4 py-3">
+                    <span className="text-xs" style={{ color: '#a89b8c' }}>{c.theme || '—'}</span>
                   </td>
-                  <td className="table-cell text-sm text-gray-600">
+                  <td className="px-4 py-3 text-sm" style={{ color: '#241512' }}>
                     {c.datePublication ? new Date(c.datePublication).toLocaleDateString('fr-FR') : '—'}
-                    {c.heurePublication && <span className="text-xs text-gray-400 ml-1">{c.heurePublication}</span>}
+                    {c.heurePublication && <span className="text-xs ml-1" style={{ color: '#a89b8c' }}>{c.heurePublication}</span>}
                   </td>
-                  <td className="table-cell">
+                  <td className="px-4 py-3">
                     {c.priorite && <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${PRIORITE_COLORS[c.priorite] || ''}`}>{c.priorite}</span>}
                   </td>
-                  <td className="table-cell" onClick={e => e.stopPropagation()}>
-                    <select className="select text-xs w-auto" value={c.statut} onChange={e => updateContenu(c.id, { statut: e.target.value })}>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <select className="text-xs w-auto rounded-lg px-2 py-1" style={inputStyle} value={c.statut} onChange={e => updateContenu(c.id, { statut: e.target.value })}>
                       {STATUTS.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
                     </select>
                   </td>
-                  <td className="table-cell" onClick={e => e.stopPropagation()}>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
                     <div className="flex gap-1">
-                      <button onClick={() => setDetailId(c.id)} className="p-1 text-gray-400 hover:text-indigo-600"><Eye size={13} /></button>
-                      <button onClick={() => openEdit(c)} className="p-1 text-gray-400 hover:text-indigo-600"><Edit size={13} /></button>
-                      <button onClick={() => handleDelete(c.id)} className="p-1 text-gray-400 hover:text-red-500"><Trash2 size={13} /></button>
+                      <button onClick={() => setDetailId(c.id)} className="p-1 hover:text-[#241512]" style={{ color: '#a89b8c' }}><Eye size={13} /></button>
+                      <button onClick={() => openEdit(c)} className="p-1 hover:text-[#241512]" style={{ color: '#a89b8c' }}><Edit size={13} /></button>
+                      <button onClick={() => handleDelete(c.id)} className="p-1 hover:text-red-500" style={{ color: '#a89b8c' }}><Trash2 size={13} /></button>
                     </div>
                   </td>
                 </tr>
@@ -500,42 +506,42 @@ export default function CalendrierEditorial() {
           {STATUTS_KANBAN.map(statut => {
             const col = filtered.filter(c => c.statut === statut.id)
             return (
-              <div key={statut.id} className="kanban-col w-72 sm:w-64 flex-shrink-0"
+              <div key={statut.id} className="rounded-2xl bg-white w-72 sm:w-64 flex-shrink-0" style={{ border: '1px solid #e7e5e1' }}
                 onDragOver={e => e.preventDefault()}
                 onDrop={e => handleDrop(e, statut.id)}>
-                <div className="flex items-center justify-between px-3 py-3 border-b border-gray-200">
+                <div className="flex items-center justify-between px-3 py-3" style={{ borderBottom: '1px solid #e7e5e1' }}>
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${statut.color}`} />
-                    <span className="text-xs font-semibold text-gray-700">{statut.label}</span>
+                    <div className="w-2 h-2 rounded-full" style={{ background: statut.color }} />
+                    <span className="text-xs font-semibold" style={{ color: '#241512' }}>{statut.label}</span>
                   </div>
-                  <span className="text-xs bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded-full">{col.length}</span>
+                  <span className="text-xs px-1.5 py-0.5 rounded-full" style={{ background: '#f5f4f1', color: '#241512' }}>{col.length}</span>
                 </div>
                 <div className="p-2 space-y-2">
                   {col.map(c => (
                     <div key={c.id} draggable onDragStart={() => setDragId(c.id)}
-                      className="kanban-card group cursor-pointer" onClick={() => setDetailId(c.id)}>
+                      className="group cursor-pointer rounded-xl p-3" style={{ background: '#f5f4f1' }} onClick={() => setDetailId(c.id)}>
                       <div className="flex items-start justify-between gap-2 mb-2">
-                        <p className="text-sm font-medium text-gray-800 leading-snug">{c.titre}</p>
+                        <p className="text-sm font-medium leading-snug" style={{ color: '#241512' }}>{c.titre}</p>
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100" onClick={e => e.stopPropagation()}>
-                          <button onClick={() => openEdit(c)} className="p-0.5 text-gray-400 hover:text-indigo-600"><Edit size={11} /></button>
-                          <button onClick={() => handleDelete(c.id)} className="p-0.5 text-gray-400 hover:text-red-500"><Trash2 size={11} /></button>
+                          <button onClick={() => openEdit(c)} className="p-0.5 hover:text-[#241512]" style={{ color: '#a89b8c' }}><Edit size={11} /></button>
+                          <button onClick={() => handleDelete(c.id)} className="p-0.5 hover:text-red-500" style={{ color: '#a89b8c' }}><Trash2 size={11} /></button>
                         </div>
                       </div>
                       <div className="flex flex-wrap gap-1 mb-1">
-                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${PLAT_COLORS[c.plateforme] || 'bg-gray-100 text-gray-600'}`}>{c.plateforme}</span>
-                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-gray-100 text-gray-600">{c.type}</span>
+                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${PLAT_COLORS[c.plateforme] || 'bg-[#eeece7] text-[#241512]'}`}>{c.plateforme}</span>
+                        <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-[#eeece7]" style={{ color: '#241512' }}>{c.type}</span>
                         {c.priorite && c.priorite !== 'normale' && (
                           <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${PRIORITE_COLORS[c.priorite]}`}>{c.priorite}</span>
                         )}
                       </div>
                       {c.datePublication && (
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs" style={{ color: '#a89b8c' }}>
                           {new Date(c.datePublication).toLocaleDateString('fr-FR')}
                           {c.heurePublication && ` · ${c.heurePublication}`}
                         </p>
                       )}
-                      {c.hook && <p className="text-xs text-gray-500 mt-1 italic truncate">"{c.hook}"</p>}
-                      {c.client && <p className="text-[10px] text-gray-400 mt-1">{c.client}</p>}
+                      {c.hook && <p className="text-xs mt-1 italic truncate" style={{ color: '#241512' }}>"{c.hook}"</p>}
+                      {c.client && <p className="text-[10px] mt-1" style={{ color: '#a89b8c' }}>{c.client}</p>}
                     </div>
                   ))}
                 </div>
