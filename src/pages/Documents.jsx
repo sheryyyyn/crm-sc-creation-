@@ -78,108 +78,108 @@ function DocumentPreview({ doc, client }) {
 
   if (doc.type === 'facture') {
     return (
-      <div className="bg-white p-8 border border-gray-200 rounded-xl text-sm" id="doc-preview">
+      <div className="bg-white p-8 rounded-xl text-sm" style={{ border: '1px solid #e7e5e1' }} id="doc-preview">
         <div className="flex justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-indigo-700">SC Création</h1>
-            <p className="text-xs text-gray-500 mt-1">Agence Web Design</p>
-            <p className="text-xs text-gray-500">contact@sc-creation.fr</p>
+            <h1 className="text-2xl font-bold" style={{ color: '#241512' }}>SC Création</h1>
+            <p className="text-xs mt-1" style={{ color: '#a89b8c' }}>Agence Web Design</p>
+            <p className="text-xs" style={{ color: '#a89b8c' }}>contact@sc-creation.fr</p>
           </div>
           <div className="text-right">
-            <p className="text-xl font-bold text-gray-900 uppercase">Facture</p>
-            <p className="text-sm text-gray-600 mt-1">N° {doc.numero}</p>
-            <p className="text-xs text-gray-400">Émis le {fmt(dateEmission)}</p>
+            <p className="text-xl font-bold uppercase" style={{ color: '#241512' }}>Facture</p>
+            <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>N° {doc.numero}</p>
+            <p className="text-xs" style={{ color: '#a89b8c' }}>Émis le {fmt(dateEmission)}</p>
           </div>
         </div>
         {client && (
-          <div className="mb-8 p-4 bg-gray-50 rounded-lg">
-            <p className="text-xs font-semibold text-gray-500 mb-1">DESTINATAIRE</p>
-            <p className="font-semibold text-gray-900">{client.nom}</p>
-            {client.email && <p className="text-sm text-gray-500">{client.email}</p>}
+          <div className="mb-8 p-4 rounded-lg" style={{ background: '#f5f4f1' }}>
+            <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>DESTINATAIRE</p>
+            <p className="font-semibold" style={{ color: '#241512' }}>{client.nom}</p>
+            {client.email && <p className="text-sm" style={{ color: '#a89b8c' }}>{client.email}</p>}
           </div>
         )}
         <table className="w-full mb-6">
           <thead>
-            <tr className="border-b-2 border-gray-200">
-              <th className="text-xs font-semibold text-gray-500 text-left pb-2">Description</th>
-              <th className="text-xs font-semibold text-gray-500 text-right pb-2 w-16">Qté</th>
-              <th className="text-xs font-semibold text-gray-500 text-right pb-2 w-24">P.U HT</th>
-              <th className="text-xs font-semibold text-gray-500 text-right pb-2 w-24">Total HT</th>
+            <tr style={{ borderBottom: '2px solid #e7e5e1' }}>
+              <th className="text-xs font-semibold text-left pb-2" style={{ color: '#a89b8c' }}>Description</th>
+              <th className="text-xs font-semibold text-right pb-2 w-16" style={{ color: '#a89b8c' }}>Qté</th>
+              <th className="text-xs font-semibold text-right pb-2 w-24" style={{ color: '#a89b8c' }}>P.U HT</th>
+              <th className="text-xs font-semibold text-right pb-2 w-24" style={{ color: '#a89b8c' }}>Total HT</th>
             </tr>
           </thead>
           <tbody>
             {(doc.lignes || []).map((l, i) => (
-              <tr key={i} className="border-b border-gray-100">
-                <td className="py-2 text-gray-800">{l.description}</td>
-                <td className="py-2 text-right text-gray-600">{l.quantite}</td>
-                <td className="py-2 text-right text-gray-600">{(l.prixUnitaire || 0).toLocaleString('fr-FR')} €</td>
-                <td className="py-2 text-right font-medium text-gray-900">{((l.quantite || 0) * (l.prixUnitaire || 0)).toLocaleString('fr-FR')} €</td>
+              <tr key={i} style={{ borderBottom: '1px solid #eeece7' }}>
+                <td className="py-2" style={{ color: '#241512' }}>{l.description}</td>
+                <td className="py-2 text-right" style={{ color: '#a89b8c' }}>{l.quantite}</td>
+                <td className="py-2 text-right" style={{ color: '#a89b8c' }}>{(l.prixUnitaire || 0).toLocaleString('fr-FR')} €</td>
+                <td className="py-2 text-right font-medium" style={{ color: '#241512' }}>{((l.quantite || 0) * (l.prixUnitaire || 0)).toLocaleString('fr-FR')} €</td>
               </tr>
             ))}
           </tbody>
         </table>
         <div className="flex justify-end">
           <div className="w-56 space-y-1 text-sm">
-            <div className="flex justify-between"><span className="text-gray-500">Total HT</span><span className="font-medium">{fmtEur(doc.montantHT || 0)} €</span></div>
-            <div className="flex justify-between"><span className="text-gray-500">TVA ({tva}%)</span><span className="font-medium">{fmtEur(montantTVA)} €</span></div>
-            <div className="flex justify-between font-bold border-t border-gray-200 pt-1"><span>Total TTC</span><span className="text-indigo-700">{fmtEur(montantTTC)} €</span></div>
+            <div className="flex justify-between"><span style={{ color: '#a89b8c' }}>Total HT</span><span className="font-medium">{fmtEur(doc.montantHT || 0)} €</span></div>
+            <div className="flex justify-between"><span style={{ color: '#a89b8c' }}>TVA ({tva}%)</span><span className="font-medium">{fmtEur(montantTVA)} €</span></div>
+            <div className="flex justify-between font-bold pt-1" style={{ borderTop: '1px solid #e7e5e1' }}><span>Total TTC</span><span style={{ color: '#241512' }}>{fmtEur(montantTTC)} €</span></div>
           </div>
         </div>
-        {doc.notes && <div className="mt-6 p-3 bg-gray-50 rounded text-xs text-gray-600"><span className="font-semibold">Notes : </span>{doc.notes}</div>}
-        <div className="mt-8 pt-4 border-t border-gray-100 text-xs text-gray-400 text-center">SC Création — Merci pour votre confiance</div>
+        {doc.notes && <div className="mt-6 p-3 rounded text-xs" style={{ background: '#f5f4f1', color: '#a89b8c' }}><span className="font-semibold">Notes : </span>{doc.notes}</div>}
+        <div className="mt-8 pt-4 text-xs text-center" style={{ borderTop: '1px solid #eeece7', color: '#a89b8c' }}>SC Création — Merci pour votre confiance</div>
       </div>
     )
   }
 
   // ── Devis ──
   return (
-    <div className="bg-white p-8 border border-gray-200 rounded-xl text-sm" id="doc-preview">
+    <div className="bg-white p-8 rounded-xl text-sm" style={{ border: '1px solid #e7e5e1' }} id="doc-preview">
       {/* Logo */}
       <div className="text-center mb-5">
-        <h1 className="text-3xl font-black tracking-widest text-gray-900 uppercase" style={{ letterSpacing: '0.18em' }}>SC CRÉATION</h1>
-        <div className="w-full h-px bg-gray-300 mt-4" />
+        <h1 className="text-3xl font-black tracking-widest uppercase" style={{ letterSpacing: '0.18em', color: '#241512' }}>SC CRÉATION</h1>
+        <div className="w-full h-px mt-4" style={{ background: '#e7e5e1' }} />
       </div>
 
       {/* Titre DEVIS */}
       <div className="text-center mb-6">
-        <h2 className="text-xl font-bold text-gray-900 uppercase tracking-widest">DEVIS</h2>
-        <p className="text-xs text-gray-500 mt-1">
+        <h2 className="text-xl font-bold uppercase tracking-widest" style={{ color: '#241512' }}>DEVIS</h2>
+        <p className="text-xs mt-1" style={{ color: '#a89b8c' }}>
           N° {doc.numero} • Émis le : {fmt(dateEmission)} • Valable jusqu'au : {fmt(dateValidite)}
         </p>
       </div>
 
       {/* Prestataire / Client */}
-      <div className="grid grid-cols-2 border border-gray-300 mb-6">
-        <div className="p-4 border-r border-gray-300">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">PRESTATAIRE</p>
-          <p className="font-bold text-gray-900">SC CRÉATION</p>
-          <p className="text-xs text-gray-600">Sheryn Ait Tabet & Chaïnez Raho</p>
-          <p className="text-xs text-gray-600">47 rue Vivienne, 75002 Paris</p>
-          <p className="text-xs text-gray-400">Société en cours de création (SAS)</p>
+      <div className="grid grid-cols-2 mb-6" style={{ border: '1px solid #e7e5e1' }}>
+        <div className="p-4" style={{ borderRight: '1px solid #e7e5e1' }}>
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#a89b8c' }}>PRESTATAIRE</p>
+          <p className="font-bold" style={{ color: '#241512' }}>SC CRÉATION</p>
+          <p className="text-xs" style={{ color: '#241512' }}>Sheryn Ait Tabet & Chaïnez Raho</p>
+          <p className="text-xs" style={{ color: '#241512' }}>47 rue Vivienne, 75002 Paris</p>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>Société en cours de création (SAS)</p>
         </div>
         <div className="p-4">
-          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">CLIENT</p>
-          <p className="font-bold text-gray-900">{client?.nom || '—'}</p>
-          {client?.email && <p className="text-xs text-gray-600">{client.email}</p>}
-          {client?.telephone && <p className="text-xs text-gray-500">{client.telephone}</p>}
+          <p className="text-[10px] font-bold uppercase tracking-wider mb-1" style={{ color: '#a89b8c' }}>CLIENT</p>
+          <p className="font-bold" style={{ color: '#241512' }}>{client?.nom || '—'}</p>
+          {client?.email && <p className="text-xs" style={{ color: '#241512' }}>{client.email}</p>}
+          {client?.telephone && <p className="text-xs" style={{ color: '#a89b8c' }}>{client.telephone}</p>}
         </div>
       </div>
 
       {/* Objet */}
       {doc.objet && (
         <div className="mb-6">
-          <p className="font-bold text-xs text-gray-900 border-b border-gray-300 pb-1 mb-2 uppercase tracking-wider">OBJET DE LA PRESTATION</p>
-          <p className="text-xs text-gray-700 leading-relaxed">{doc.objet}</p>
-          {doc.delai && <p className="text-xs text-gray-500 mt-1 italic">Délai de livraison estimé : {doc.delai} à compter de la réception de l'acompte et de la validation du brief.</p>}
+          <p className="font-bold text-xs pb-1 mb-2 uppercase tracking-wider" style={{ color: '#241512', borderBottom: '1px solid #e7e5e1' }}>OBJET DE LA PRESTATION</p>
+          <p className="text-xs leading-relaxed" style={{ color: '#241512' }}>{doc.objet}</p>
+          {doc.delai && <p className="text-xs mt-1 italic" style={{ color: '#a89b8c' }}>Délai de livraison estimé : {doc.delai} à compter de la réception de l'acompte et de la validation du brief.</p>}
         </div>
       )}
 
       {/* Prestations */}
       <div className="mb-6">
-        <p className="font-bold text-xs text-gray-900 border-b border-gray-300 pb-1 mb-0 uppercase tracking-wider">DÉTAIL DES PRESTATIONS</p>
+        <p className="font-bold text-xs pb-1 mb-0 uppercase tracking-wider" style={{ color: '#241512', borderBottom: '1px solid #e7e5e1' }}>DÉTAIL DES PRESTATIONS</p>
         <table className="w-full">
           <thead>
-            <tr style={{ background: '#374151' }}>
+            <tr style={{ background: '#241512' }}>
               <th className="text-left px-3 py-2 text-xs font-semibold text-white">Prestation</th>
               <th className="text-center px-3 py-2 text-xs font-semibold text-white w-12">Qté</th>
               <th className="text-right px-3 py-2 text-xs font-semibold text-white w-24">P.U. HT</th>
@@ -191,14 +191,14 @@ function DocumentPreview({ doc, client }) {
               const inclus = !l.prixUnitaire || l.prixUnitaire === 0
               const total = (l.quantite || 0) * (l.prixUnitaire || 0)
               return (
-                <tr key={i} className="border-b border-gray-200" style={{ background: i % 2 === 0 ? '#ffffff' : '#f9fafb' }}>
+                <tr key={i} style={{ borderBottom: '1px solid #e7e5e1', background: i % 2 === 0 ? '#ffffff' : '#f5f4f1' }}>
                   <td className="px-3 py-2.5">
-                    <p className="font-semibold text-xs text-gray-900">{l.description}</p>
-                    {l.detail && <p className="text-[11px] text-gray-500 mt-0.5 leading-snug">{l.detail}</p>}
+                    <p className="font-semibold text-xs" style={{ color: '#241512' }}>{l.description}</p>
+                    {l.detail && <p className="text-[11px] mt-0.5 leading-snug" style={{ color: '#a89b8c' }}>{l.detail}</p>}
                   </td>
-                  <td className="px-3 py-2.5 text-center text-xs text-gray-600">{l.quantite}</td>
-                  <td className="px-3 py-2.5 text-right text-xs text-gray-500">{inclus ? 'Inclus' : `${(l.prixUnitaire || 0).toLocaleString('fr-FR')} €`}</td>
-                  <td className="px-3 py-2.5 text-right text-xs text-gray-500">{inclus ? '—' : `${total.toLocaleString('fr-FR')} €`}</td>
+                  <td className="px-3 py-2.5 text-center text-xs" style={{ color: '#a89b8c' }}>{l.quantite}</td>
+                  <td className="px-3 py-2.5 text-right text-xs" style={{ color: '#a89b8c' }}>{inclus ? 'Inclus' : `${(l.prixUnitaire || 0).toLocaleString('fr-FR')} €`}</td>
+                  <td className="px-3 py-2.5 text-right text-xs" style={{ color: '#a89b8c' }}>{inclus ? '—' : `${total.toLocaleString('fr-FR')} €`}</td>
                 </tr>
               )
             })}
@@ -206,15 +206,15 @@ function DocumentPreview({ doc, client }) {
         </table>
         <div className="flex justify-end mt-2">
           <div className="w-64 text-xs space-y-1">
-            <div className="flex justify-between py-1 border-t border-gray-200">
-              <span className="text-gray-600">Total HT</span>
+            <div className="flex justify-between py-1" style={{ borderTop: '1px solid #e7e5e1' }}>
+              <span style={{ color: '#241512' }}>Total HT</span>
               <span className="font-semibold">{fmtEur(doc.montantHT || 0)} €</span>
             </div>
             <div className="flex justify-between py-1">
-              <span className="text-gray-500">TVA — Non applicable (Art. 293 B du CGI)</span>
-              <span className="text-gray-500">0,00 €</span>
+              <span style={{ color: '#a89b8c' }}>TVA — Non applicable (Art. 293 B du CGI)</span>
+              <span style={{ color: '#a89b8c' }}>0,00 €</span>
             </div>
-            <div className="flex justify-between py-2 border-t-2 border-gray-800 font-bold text-sm mt-1 bg-gray-100 px-2">
+            <div className="flex justify-between py-2 font-bold text-sm mt-1 px-2" style={{ borderTop: '2px solid #241512', background: '#f5f4f1' }}>
               <span>TOTAL TTC</span>
               <span>{fmtEur(doc.montantHT || 0)} €</span>
             </div>
@@ -224,20 +224,20 @@ function DocumentPreview({ doc, client }) {
 
       {/* Conditions de paiement */}
       <div className="mb-6">
-        <p className="font-bold text-xs text-gray-900 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">CONDITIONS DE PAIEMENT</p>
-        <div className="grid grid-cols-2 border border-gray-300">
-          <div className="p-4 border-r border-gray-300">
-            <p className="font-bold text-xs text-gray-900">Acompte à la signature</p>
-            <p className="text-base font-bold text-gray-900 mt-1">{acompte}% — {fmtEur(acompteHT)} €</p>
-            <p className="text-[11px] text-gray-400 mt-1">Démarrage des travaux à réception</p>
+        <p className="font-bold text-xs pb-1 mb-3 uppercase tracking-wider" style={{ color: '#241512', borderBottom: '1px solid #e7e5e1' }}>CONDITIONS DE PAIEMENT</p>
+        <div className="grid grid-cols-2" style={{ border: '1px solid #e7e5e1' }}>
+          <div className="p-4" style={{ borderRight: '1px solid #e7e5e1' }}>
+            <p className="font-bold text-xs" style={{ color: '#241512' }}>Acompte à la signature</p>
+            <p className="text-base font-bold mt-1" style={{ color: '#241512' }}>{acompte}% — {fmtEur(acompteHT)} €</p>
+            <p className="text-[11px] mt-1" style={{ color: '#a89b8c' }}>Démarrage des travaux à réception</p>
           </div>
           <div className="p-4">
-            <p className="font-bold text-xs text-gray-900">Solde à la livraison</p>
-            <p className="text-base font-bold text-gray-900 mt-1">{100 - acompte}% — {fmtEur(soldeHT)} €</p>
-            <p className="text-[11px] text-gray-400 mt-1">Avant mise en ligne du site</p>
+            <p className="font-bold text-xs" style={{ color: '#241512' }}>Solde à la livraison</p>
+            <p className="text-base font-bold mt-1" style={{ color: '#241512' }}>{100 - acompte}% — {fmtEur(soldeHT)} €</p>
+            <p className="text-[11px] mt-1" style={{ color: '#a89b8c' }}>Avant mise en ligne du site</p>
           </div>
         </div>
-        <div className="text-[11px] text-gray-500 mt-2 space-y-1 leading-relaxed">
+        <div className="text-[11px] mt-2 space-y-1 leading-relaxed" style={{ color: '#a89b8c' }}>
           <p>Règlement par virement bancaire. Coordonnées bancaires transmises sur la facture d'acompte.</p>
           <p>En cas de retard de paiement, des pénalités de 3 fois le taux d'intérêt légal seront appliquées, ainsi qu'une indemnité forfaitaire de 40 € pour frais de recouvrement (art. L.441-10 du Code de commerce).</p>
         </div>
@@ -245,42 +245,42 @@ function DocumentPreview({ doc, client }) {
 
       {/* Conditions générales */}
       <div className="mb-6">
-        <p className="font-bold text-xs text-gray-900 border-b border-gray-300 pb-1 mb-2 uppercase tracking-wider">CONDITIONS GÉNÉRALES</p>
-        <div className="text-[11px] text-gray-600 space-y-1 leading-relaxed">
+        <p className="font-bold text-xs pb-1 mb-2 uppercase tracking-wider" style={{ color: '#241512', borderBottom: '1px solid #e7e5e1' }}>CONDITIONS GÉNÉRALES</p>
+        <div className="text-[11px] space-y-1 leading-relaxed" style={{ color: '#241512' }}>
           <p>Le présent devis est valable 30 jours à compter de sa date d'émission.</p>
           <p>Toute modification du scope entraînera l'émission d'un avenant au présent devis.</p>
           <p>Les contenus (textes, images, logos) sont à fournir par le client dans les 3 jours suivant la signature. Tout retard de fourniture de contenus entraîne un décalage équivalent du délai de livraison.</p>
           {doc.delai && <p>Le délai est de {doc.delai} à compter de la réception de l'acompte ET des contenus complets.</p>}
           <p>SC CRÉATION se réserve le droit de mentionner la réalisation de ce projet dans son portfolio, sauf demande contraire écrite du client.</p>
         </div>
-        {doc.notes && <div className="mt-2 p-2 bg-gray-50 rounded text-[11px] text-gray-600"><span className="font-semibold">Conditions particulières : </span>{doc.notes}</div>}
+        {doc.notes && <div className="mt-2 p-2 rounded text-[11px]" style={{ background: '#f5f4f1', color: '#a89b8c' }}><span className="font-semibold">Conditions particulières : </span>{doc.notes}</div>}
       </div>
 
       {/* Acceptation */}
       <div className="mb-4">
-        <p className="font-bold text-xs text-gray-900 border-b border-gray-300 pb-1 mb-3 uppercase tracking-wider">ACCEPTATION DU DEVIS</p>
-        <p className="text-[11px] text-gray-500 italic mb-4">Bon pour accord — À retourner signé avec la mention « Lu et approuvé »</p>
+        <p className="font-bold text-xs pb-1 mb-3 uppercase tracking-wider" style={{ color: '#241512', borderBottom: '1px solid #e7e5e1' }}>ACCEPTATION DU DEVIS</p>
+        <p className="text-[11px] italic mb-4" style={{ color: '#a89b8c' }}>Bon pour accord — À retourner signé avec la mention « Lu et approuvé »</p>
         <div className="grid grid-cols-2 gap-6">
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <p className="text-[11px] text-gray-400 mb-0.5">Le prestataire</p>
-            <p className="text-xs font-bold text-gray-900">SC CRÉATION</p>
-            <p className="text-[11px] text-gray-500 mb-2">Sheryn Ait Tabet & Chaïnez Raho</p>
-            <p className="text-[11px] text-gray-400">Date : ___/___/______</p>
-            <p className="text-[11px] text-gray-400 mt-1">Signature :</p>
-            <div className="border-b border-gray-300 h-8 mt-2" />
+          <div className="p-4 rounded-lg" style={{ border: '1px solid #e7e5e1' }}>
+            <p className="text-[11px] mb-0.5" style={{ color: '#a89b8c' }}>Le prestataire</p>
+            <p className="text-xs font-bold" style={{ color: '#241512' }}>SC CRÉATION</p>
+            <p className="text-[11px] mb-2" style={{ color: '#a89b8c' }}>Sheryn Ait Tabet & Chaïnez Raho</p>
+            <p className="text-[11px]" style={{ color: '#a89b8c' }}>Date : ___/___/______</p>
+            <p className="text-[11px] mt-1" style={{ color: '#a89b8c' }}>Signature :</p>
+            <div className="h-8 mt-2" style={{ borderBottom: '1px solid #e7e5e1' }} />
           </div>
-          <div className="border border-gray-200 p-4 rounded-lg">
-            <p className="text-[11px] text-gray-400 mb-0.5">Le client</p>
-            <p className="text-xs font-bold text-gray-900">{client?.nom || '—'}</p>
+          <div className="p-4 rounded-lg" style={{ border: '1px solid #e7e5e1' }}>
+            <p className="text-[11px] mb-0.5" style={{ color: '#a89b8c' }}>Le client</p>
+            <p className="text-xs font-bold" style={{ color: '#241512' }}>{client?.nom || '—'}</p>
             <div className="mt-2" />
-            <p className="text-[11px] text-gray-400">Date : ___/___/______</p>
-            <p className="text-[11px] text-gray-400 mt-1">Signature + « Lu et approuvé » :</p>
-            <div className="border-b border-gray-300 h-8 mt-2" />
+            <p className="text-[11px]" style={{ color: '#a89b8c' }}>Date : ___/___/______</p>
+            <p className="text-[11px] mt-1" style={{ color: '#a89b8c' }}>Signature + « Lu et approuvé » :</p>
+            <div className="h-8 mt-2" style={{ borderBottom: '1px solid #e7e5e1' }} />
           </div>
         </div>
       </div>
 
-      <div className="mt-5 pt-4 border-t border-gray-100 text-[11px] text-gray-400 text-center">
+      <div className="mt-5 pt-4 text-[11px] text-center" style={{ borderTop: '1px solid #eeece7', color: '#a89b8c' }}>
         SC CRÉATION • Sheryn Ait Tabet & Chaïnez Raho • 47 rue Vivienne, 75002 Paris
       </div>
     </div>
@@ -293,72 +293,72 @@ function ContratPreview({ doc, client }) {
   const soldeHT = (doc.montantHT || 0) - acompteHT
   const today = doc.dateEmission ? new Date(doc.dateEmission).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '—'
   return (
-    <div className="bg-white p-10 border border-gray-200 rounded-xl text-sm leading-relaxed" id="doc-preview">
+    <div className="bg-white p-10 rounded-xl text-sm leading-relaxed" style={{ border: '1px solid #e7e5e1' }} id="doc-preview">
       {/* En-tête */}
       <div className="flex justify-between items-start mb-10">
         <div>
-          <h1 className="text-2xl font-bold text-indigo-700">SC Création</h1>
-          <p className="text-xs text-gray-500">Agence Web Design</p>
-          <p className="text-xs text-gray-500">contact@sc-creation.fr</p>
+          <h1 className="text-2xl font-bold" style={{ color: '#241512' }}>SC Création</h1>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>Agence Web Design</p>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>contact@sc-creation.fr</p>
         </div>
         <div className="text-right">
-          <p className="text-xl font-bold text-gray-900 uppercase tracking-wide">Contrat de prestation</p>
-          <p className="text-sm text-gray-600 mt-1">N° {doc.numero}</p>
-          <p className="text-xs text-gray-400">Fait à Paris, le {today}</p>
+          <p className="text-xl font-bold uppercase tracking-wide" style={{ color: '#241512' }}>Contrat de prestation</p>
+          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>N° {doc.numero}</p>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>Fait à Paris, le {today}</p>
         </div>
       </div>
 
       {/* Parties */}
       <div className="grid grid-cols-2 gap-6 mb-8">
-        <div className="p-4 bg-indigo-50 rounded-lg">
-          <p className="text-xs font-bold text-indigo-600 mb-2 uppercase tracking-wide">Le Prestataire</p>
-          <p className="font-semibold text-gray-900">SC Création</p>
-          <p className="text-xs text-gray-600">Agence Web Design</p>
-          <p className="text-xs text-gray-500">contact@sc-creation.fr</p>
+        <div className="p-4 rounded-lg" style={{ background: '#f5f4f1' }}>
+          <p className="text-xs font-bold mb-2 uppercase tracking-wide" style={{ color: '#241512' }}>Le Prestataire</p>
+          <p className="font-semibold" style={{ color: '#241512' }}>SC Création</p>
+          <p className="text-xs" style={{ color: '#241512' }}>Agence Web Design</p>
+          <p className="text-xs" style={{ color: '#a89b8c' }}>contact@sc-creation.fr</p>
         </div>
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <p className="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wide">Le Client</p>
-          <p className="font-semibold text-gray-900">{client?.nom || '—'}</p>
-          {client?.contact && <p className="text-xs text-gray-600">{client.contact}</p>}
-          {client?.email && <p className="text-xs text-gray-500">{client.email}</p>}
+        <div className="p-4 rounded-lg" style={{ background: '#f5f4f1' }}>
+          <p className="text-xs font-bold mb-2 uppercase tracking-wide" style={{ color: '#a89b8c' }}>Le Client</p>
+          <p className="font-semibold" style={{ color: '#241512' }}>{client?.nom || '—'}</p>
+          {client?.contact && <p className="text-xs" style={{ color: '#241512' }}>{client.contact}</p>}
+          {client?.email && <p className="text-xs" style={{ color: '#a89b8c' }}>{client.email}</p>}
         </div>
       </div>
 
-      <div className="space-y-5 text-gray-700">
+      <div className="space-y-5" style={{ color: '#241512' }}>
         {/* Art. 1 */}
         <div>
-          <p className="font-bold text-gray-900 mb-1">Article 1 — Objet du contrat</p>
+          <p className="font-bold mb-1" style={{ color: '#241512' }}>Article 1 — Objet du contrat</p>
           <p className="text-xs leading-relaxed">
             Le présent contrat a pour objet de définir les conditions dans lesquelles SC Création
             réalisera la mission suivante pour le Client :{' '}
-            <span className="font-medium text-gray-900">{doc.objet || '(à préciser)'}</span>.
+            <span className="font-medium" style={{ color: '#241512' }}>{doc.objet || '(à préciser)'}</span>.
           </p>
         </div>
 
         {/* Art. 2 */}
         <div>
-          <p className="font-bold text-gray-900 mb-1">Article 2 — Durée et délai de réalisation</p>
+          <p className="font-bold mb-1" style={{ color: '#241512' }}>Article 2 — Durée et délai de réalisation</p>
           <p className="text-xs leading-relaxed">
             La mission débutera à compter de la réception de l'acompte et du brief complet du Client.
             Le délai estimé de réalisation est de{' '}
-            <span className="font-medium text-gray-900">{doc.delai || '(à préciser)'}</span>.
+            <span className="font-medium" style={{ color: '#241512' }}>{doc.delai || '(à préciser)'}</span>.
             Ce délai est conditionné à la fourniture des éléments nécessaires par le Client dans les délais convenus.
           </p>
         </div>
 
         {/* Art. 3 */}
         <div>
-          <p className="font-bold text-gray-900 mb-1">Article 3 — Conditions financières</p>
+          <p className="font-bold mb-1" style={{ color: '#241512' }}>Article 3 — Conditions financières</p>
           <p className="text-xs leading-relaxed mb-2">
             Le montant total de la prestation est fixé à{' '}
-            <span className="font-semibold text-indigo-700">{(doc.montantHT || 0).toLocaleString('fr-FR')} € HT</span> (TVA {doc.tva}% en sus).
+            <span className="font-semibold" style={{ color: '#241512' }}>{(doc.montantHT || 0).toLocaleString('fr-FR')} € HT</span> (TVA {doc.tva}% en sus).
           </p>
-          <div className="bg-gray-50 rounded-lg p-3 text-xs space-y-1">
+          <div className="rounded-lg p-3 text-xs space-y-1" style={{ background: '#f5f4f1' }}>
             <div className="flex justify-between">
               <span>Acompte à la signature ({doc.acompte}%)</span>
               <span className="font-semibold">{acompteHT.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} € HT</span>
             </div>
-            <div className="flex justify-between border-t border-gray-200 pt-1">
+            <div className="flex justify-between pt-1" style={{ borderTop: '1px solid #e7e5e1' }}>
               <span>Solde à la livraison ({100 - (doc.acompte || 30)}%)</span>
               <span className="font-semibold">{soldeHT.toLocaleString('fr-FR', { maximumFractionDigits: 2 })} € HT</span>
             </div>
@@ -367,7 +367,7 @@ function ContratPreview({ doc, client }) {
 
         {/* Art. 4 */}
         <div>
-          <p className="font-bold text-gray-900 mb-1">Article 4 — Propriété intellectuelle</p>
+          <p className="font-bold mb-1" style={{ color: '#241512' }}>Article 4 — Propriété intellectuelle</p>
           <p className="text-xs leading-relaxed">
             L'ensemble des créations réalisées dans le cadre de cette mission (design, code, visuels)
             reste la propriété de SC Création jusqu'au règlement intégral de la facture. À réception
@@ -378,7 +378,7 @@ function ContratPreview({ doc, client }) {
 
         {/* Art. 5 */}
         <div>
-          <p className="font-bold text-gray-900 mb-1">Article 5 — Résiliation</p>
+          <p className="font-bold mb-1" style={{ color: '#241512' }}>Article 5 — Résiliation</p>
           <p className="text-xs leading-relaxed">
             En cas de résiliation à l'initiative du Client après le début des travaux, l'acompte versé
             reste acquis à SC Création. Si la résiliation intervient après livraison des maquettes,
@@ -388,26 +388,26 @@ function ContratPreview({ doc, client }) {
 
         {doc.notes && (
           <div>
-            <p className="font-bold text-gray-900 mb-1">Conditions particulières</p>
+            <p className="font-bold mb-1" style={{ color: '#241512' }}>Conditions particulières</p>
             <p className="text-xs leading-relaxed">{doc.notes}</p>
           </div>
         )}
       </div>
 
       {/* Signatures */}
-      <div className="grid grid-cols-2 gap-10 mt-12 pt-6 border-t border-gray-200">
+      <div className="grid grid-cols-2 gap-10 mt-12 pt-6" style={{ borderTop: '1px solid #e7e5e1' }}>
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-1">Pour SC Création</p>
-          <p className="text-xs text-gray-400 mb-8">Lu et approuvé — Signature :</p>
-          <div className="border-b border-gray-300 h-10" />
+          <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>Pour SC Création</p>
+          <p className="text-xs mb-8" style={{ color: '#a89b8c' }}>Lu et approuvé — Signature :</p>
+          <div className="h-10" style={{ borderBottom: '1px solid #e7e5e1' }} />
         </div>
         <div>
-          <p className="text-xs font-semibold text-gray-500 mb-1">Pour le Client — {client?.nom || '—'}</p>
-          <p className="text-xs text-gray-400 mb-8">Lu et approuvé — Signature :</p>
-          <div className="border-b border-gray-300 h-10" />
+          <p className="text-xs font-semibold mb-1" style={{ color: '#a89b8c' }}>Pour le Client — {client?.nom || '—'}</p>
+          <p className="text-xs mb-8" style={{ color: '#a89b8c' }}>Lu et approuvé — Signature :</p>
+          <div className="h-10" style={{ borderBottom: '1px solid #e7e5e1' }} />
         </div>
       </div>
-      <div className="mt-6 text-xs text-gray-400 text-center">SC Création — Merci pour votre confiance</div>
+      <div className="mt-6 text-xs text-center" style={{ color: '#a89b8c' }}>SC Création — Merci pour votre confiance</div>
     </div>
   )
 }
@@ -463,22 +463,25 @@ export default function Documents() {
 
   const typeLabel = { devis: 'Devis', contrat: 'Contrat', facture: 'Facture' }
 
+  const inputCls = "w-full px-3.5 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 transition-all"
+  const inputStyle = { background: '#f5f4f1', border: '1px solid #e7e5e1', color: '#241512' }
+
   return (
     <div>
-      <div className="page-header">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
         <div>
-          <h1 className="page-title">Documents</h1>
-          <p className="text-sm text-gray-500 mt-1">{documents.length} document{documents.length > 1 ? 's' : ''}</p>
+          <h1 className="font-display text-4xl font-bold" style={{ color: '#241512' }}>Documents</h1>
+          <p className="text-sm mt-1" style={{ color: '#a89b8c' }}>{documents.length} document{documents.length > 1 ? 's' : ''}</p>
         </div>
         {/* 3 boutons de génération */}
         <div className="flex flex-wrap gap-2">
-          <button className="btn-secondary flex items-center gap-2" onClick={() => openTemplate('devis')}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => openTemplate('devis')}>
             <FileText size={15} className="text-indigo-600" /> Générer un devis
           </button>
-          <button className="btn-secondary flex items-center gap-2" onClick={() => openTemplate('contrat')}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => openTemplate('contrat')}>
             <BookOpen size={15} className="text-emerald-600" /> Générer un contrat
           </button>
-          <button className="btn-secondary flex items-center gap-2" onClick={() => openTemplate('facture')}>
+          <button className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => openTemplate('facture')}>
             <Receipt size={15} className="text-amber-600" /> Générer une facture
           </button>
         </div>
@@ -486,16 +489,17 @@ export default function Documents() {
 
       {/* Filtres */}
       <div className="flex flex-wrap gap-3 mb-5">
-        <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-1">
+        <div className="flex gap-1 bg-white rounded-lg p-1" style={{ border: '1px solid #e7e5e1' }}>
           {['tous', 'devis', 'contrat', 'facture'].map(t => (
             <button key={t} onClick={() => setFilterType(t)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all ${filterType === t ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'}`}>
+              className="px-3 py-1.5 text-xs font-medium rounded-md capitalize transition-all"
+              style={filterType === t ? { background: '#241512', color: '#FDFCF8' } : { background: 'transparent', color: '#241512' }}>
               {t === 'tous' ? 'Tous' : typeLabel[t]}
               {' '}({documents.filter(d => t === 'tous' || d.type === t).length})
             </button>
           ))}
         </div>
-        <select className="select w-auto text-xs" value={filterStatut} onChange={e => setFilterStatut(e.target.value)}>
+        <select className="w-auto text-xs px-3 py-1.5 rounded-lg focus:outline-none focus:ring-2 transition-all" style={inputStyle} value={filterStatut} onChange={e => setFilterStatut(e.target.value)}>
           <option value="tous">Tous statuts</option>
           <option value="en_attente">En attente</option>
           <option value="envoye">Envoyé</option>
@@ -505,45 +509,46 @@ export default function Documents() {
       </div>
 
       {/* Tableau */}
-      <div className="card overflow-hidden mb-6">
+      <div className="bg-white rounded-2xl overflow-hidden mb-6" style={{ border: '1px solid #e7e5e1' }}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[680px]">
             <thead>
-              <tr>
-                <th className="table-header">Numéro</th>
-                <th className="table-header">Type</th>
-                <th className="table-header">Client</th>
-                <th className="table-header">Montant HT</th>
-                <th className="table-header">TTC</th>
-                <th className="table-header">Date</th>
-                <th className="table-header">Statut</th>
-                <th className="table-header w-24">Actions</th>
+              <tr style={{ background: '#f5f4f1' }}>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Numéro</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Type</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Client</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Montant HT</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>TTC</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Date</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3" style={{ color: '#a89b8c' }}>Statut</th>
+                <th className="text-left text-xs font-bold uppercase tracking-wider px-4 py-3 w-24" style={{ color: '#a89b8c' }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 && <tr><td colSpan={8} className="py-10 text-gray-400 sticky left-0">Aucun document</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={8} className="py-10 text-center sticky left-0" style={{ color: '#a89b8c' }}>Aucun document</td></tr>}
               {filtered.map(d => {
                 const client = getClient(d.clientId)
                 const ttc = (d.montantHT || 0) * (1 + (d.tva || 20) / 100)
                 return (
-                  <tr key={d.id} className="table-row">
-                    <td className="table-cell font-semibold text-indigo-700">{d.numero}</td>
-                    <td className="table-cell">
+                  <tr key={d.id} style={{ borderTop: '1px solid #eeece7' }}>
+                    <td className="px-4 py-3 text-sm font-semibold" style={{ color: '#241512' }}>{d.numero}</td>
+                    <td className="px-4 py-3">
                       <span className={`capitalize text-xs font-semibold px-2 py-0.5 rounded-full ${
                         d.type === 'devis' ? 'bg-indigo-50 text-indigo-700' :
                         d.type === 'contrat' ? 'bg-emerald-50 text-emerald-700' :
                         'bg-amber-50 text-amber-700'
                       }`}>{typeLabel[d.type] || d.type}</span>
                     </td>
-                    <td className="table-cell">{client?.nom || '—'}</td>
-                    <td className="table-cell font-medium">{(d.montantHT || 0).toLocaleString('fr-FR')} €</td>
-                    <td className="table-cell font-semibold text-gray-900">{ttc.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</td>
-                    <td className="table-cell text-xs text-gray-500">{d.dateEmission ? new Date(d.dateEmission).toLocaleDateString('fr-FR') : '—'}</td>
-                    <td className="table-cell">
+                    <td className="px-4 py-3 text-sm" style={{ color: '#241512' }}>{client?.nom || '—'}</td>
+                    <td className="px-4 py-3 text-sm font-medium" style={{ color: '#241512' }}>{(d.montantHT || 0).toLocaleString('fr-FR')} €</td>
+                    <td className="px-4 py-3 text-sm font-semibold" style={{ color: '#241512' }}>{ttc.toLocaleString('fr-FR', { maximumFractionDigits: 0 })} €</td>
+                    <td className="px-4 py-3 text-xs" style={{ color: '#a89b8c' }}>{d.dateEmission ? new Date(d.dateEmission).toLocaleDateString('fr-FR') : '—'}</td>
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-2">
                         {statutBadge(d.statut)}
                         <select
-                          className="text-xs border border-gray-200 rounded px-1 py-0.5"
+                          className="text-xs rounded px-1 py-0.5"
+                          style={{ border: '1px solid #e7e5e1', color: '#241512' }}
                           value={d.statut}
                           onChange={e => updateDocument(d.id, { statut: e.target.value })}
                           onClick={e => e.stopPropagation()}
@@ -555,10 +560,10 @@ export default function Documents() {
                         </select>
                       </div>
                     </td>
-                    <td className="table-cell">
+                    <td className="px-4 py-3">
                       <div className="flex gap-1">
-                        <button onClick={() => setPreviewDoc(d)} className="p-1.5 text-gray-400 hover:text-indigo-600 rounded" title="Aperçu"><FileText size={14} /></button>
-                        <button onClick={() => { if (confirm('Supprimer ?')) deleteDocument(d.id) }} className="p-1.5 text-gray-400 hover:text-red-500 rounded"><Trash2 size={14} /></button>
+                        <button onClick={() => setPreviewDoc(d)} className="p-1.5 rounded hover:bg-[#f5f4f1]" style={{ color: '#a89b8c' }} title="Aperçu"><FileText size={14} /></button>
+                        <button onClick={() => { if (confirm('Supprimer ?')) deleteDocument(d.id) }} className="p-1.5 rounded hover:bg-red-50 hover:text-red-500" style={{ color: '#a89b8c' }}><Trash2 size={14} /></button>
                       </div>
                     </td>
                   </tr>
@@ -575,28 +580,28 @@ export default function Documents() {
           <form onSubmit={handleSubmit}>
             <FormRow cols={2}>
               <FormField label="Client" required>
-                <select className="select" value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })} required>
+                <select className={inputCls} style={inputStyle} value={form.clientId} onChange={e => setForm({ ...form, clientId: e.target.value })} required>
                   <option value="">— Choisir un client —</option>
                   {clients.map(c => <option key={c.id} value={c.id}>{c.nom}</option>)}
                 </select>
               </FormField>
               <FormField label="Numéro">
-                <input className="input" value={form.numero} onChange={e => setForm({ ...form, numero: e.target.value })} />
+                <input className={inputCls} style={inputStyle} value={form.numero} onChange={e => setForm({ ...form, numero: e.target.value })} />
               </FormField>
             </FormRow>
 
             <FormRow cols={2}>
               <FormField label="Date d'émission">
-                <input type="date" className="input" value={form.dateEmission} onChange={e => setForm({ ...form, dateEmission: e.target.value })} />
+                <input type="date" className={inputCls} style={inputStyle} value={form.dateEmission} onChange={e => setForm({ ...form, dateEmission: e.target.value })} />
               </FormField>
               {form.type === 'facture' && (
                 <FormField label="Date d'échéance">
-                  <input type="date" className="input" value={form.dateEcheance} onChange={e => setForm({ ...form, dateEcheance: e.target.value })} />
+                  <input type="date" className={inputCls} style={inputStyle} value={form.dateEcheance} onChange={e => setForm({ ...form, dateEcheance: e.target.value })} />
                 </FormField>
               )}
               {form.type !== 'facture' && (
                 <FormField label="Acompte (%)">
-                  <input type="number" className="input" min={0} max={100} value={form.acompte} onChange={e => setForm({ ...form, acompte: Number(e.target.value) })} />
+                  <input type="number" className={inputCls} style={inputStyle} min={0} max={100} value={form.acompte} onChange={e => setForm({ ...form, acompte: Number(e.target.value) })} />
                 </FormField>
               )}
             </FormRow>
@@ -605,10 +610,10 @@ export default function Documents() {
             {form.type !== 'facture' && (
               <>
                 <FormField label="Objet de la prestation">
-                  <textarea className="input resize-none" rows={2} placeholder="Ex : Création du site e-commerce — marque de vêtements en édition limitée…" value={form.objet} onChange={e => setForm({ ...form, objet: e.target.value })} />
+                  <textarea className={`${inputCls} resize-none`} style={inputStyle} rows={2} placeholder="Ex : Création du site e-commerce — marque de vêtements en édition limitée…" value={form.objet} onChange={e => setForm({ ...form, objet: e.target.value })} />
                 </FormField>
                 <FormField label="Délai de réalisation">
-                  <input className="input" placeholder="Ex : 3 à 4 semaines" value={form.delai} onChange={e => setForm({ ...form, delai: e.target.value })} />
+                  <input className={inputCls} style={inputStyle} placeholder="Ex : 3 à 4 semaines" value={form.delai} onChange={e => setForm({ ...form, delai: e.target.value })} />
                 </FormField>
               </>
             )}
@@ -616,52 +621,52 @@ export default function Documents() {
             {/* Champs montant HT pour contrat (sans lignes) */}
             {form.type === 'contrat' && (
               <FormField label="Montant HT (€)">
-                <input type="number" className="input" value={form.montantHT} onChange={e => setForm({ ...form, montantHT: Number(e.target.value) })} />
+                <input type="number" className={inputCls} style={inputStyle} value={form.montantHT} onChange={e => setForm({ ...form, montantHT: Number(e.target.value) })} />
               </FormField>
             )}
 
             {/* Lignes — devis & facture */}
             {form.type !== 'contrat' && (
               <div className="mb-4">
-                <label className="label">Prestations</label>
-                <div className="space-y-3 mb-3">
+                <label className="text-xs font-bold uppercase tracking-wider" style={{ color: '#a89b8c' }}>Prestations</label>
+                <div className="space-y-3 mb-3 mt-2">
                   {form.lignes.map((l, i) => (
-                    <div key={i} className="border border-gray-200 rounded-xl p-3 space-y-2">
+                    <div key={i} className="rounded-xl p-3 space-y-2" style={{ border: '1px solid #e7e5e1' }}>
                       <div className="flex gap-2 items-start">
                         <div className="flex-1 space-y-1.5">
-                          <input className="input text-xs" placeholder="Titre de la prestation" value={l.description} onChange={e => updateLigne(i, 'description', e.target.value)} />
+                          <input className={`${inputCls} text-xs`} style={inputStyle} placeholder="Titre de la prestation" value={l.description} onChange={e => updateLigne(i, 'description', e.target.value)} />
                           {form.type === 'devis' && (
-                            <textarea className="input text-xs resize-none" rows={2} placeholder="Description (optionnel)" value={l.detail || ''} onChange={e => updateLigne(i, 'detail', e.target.value)} />
+                            <textarea className={`${inputCls} text-xs resize-none`} style={inputStyle} rows={2} placeholder="Description (optionnel)" value={l.detail || ''} onChange={e => updateLigne(i, 'detail', e.target.value)} />
                           )}
                         </div>
-                        <button type="button" onClick={() => removeLigne(i)} className="text-gray-300 hover:text-red-400 mt-1 flex-shrink-0">✕</button>
+                        <button type="button" onClick={() => removeLigne(i)} className="mt-1 flex-shrink-0 hover:text-red-500" style={{ color: '#a89b8c' }}>✕</button>
                       </div>
                       <div className="flex gap-2 items-center">
-                        <input type="number" className="input w-16 text-xs" placeholder="Qté" value={l.quantite} onChange={e => updateLigne(i, 'quantite', e.target.value)} />
-                        <input type="number" className="input w-28 text-xs" placeholder="P.U € (0 = Inclus)" value={l.prixUnitaire} onChange={e => updateLigne(i, 'prixUnitaire', e.target.value)} />
-                        <span className="text-xs font-semibold text-gray-500 flex-1 text-right">
+                        <input type="number" className={`${inputCls} w-16 text-xs`} style={inputStyle} placeholder="Qté" value={l.quantite} onChange={e => updateLigne(i, 'quantite', e.target.value)} />
+                        <input type="number" className={`${inputCls} w-28 text-xs`} style={inputStyle} placeholder="P.U € (0 = Inclus)" value={l.prixUnitaire} onChange={e => updateLigne(i, 'prixUnitaire', e.target.value)} />
+                        <span className="text-xs font-semibold flex-1 text-right" style={{ color: '#a89b8c' }}>
                           {l.prixUnitaire === 0 ? 'Inclus' : `${((l.quantite || 0) * (l.prixUnitaire || 0)).toLocaleString('fr-FR')} €`}
                         </span>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button type="button" onClick={addLigne} className="text-xs text-indigo-600 hover:underline flex items-center gap-1">
+                <button type="button" onClick={addLigne} className="text-xs hover:underline flex items-center gap-1" style={{ color: '#241512' }}>
                   <Plus size={12} /> Ajouter une ligne
                 </button>
                 <div className="flex justify-end mt-3">
-                  <p className="text-sm font-bold text-gray-900">Total HT : {(form.montantHT || 0).toLocaleString('fr-FR')} €</p>
+                  <p className="text-sm font-bold" style={{ color: '#241512' }}>Total HT : {(form.montantHT || 0).toLocaleString('fr-FR')} €</p>
                 </div>
               </div>
             )}
 
             <FormField label={form.type === 'contrat' ? 'Conditions particulières' : 'Notes'}>
-              <textarea className="input resize-none" rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
+              <textarea className={`${inputCls} resize-none`} style={inputStyle} rows={2} value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} />
             </FormField>
 
             <div className="flex justify-end gap-2 mt-5">
-              <button type="button" className="btn-secondary" onClick={() => setModal(false)}>Annuler</button>
-              <button type="submit" className="btn-primary">Générer →</button>
+              <button type="button" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }} onClick={() => setModal(false)}>Annuler</button>
+              <button type="submit" className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all" style={{ background: '#241512', color: '#FDFCF8' }}>Générer →</button>
             </div>
           </form>
         </Modal>
@@ -671,7 +676,7 @@ export default function Documents() {
       {previewDoc && (
         <Modal isOpen={!!previewDoc} onClose={() => setPreviewDoc(null)} title={`Aperçu — ${previewDoc.numero}`} size="xl">
           <div className="mb-4 flex justify-end">
-            <button onClick={() => window.print()} className="btn-secondary"><Printer size={15} /> Télécharger / Imprimer</button>
+            <button onClick={() => window.print()} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all hover:bg-[#eeece7]" style={{ background: '#f5f4f1', color: '#241512' }}><Printer size={15} /> Télécharger / Imprimer</button>
           </div>
           {previewDoc.type === 'contrat'
             ? <ContratPreview doc={previewDoc} client={getClient(previewDoc.clientId)} />
