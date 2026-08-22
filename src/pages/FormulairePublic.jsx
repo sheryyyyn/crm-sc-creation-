@@ -24,7 +24,7 @@ const FORM_FIELDS = [
         { value: 'Mon activité est déjà lancée', title: 'Mon activité est déjà lancée', desc: 'Je commercialise déjà mes produits ou mes services.' },
       ],
     },
-    { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
+    { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "Comment est né votre projet ?\nQui se cache derrière la marque ?\nQuelle vision ou quelles valeurs souhaitez-vous transmettre ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'tags', required: true, options: ['Acheter en ligne', 'Me contacter / demander un devis', 'Prendre rendez-vous', 'Découvrir mes réalisations', 'Autre'] },
     { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
