@@ -382,7 +382,7 @@ function CarteReponse({ rep, onToggle, open }) {
         { icon: Target, label: 'État du projet', value: rep.etatProjet || '—' },
         { icon: MessageSquare, label: 'Histoire de la marque', value: rep.histoire || '—' },
         { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
-        { icon: Target, label: 'Raison principale du projet', value: rep.objectif || '—' },
+        { icon: Target, label: 'Objectif principal du projet', value: rep.objectif || '—' },
         { icon: Users, label: 'Cible', value: rep.cible || '—' },
         { icon: Users, label: 'Concurrents', value: rep.concurrents || '—' },
       ],
