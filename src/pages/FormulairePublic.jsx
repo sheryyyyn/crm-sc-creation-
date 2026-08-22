@@ -33,10 +33,10 @@ const FORM_FIELDS = [
     {
       label: "Quel est l'objectif principal de votre projet ? *", name: 'objectif', type: 'cards', required: true,
       options: [
-        { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
-        { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
         { value: 'Présenter mon entreprise et mes services', title: 'Présenter mon entreprise et mes services', desc: 'Faire découvrir mon activité, mon histoire, mes services ou mes réalisations.' },
         { value: 'Vendre mes produits en ligne', title: 'Vendre mes produits en ligne', desc: 'Permettre aux visiteurs de consulter, commander et payer mes produits sur le site.' },
+        { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
+        { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
         { value: 'Refaire ou améliorer mon site actuel', title: 'Refaire ou améliorer mon site actuel' },
       ],
     },
