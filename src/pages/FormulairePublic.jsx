@@ -12,7 +12,7 @@ const FORM_FIELDS = [
     { label: 'Avez-vous déjà un site web ?', name: 'aSiteWeb', type: 'tags', options: ['Non, pas encore', "Oui, j'en ai un"] },
     { label: 'Adresse de votre site actuel', name: 'siteActuel', type: 'text', placeholder: 'https://... — adresse de votre site actuel', showIf: v => v.aSiteWeb === "Oui, j'en ai un" },
   ]},
-  { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
+  { section: 'Votre projet', mobileTitle: 'Projet', short: 'Où vous en êtes', subtitle: 'Parlez-nous de l\'avancement de votre projet.', fields: [
     {
       label: 'Où en est concrètement votre projet aujourd\'hui ? *', name: 'etatProjet', type: 'cards', required: true,
       options: [
@@ -24,6 +24,8 @@ const FORM_FIELDS = [
         { value: 'Mon activité est déjà lancée', title: 'Mon activité est déjà lancée', desc: 'Je commercialise déjà mes produits ou mes services.' },
       ],
     },
+  ]},
+  { section: 'Votre vision', mobileTitle: 'Vision', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "Comment est né votre projet ?\nQui se cache derrière la marque ?\nQuelle vision ou quelles valeurs souhaitez-vous transmettre ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'tags', required: true, options: ['Acheter en ligne', 'Me contacter / demander un devis', 'Prendre rendez-vous', 'Découvrir mes réalisations', 'Autre'] },
