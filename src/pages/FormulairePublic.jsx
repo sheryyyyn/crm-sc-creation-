@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { CheckCircle2, ChevronLeft, ChevronRight, Loader2, MessageCircle, Mail } from 'lucide-react'
 import useStore from '../store/useStore'
 import { buildClientFromForm } from '../utils/buildClientFromForm'
@@ -42,7 +42,7 @@ const FORM_FIELDS = [
       ],
     },
     {
-      label: 'Combien de produits souhaitez-vous vendre au lancement ?', name: 'nombreProduitsVente', type: 'select',
+      label: 'Combien de produits souhaitez-vous vendre au lancement ?', name: 'nombreProduits', type: 'select',
       options: ['1 à 10', '11 à 30', '31 à 50', 'Plus de 50', 'Je ne sais pas encore'],
       nestUnder: 'objectif', nestOptionValue: 'Vendre mes produits en ligne',
     },
@@ -54,28 +54,12 @@ const FORM_FIELDS = [
     { label: 'Qui sont vos principaux concurrents qui vous inspirent (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
   {
-    section: 'Budget & délais',
-    mobileTitle: 'Budget',
-    short: 'Budget',
-    subtitle: 'Pour vous proposer un accompagnement réaliste et adapté.',
-    banner: "Nos tarifs démarrent à partir d'un montant selon le type de prestation — le prix final dépend toujours de votre besoin réel.",
+    section: 'Votre recommandation',
+    mobileTitle: 'Recommandation',
+    short: 'La prestation adaptée à votre projet',
+    subtitle: 'La prestation adaptée à votre projet',
+    title: 'Votre recommandation',
     fields: [
-      {
-        label: 'Vers quelle prestation vous orientez-vous ? *', name: 'budget', type: 'cards', required: true,
-        options: [
-          { value: 'Landing page', title: 'Landing page', price: 'à partir de 950 € HT' },
-          { value: 'Site vitrine', title: 'Site vitrine', price: 'à partir de 1 900 € HT' },
-          { value: 'E-commerce Shopify', title: 'E-commerce Shopify', price: 'à partir de 2 500 € HT' },
-          { value: 'Refonte de site existant', title: 'Refonte de site existant', price: 'sur devis uniquement' },
-          { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore', desc: "On identifie le bon format ensemble lors de l'appel de découverte" },
-        ],
-      },
-      {
-        label: 'Combien de produits souhaitez-vous intégrer ? (pour affiner le devis)', name: 'nombreProduits', type: 'select',
-        options: ['1 à 10 produits', '11 à 30 produits', '31 à 50 produits', 'Plus de 50 produits'],
-        nestUnder: 'budget', nestOptionValue: 'E-commerce Shopify',
-      },
-      { label: 'Date de lancement souhaitée', name: 'dateButoir', type: 'text', placeholder: 'Ex : dans 1 mois' },
       { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
     ],
   },
@@ -106,6 +90,53 @@ const initialValues = {
   ...Object.fromEntries(FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])),
   moyenContact: '',
 }
+
+// Recommande une prestation à partir de la réponse à "Quel est l'objectif
+// principal de votre projet ?" — remplace le choix manuel de prestation.
+// `key` est stocké dans values.budget, exactement les valeurs déjà attendues
+// par le CRM (voir BUDGET_INDICATIF dans src/pages/Formulaires.jsx).
+function getRecommandation(objectif) {
+  if (objectif === 'Mettre en avant une offre ou un événement précis' || objectif === 'Recueillir des inscriptions avant un lancement') {
+    return {
+      key: 'Landing page',
+      titre: 'Landing page',
+      prix: 'À partir de 950 € HT',
+      texte: "Votre projet est centré sur une offre, un événement ou un lancement précis. Une landing page vous permettra de présenter clairement votre proposition et de guider vos visiteurs vers une action principale.",
+    }
+  }
+  if (objectif === 'Présenter mon entreprise et mes services') {
+    return {
+      key: 'Site vitrine',
+      titre: 'Site vitrine',
+      prix: 'À partir de 1 900 € HT',
+      texte: "Votre projet nécessite de présenter votre entreprise, votre activité, vos services et votre univers. Un site vitrine vous permettra de renforcer votre crédibilité et d'offrir une présentation claire et professionnelle à vos visiteurs.",
+    }
+  }
+  if (objectif === 'Vendre mes produits en ligne') {
+    return {
+      key: 'E-commerce Shopify',
+      titre: 'Site e-commerce Shopify',
+      prix: 'À partir de 2 500 € HT',
+      texte: "Votre projet nécessite une boutique permettant à vos visiteurs de consulter vos produits, de les ajouter au panier et d'effectuer leur paiement directement en ligne.",
+    }
+  }
+  if (objectif === 'Refaire ou améliorer mon site actuel') {
+    return {
+      key: 'Refonte de site existant',
+      titre: 'Refonte de site existant',
+      prix: 'Sur devis',
+      texte: "Votre projet nécessite une analyse de votre site actuel afin d'identifier les améliorations à apporter à son design, sa structure, son expérience utilisateur ou ses performances.",
+    }
+  }
+  return {
+    key: 'Je ne sais pas encore',
+    titre: 'Votre projet nécessite une analyse personnalisée',
+    prix: null,
+    texte: "Certaines informations nécessitent d'être approfondies afin de vous proposer la prestation la plus adaptée. Nous pourrons préciser votre besoin ensemble lors de l'appel découverte.",
+  }
+}
+
+const ANALYSIS_STEPS = ['Analyse de votre besoin', 'Identification du format adapté', 'Préparation de votre recommandation']
 
 function TagSelect({ options, value, onChange, hasError }) {
   if (options.length <= 2) {
@@ -280,12 +311,46 @@ export default function FormulairePublic() {
   const [step, setStep] = useState(0)
   const [showContactPopup, setShowContactPopup] = useState(false)
   const [contactError, setContactError] = useState(false)
+  const [analyzing, setAnalyzing] = useState(false)
+  const [analysisStep, setAnalysisStep] = useState(0)
   const progressRef = useRef(null)
 
   const isLastStep = step === FORM_FIELDS.length - 1
 
+  // Recalcule automatiquement la prestation recommandée à chaque changement de
+  // réponse à l'objectif principal (y compris après un retour en arrière), et
+  // l'enregistre dans le même champ `budget` qu'utilisait l'ancien choix manuel.
+  useEffect(() => {
+    const reco = getRecommandation(values.objectif)
+    setValues(prev => (prev.budget === reco.key ? prev : { ...prev, budget: reco.key }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.objectif])
+
   const scrollToProgress = () => {
     progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  // Petite animation d'analyse (~2s) jouée uniquement en quittant l'étape
+  // "Votre contenu & identité" pour entrer dans "Votre recommandation".
+  // Aucun envoi de formulaire ni changement de step n'a lieu tant qu'elle tourne.
+  const runAnalysisThenAdvance = () => {
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    if (prefersReducedMotion) {
+      setStep(s => s + 1)
+      scrollToProgress()
+      return
+    }
+    setAnalysisStep(0)
+    setAnalyzing(true)
+    const stepDelay = 620
+    ANALYSIS_STEPS.forEach((_, i) => {
+      setTimeout(() => setAnalysisStep(i + 1), stepDelay * (i + 1))
+    })
+    setTimeout(() => {
+      setAnalyzing(false)
+      setStep(s => s + 1)
+      scrollToProgress()
+    }, stepDelay * ANALYSIS_STEPS.length + 300)
   }
 
   const set = (name, value) => {
@@ -357,6 +422,10 @@ export default function FormulairePublic() {
     if (Object.keys(stepErrors).length > 0) {
       setErrors(prev => ({ ...prev, ...stepErrors }))
       document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+    if (FORM_FIELDS[step + 1]?.section === 'Votre recommandation') {
+      runAnalysisThenAdvance()
       return
     }
     setStep(s => s + 1)
@@ -557,6 +626,46 @@ export default function FormulairePublic() {
           <form onSubmit={handleSubmit} noValidate style={{ flex: 1, minWidth: 0 }}>
             {(() => {
               const { section, title, subtitle, banner, fields } = FORM_FIELDS[step]
+
+              if (analyzing) {
+                return (
+                  <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '18px', padding: '56px 32px', boxShadow: '0 1px 4px rgba(27,11,9,.04)', textAlign: 'center' }}>
+                    <style>{`
+                      @keyframes sc-analysis-fill { from { width: 0%; } to { width: 100%; } }
+                      @keyframes sc-analysis-pulse { 0%, 100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1); } }
+                      .sc-analysis-bar-fill { animation: sc-analysis-fill ${ANALYSIS_STEPS.length * 620 + 300}ms linear forwards; }
+                      .sc-analysis-dot { animation: sc-analysis-pulse 1s ease-in-out infinite; }
+                    `}</style>
+                    <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#fcf7cf', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px' }}>
+                      <Loader2 size={20} className="animate-spin" style={{ color: '#b8a508' }} />
+                    </div>
+                    <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', margin: '0 0 8px' }}>
+                      Nous analysons vos réponses…
+                    </h2>
+                    <p style={{ fontSize: '13.5px', color: '#7e7e7e', margin: '0 0 30px' }}>
+                      Nous identifions la prestation la plus adaptée à vos besoins et à vos objectifs.
+                    </p>
+                    <div style={{ maxWidth: '320px', margin: '0 auto', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                      {ANALYSIS_STEPS.map((label, i) => {
+                        const done = analysisStep > i
+                        const active = analysisStep === i
+                        return (
+                          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '10px', opacity: analysisStep >= i ? 1 : 0.35, transition: 'opacity .3s ease' }}>
+                            <span style={{ width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: done ? '#1b0b09' : '#fdfbf4', border: done ? 'none' : '1.5px solid #e8e0cc' }}>
+                              {done ? <CheckCircle2 size={11} color="#fcf7cf" /> : active ? <span className="sc-analysis-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#b8a508', display: 'block' }} /> : null}
+                            </span>
+                            <span style={{ fontSize: '13.5px', color: '#1b0b09', fontWeight: done || active ? 600 : 500 }}>{label}</span>
+                          </div>
+                        )
+                      })}
+                    </div>
+                    <div style={{ maxWidth: '320px', margin: '26px auto 0', height: '4px', borderRadius: '999px', background: '#eee7d5', overflow: 'hidden' }}>
+                      <div className="sc-analysis-bar-fill" style={{ height: '100%', background: '#1b0b09', borderRadius: '999px' }} />
+                    </div>
+                  </div>
+                )
+              }
+
               return (
                 <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '18px', padding: '32px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -584,6 +693,29 @@ export default function FormulairePublic() {
                       <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>{banner}</p>
                     </div>
                   )}
+                  {section === 'Votre recommandation' && (() => {
+                    const reco = getRecommandation(values.objectif)
+                    return (
+                      <div style={{ border: '1.5px solid #1b0b09', borderRadius: '16px', padding: '24px 26px', marginBottom: '26px', background: '#fcf7cf' }}>
+                        <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: '#8a7a1f', background: '#fff', border: '1px solid #e8dfa8', borderRadius: '999px', padding: '4px 10px', marginBottom: '14px' }}>
+                          Recommandé pour votre projet
+                        </span>
+                        <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-3">
+                          <h3 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '21px', fontWeight: 700, color: '#1b0b09', margin: 0 }}>{reco.titre}</h3>
+                          {reco.prix && <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: '#7e7e7e' }}>{reco.prix}</p>}
+                        </div>
+                        <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.7, margin: '12px 0 0' }}>{reco.texte}</p>
+                        {reco.prix && (
+                          <p style={{ fontSize: '12px', color: '#8a7a1f', margin: '14px 0 0' }}>
+                            Le tarif final sera déterminé selon la structure, les contenus et les fonctionnalités nécessaires à votre projet.
+                          </p>
+                        )}
+                        <button type="button" onClick={handlePrevious} style={{ marginTop: '16px', background: 'none', border: 'none', padding: 0, fontSize: '12.5px', fontWeight: 600, color: '#7e7e7e', textDecoration: 'underline', cursor: 'pointer' }}>
+                          Modifier mes réponses
+                        </button>
+                      </div>
+                    )
+                  })()}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {fields.filter(f => !f.nestUnder && (!f.showIf || f.showIf(values))).map(field => {
                       const { name, type } = field
