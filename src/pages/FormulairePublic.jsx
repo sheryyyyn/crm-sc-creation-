@@ -57,8 +57,7 @@ const FORM_FIELDS = [
     section: 'Analyse',
     mobileTitle: 'Analyse',
     short: 'La prestation adaptée à votre projet',
-    subtitle: 'La prestation adaptée à votre projet',
-    title: 'Votre recommandation',
+    title: 'La prestation adaptée à votre projet',
     fields: [
       { label: 'Des demandes spécifiques ou fonctionnalités souhaitées ?', name: 'demandesSpecifiques', type: 'textarea', placeholder: 'Multilingue, blog, réservation en ligne…' },
     ],
@@ -711,7 +710,7 @@ export default function FormulairePublic() {
                     return (
                       <div style={{ border: '1.5px solid #1b0b09', borderRadius: '16px', padding: '24px 26px', marginBottom: '26px', background: '#fcf7cf' }}>
                         <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: '#8a7a1f', background: '#fff', border: '1px solid #e8dfa8', borderRadius: '999px', padding: '4px 10px', marginBottom: '14px' }}>
-                          Prestation correspondant à votre projet
+                          Pour vous
                         </span>
                         <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-3">
                           <h3 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '21px', fontWeight: 700, color: '#1b0b09', margin: 0 }}>{reco.titre}</h3>
@@ -723,9 +722,6 @@ export default function FormulairePublic() {
                             {reco.precision || 'Le tarif final sera déterminé selon la structure, les contenus et les fonctionnalités nécessaires à votre projet.'}
                           </p>
                         )}
-                        <button type="button" onClick={handlePrevious} style={{ marginTop: '16px', background: 'none', border: 'none', padding: 0, fontSize: '12.5px', fontWeight: 600, color: '#7e7e7e', textDecoration: 'underline', cursor: 'pointer' }}>
-                          Modifier mes réponses
-                        </button>
                       </div>
                     )
                   })()}
