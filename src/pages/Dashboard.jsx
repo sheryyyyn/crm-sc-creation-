@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, Fragment } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   Video, ClipboardList, Handshake, ArrowRight, ChevronDown, ChevronUp, ChevronRight, Plus, Check,
@@ -663,11 +663,13 @@ export default function Dashboard() {
           )}
 
           <div className="flex-1 flex flex-col sm:flex-row gap-8 sm:gap-10">
-            <TodoColumn profil="Sheryn" taches={taches} clients={clients} projets={projets}
-              moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
-            <div className="hidden sm:block w-px" style={{ background: '#eeece7' }} />
-            <TodoColumn profil="Chainez" taches={taches} clients={clients} projets={projets}
-              moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
+            {(profil === 'Chainez' ? ['Chainez', 'Sheryn'] : ['Sheryn', 'Chainez']).map((p, i) => (
+              <Fragment key={p}>
+                {i > 0 && <div className="hidden sm:block w-px" style={{ background: '#eeece7' }} />}
+                <TodoColumn profil={p} taches={taches} clients={clients} projets={projets}
+                  moveTache={moveTache} addNotification={addNotification} todayStr={today} currentProfil={profil} navigate={navigate} />
+              </Fragment>
+            ))}
           </div>
 
           <button onClick={() => navigate('/taches')}

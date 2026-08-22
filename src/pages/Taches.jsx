@@ -4,6 +4,14 @@ import { Plus, X, ChevronLeft, ChevronDown, ChevronUp, Search } from 'lucide-rea
 import useStore from '../store/useStore'
 import Modal, { FormRow, FormField } from '../components/ui/Modal'
 import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskField'
+import { getProfil } from '../components/layout/LoginGate'
+
+// Ordonne Sheryn/Chaïnez avec le profil de cet appareil en premier (et inversement
+// sur l'appareil de l'autre) — utilisé pour le tri des toggles ci-dessous.
+function profilsOrdonnes() {
+  const moi = getProfil()
+  return moi === 'Chainez' ? ['Chainez', 'Sheryn'] : ['Sheryn', 'Chainez']
+}
 
 const COLUMNS = [
   { id: 'pas_commence', label: 'Pas commencé', color: 'bg-gray-400' },
@@ -174,7 +182,7 @@ export default function Taches() {
   const [editModal, setEditModal] = useState(null)
   const [form, setForm] = useState(emptyTache)
   const [editForm, setEditForm] = useState(null)
-  const [mobileProfil, setMobileProfil] = useState('Sheryn')
+  const [mobileProfil, setMobileProfil] = useState(getProfil())
   const [openUrgentes, setOpenUrgentes] = useState(true)
   const [openSecondaires, setOpenSecondaires] = useState(true)
   const [desktopWho, setDesktopWho] = useState('Toutes')
@@ -255,7 +263,7 @@ export default function Taches() {
         <p className="font-display text-[26px] font-bold mb-4" style={{ color: '#241512' }}>To-do du jour</p>
 
         <div className="flex p-1 rounded-full mb-4" style={{ background: '#fff', border: '1px solid #e7e5e1' }}>
-          {['Sheryn', 'Chainez'].map(p => {
+          {profilsOrdonnes().map(p => {
             const active = mobileProfil === p
             const count = p === 'Sheryn' ? sherynCount : chainezCount
             return (
@@ -313,7 +321,7 @@ export default function Taches() {
         </div>
 
         <div className="flex items-center gap-2 mb-6">
-          {['Toutes', 'Sheryn', 'Chainez', 'Communes'].map(w => {
+          {['Toutes', ...profilsOrdonnes(), 'Communes'].map(w => {
             const active = desktopWho === w
             return (
               <button
