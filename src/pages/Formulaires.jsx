@@ -383,6 +383,7 @@ function CarteReponse({ rep, onToggle, open }) {
         { icon: MessageSquare, label: 'Histoire de la marque', value: rep.histoire || '—' },
         { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
         { icon: Target, label: 'Objectif du visiteur', value: rep.objectif || '—' },
+        { icon: Users, label: 'Cible', value: rep.cible || '—' },
         { icon: Users, label: 'Concurrents', value: rep.concurrents || '—' },
       ],
     },
@@ -390,7 +391,6 @@ function CarteReponse({ rep, onToggle, open }) {
       section: 'Contenu & identité',
       rows: [
         { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
-        { icon: Users, label: 'Cible', value: rep.cible || '—' },
         { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
         { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
         { icon: ExternalLink, label: 'Sites inspirants', value: rep.sitesInspirants || '—' },
