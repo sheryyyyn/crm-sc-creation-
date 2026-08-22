@@ -99,7 +99,7 @@ function getSteps(values) {
         { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
         {
           label: hasSite ? 'À quelle période souhaitez-vous que votre nouveau site soit en ligne ?' : 'À quelle période souhaitez-vous que votre site soit mis en ligne ?',
-          name: 'periodeMiseEnLigne', type: 'tags', options: ['Dès que possible', 'Dans 1 à 3 mois', 'Dans plus de 3 mois', "Je n'ai pas encore de date précise"],
+          name: 'periodeMiseEnLigne', type: 'tags', options: ['Dès que possible', 'Dans 1 à 3 mois', 'Plus de 3 mois', 'Pas de date précise'],
         },
       ],
     },
