@@ -10,9 +10,13 @@ const OBJECTIF_OPTIONS_SANS_SITE = [
   { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
   { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
 ]
+// Un prospect qui a déjà un site présente déjà son entreprise (et vend peut-être
+// déjà en ligne) — "Présenter mon entreprise" et "Vendre mes produits en ligne"
+// ne sont donc pas des objectifs pertinents pour lui.
 const OBJECTIF_OPTIONS_AVEC_SITE = [
   { value: 'Refaire ou améliorer mon site actuel', title: 'Refaire ou améliorer mon site actuel' },
-  ...OBJECTIF_OPTIONS_SANS_SITE,
+  { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
+  { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
 ]
 
 // ─── Champs "contenu & identité" génériques (tous les parcours sauf refonte) ─
