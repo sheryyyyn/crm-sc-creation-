@@ -209,8 +209,8 @@ export default function Taches() {
   const assigneeLabelDesktop = (a) => (a === 'Chainez' ? 'Chaïnez' : a === 'Les deux' ? 'Communes' : a)
   const desktopFiltered = taches.filter(t => {
     if (t.statut === 'termine') return false
-    if (desktopWho === 'Sheryn' && t.assignee !== 'Sheryn') return false
-    if (desktopWho === 'Chainez' && t.assignee !== 'Chainez') return false
+    if (desktopWho === 'Sheryn' && t.assignee !== 'Sheryn' && t.assignee !== 'Les deux') return false
+    if (desktopWho === 'Chainez' && t.assignee !== 'Chainez' && t.assignee !== 'Les deux') return false
     if (desktopWho === 'Communes' && t.assignee !== 'Les deux') return false
     if (desktopProjetFilter !== 'tous' && t.projetId !== desktopProjetFilter) return false
     if (desktopSearch.trim()) {
