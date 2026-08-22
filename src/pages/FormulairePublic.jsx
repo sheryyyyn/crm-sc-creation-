@@ -30,7 +30,7 @@ const FORM_FIELDS = [
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: "Quel est l'objectif principal de votre projet ? *", name: 'objectif', type: 'tags', required: true, options: ['Promouvoir une offre ou un événement précis', "Créer une liste d'attente avant un lancement", 'Présenter mon entreprise, mes services et mes réalisations', 'Vendre mes produits en ligne', 'Refaire ou améliorer mon site actuel', 'Je ne sais pas encore'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
-    { label: 'À quelle période souhaitez-vous que votre site soit mis en ligne ?', name: 'periodeMiseEnLigne', type: 'tags', options: ['Dès que possible', "Dans moins d'un mois", 'Dans 1 à 3 mois', 'Dans plus de 3 mois', "Je n'ai pas encore de date précise"] },
+    { label: 'À quelle période souhaitez-vous que votre site soit mis en ligne ?', name: 'periodeMiseEnLigne', type: 'tags', options: ['Dès que possible', 'Dans 1 à 3 mois', 'Dans plus de 3 mois', "Je n'ai pas encore de date précise"] },
   ]},
   { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
