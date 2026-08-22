@@ -60,7 +60,13 @@ function getSteps(values) {
         { label: 'Quelle est l\'adresse de votre site actuel ? *', name: 'siteActuel', type: 'text', placeholder: 'https://www.votresite.fr', showIf: v => v.aSiteWeb === "Oui, j'en ai un", required: v => v.aSiteWeb === "Oui, j'en ai un" },
       ],
     },
-    {
+  ]
+
+  // La question d'avancement ("stade de l'idée" / "activité déjà lancée"...)
+  // n'a de sens que pour un projet qui n'existe pas encore — un prospect qui
+  // a déjà un site est par définition à un stade avancé, on ne la pose pas.
+  if (!hasSite) {
+    steps.push({
       key: 'avancement', section: 'Votre projet', mobileTitle: 'Projet', short: 'Où vous en êtes',
       subtitle: "Parlez-nous de l'avancement de votre projet.",
       fields: [
@@ -76,7 +82,10 @@ function getSteps(values) {
         },
         { label: 'Précisez', name: 'etatProjetAutre', type: 'text', placeholder: 'Décrivez où en est votre projet…', nestUnder: 'etatProjet', nestOptionValue: 'Autre' },
       ],
-    },
+    })
+  }
+
+  steps.push(
     {
       key: 'presentation', section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision',
       subtitle: 'Parlez-nous de votre projet et de vos objectifs.',
@@ -102,7 +111,7 @@ function getSteps(values) {
         },
       ],
     },
-  ]
+  )
 
   if (showContenu) {
     steps.push({
