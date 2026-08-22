@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import {
   Copy, Check, ChevronDown, ChevronUp,
   Mail, Phone, Globe, Calendar, Euro, Target, Users, Star, MessageSquare,
-  Building2, Inbox, ExternalLink, CheckCircle2, Clock, Send, X, CalendarPlus, Trash2, UserPlus, PackageOpen,
+  Building2, Inbox, CheckCircle2, Clock, Send, X, CalendarPlus, Trash2, UserPlus, PackageOpen,
 } from 'lucide-react'
 import useStore from '../store/useStore'
 import { getCalendlyUrl } from './Parametres'
@@ -384,7 +384,7 @@ function CarteReponse({ rep, onToggle, open }) {
         { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
         { icon: Target, label: 'Objectif principal du projet', value: rep.objectif || '—' },
         { icon: Users, label: 'Cible', value: rep.cible || '—' },
-        { icon: Users, label: 'Concurrents', value: rep.concurrents || '—' },
+        { icon: Calendar, label: 'Période de mise en ligne souhaitée', value: rep.periodeMiseEnLigne || '—' },
       ],
     },
     {
@@ -393,7 +393,7 @@ function CarteReponse({ rep, onToggle, open }) {
         { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
         { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
         { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
-        { icon: ExternalLink, label: 'Sites inspirants', value: rep.sitesInspirants || '—' },
+        { icon: Users, label: 'Concurrents qui inspirent', value: rep.concurrents || '—' },
       ],
     },
     {
