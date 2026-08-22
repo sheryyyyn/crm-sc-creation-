@@ -38,10 +38,15 @@ const FORM_FIELDS = [
         { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
         { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
         { value: 'Présenter mon entreprise et mes services', title: 'Présenter mon entreprise et mes services', desc: 'Faire découvrir mon activité, mon histoire, mes services ou mes réalisations.' },
-        { value: 'Vendre mes produits directement en ligne', title: 'Vendre mes produits directement en ligne', desc: 'Permettre aux visiteurs de consulter, commander et payer mes produits sur le site.' },
+        { value: 'Vendre mes produits en ligne', title: 'Vendre mes produits en ligne', desc: 'Permettre aux visiteurs de consulter, commander et payer mes produits sur le site.' },
         { value: 'Refaire ou améliorer mon site actuel', title: 'Refaire ou améliorer mon site actuel' },
         { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore' },
       ],
+    },
+    {
+      label: 'Combien de produits souhaitez-vous vendre au lancement ?', name: 'nombreProduitsVente', type: 'select',
+      options: ['1 à 10', '11 à 30', '31 à 50', 'Plus de 50', 'Je ne sais pas encore'],
+      nestUnder: 'objectif', nestOptionValue: 'Vendre mes produits en ligne',
     },
   ]},
   { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
