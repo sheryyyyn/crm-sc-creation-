@@ -28,9 +28,21 @@ const FORM_FIELDS = [
   { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "Comment est né votre projet ?\nQui se cache derrière la marque ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
-    { label: "Quel est l'objectif principal de votre projet ? *", name: 'objectif', type: 'tags', required: true, options: ['Promouvoir une offre ou un événement précis', "Créer une liste d'attente avant un lancement", 'Présenter mon entreprise, mes services et mes réalisations', 'Vendre mes produits en ligne', 'Refaire ou améliorer mon site actuel', 'Je ne sais pas encore'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
     { label: 'À quelle période souhaitez-vous que votre site soit mis en ligne ?', name: 'periodeMiseEnLigne', type: 'tags', options: ['Dès que possible', 'Dans 1 à 3 mois', 'Dans plus de 3 mois', "Je n'ai pas encore de date précise"] },
+  ]},
+  { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre objectif', subtitle: 'Quel est le rôle principal de votre futur site ?', fields: [
+    {
+      label: "Quel est l'objectif principal de votre projet ? *", name: 'objectif', type: 'cards', required: true,
+      options: [
+        { value: 'Mettre en avant une offre ou un événement précis', title: 'Mettre en avant une offre ou un événement précis', desc: 'Présenter une offre et guider les visiteurs vers une action principale.' },
+        { value: 'Recueillir des inscriptions avant un lancement', title: 'Recueillir des inscriptions avant un lancement', desc: 'Faire découvrir un futur projet et constituer une liste de personnes intéressées.' },
+        { value: 'Présenter mon entreprise et mes services', title: 'Présenter mon entreprise et mes services', desc: 'Faire découvrir mon activité, mon histoire, mes services ou mes réalisations.' },
+        { value: 'Vendre mes produits directement en ligne', title: 'Vendre mes produits directement en ligne', desc: 'Permettre aux visiteurs de consulter, commander et payer mes produits sur le site.' },
+        { value: 'Refaire ou améliorer mon site actuel', title: 'Refaire ou améliorer mon site actuel' },
+        { value: 'Je ne sais pas encore', title: 'Je ne sais pas encore' },
+      ],
+    },
   ]},
   { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
     { label: 'Avez-vous du contenu prêt ? (textes, photos, vidéos)', name: 'contenuPret', type: 'tags', options: ['Oui, tout est prêt', 'Partiellement', 'Non, pas encore'] },
