@@ -36,7 +36,7 @@ function champsContenuGeneriques(hasSite) {
 const CHAMPS_CONTENU_REFONTE = [
   { label: 'Souhaitez-vous conserver les contenus de votre site actuel ?', name: 'refonteContenuConserver', type: 'tags', options: ['Oui, en grande partie', 'Seulement certains textes ou visuels', 'Non, je souhaite repartir sur de nouveaux contenus', 'Je ne sais pas encore'] },
   { label: 'Souhaitez-vous conserver votre identité visuelle actuelle ?', name: 'refonteIdentiteConserver', type: 'tags', options: ['Oui, je souhaite la conserver', 'Je souhaite la faire évoluer', 'Je souhaite la changer complètement', "Je n'ai pas de charte graphique définie", 'Je ne sais pas encore'] },
-  { label: 'Que souhaitez-vous principalement améliorer ?', name: 'refonteAmeliorations', type: 'multitags', options: ['Le design', 'La clarté des informations', "L'expérience sur mobile", 'Le parcours utilisateur', 'Les performances', 'Les ventes ou les prises de contact', 'Les fonctionnalités', 'Autre'] },
+  { label: 'Que souhaitez-vous principalement améliorer ?', name: 'refonteAmeliorations', type: 'multitags', options: ['Le design', 'La clarté des informations', "L'expérience sur mobile", 'Le parcours utilisateur', 'Les performances', 'Les fonctionnalités', 'Autre'] },
   { label: 'Précisez', name: 'refonteAmeliorationsAutre', type: 'text', placeholder: 'Précisez ce que vous souhaitez améliorer…', showIf: v => (v.refonteAmeliorations || []).includes('Autre') },
 ]
 
