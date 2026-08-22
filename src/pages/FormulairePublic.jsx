@@ -28,7 +28,7 @@ const FORM_FIELDS = [
   { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "Comment est né votre projet ?\nQui se cache derrière la marque ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
-    { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'tags', required: true, options: ['Lancer une offre, un produit ou un événement', 'Présenter mon entreprise et mes services', 'Vendre mes produits en ligne', 'Refaire mon site actuel', 'Je ne sais pas encore', 'Autre'] },
+    { label: 'Quelle est la raison principale de votre projet ? *', name: 'objectif', type: 'tags', required: true, options: ['Lancer une offre, un produit ou un événement', 'Présenter mon entreprise et mes services', 'Vendre mes produits en ligne', 'Refaire mon site actuel', 'Je ne sais pas encore', 'Autre'] },
     { label: 'Quelle est votre cible ?', name: 'cible', type: 'text', placeholder: 'Ex : 18-24 ans, femmes, professionnels…' },
     { label: 'Qui sont vos principaux concurrents (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
