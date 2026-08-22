@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, CalendarDays, Handshake, Lock, X, AppWindow, ChevronDown, ChevronUp,
+  FolderOpen, CalendarDays, Handshake, Lock, X, AppWindow, ChevronDown, ChevronUp, Settings,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
 
@@ -46,6 +46,7 @@ const saasSection = {
 // Entrée seule, entre deux séparateurs
 const partnerItem = { label: 'Espace partenaire', icon: Handshake, to: '/espace-partenaire' }
 const passwordItem = { label: 'Mots de passe', icon: Lock, to: '/mots-de-passe' }
+const settingsItem = { label: 'Paramètres', icon: Settings, to: '/parametres' }
 
 function NavItem({ label, icon: Icon, to, isActive, onClose, badge }) {
   return (
@@ -160,6 +161,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <div className="space-y-0.5">
           <NavItem {...partnerItem} isActive={isPathActive(partnerItem.to)} onClose={onClose} badge={newPartnerCount} />
           <NavItem {...passwordItem} isActive={isPathActive(passwordItem.to)} onClose={onClose} />
+          <NavItem {...settingsItem} isActive={isPathActive(settingsItem.to)} onClose={onClose} />
         </div>
       </nav>
     </aside>
