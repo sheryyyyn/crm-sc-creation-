@@ -379,6 +379,7 @@ function CarteReponse({ rep, onToggle, open }) {
     {
       section: 'Projet',
       rows: [
+        { icon: Target, label: 'État du projet', value: rep.etatProjet || '—' },
         { icon: MessageSquare, label: 'Histoire de la marque', value: rep.histoire || '—' },
         { icon: Star, label: 'Produits / Services', value: rep.produits || '—' },
         { icon: Target, label: 'Objectif du visiteur', value: rep.objectif || '—' },

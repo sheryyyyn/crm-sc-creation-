@@ -13,6 +13,17 @@ const FORM_FIELDS = [
     { label: 'Adresse de votre site actuel', name: 'siteActuel', type: 'text', placeholder: 'https://... — adresse de votre site actuel', showIf: v => v.aSiteWeb === "Oui, j'en ai un" },
   ]},
   { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
+    {
+      label: 'Où en est concrètement votre projet aujourd\'hui ? *', name: 'etatProjet', type: 'cards', required: true,
+      options: [
+        { value: "Je suis encore au stade de l'idée", title: "Je suis encore au stade de l'idée", desc: "Mon offre et mon positionnement ne sont pas encore définis." },
+        { value: 'Je pose les bases de mon projet', title: 'Je pose les bases de mon projet', desc: 'Je travaille encore sur mes produits, mes services, mes fournisseurs ou mes tarifs.' },
+        { value: 'Mon projet est en cours de préparation', title: 'Mon projet est en cours de préparation', desc: 'Mon offre est définie et je prépare mon identité, mes contenus ou mes produits.' },
+        { value: 'Mon lancement approche', title: 'Mon lancement approche', desc: 'Les éléments principaux sont validés et mon lancement est en préparation.' },
+        { value: 'Je suis prêt(e) à commencer le site', title: 'Je suis prêt(e) à commencer le site', desc: 'Mon projet est finalisé et je peux débuter la collaboration.' },
+        { value: 'Mon activité est déjà lancée', title: 'Mon activité est déjà lancée', desc: 'Je commercialise déjà mes produits ou mes services.' },
+      ],
+    },
     { label: "Racontez-nous l'histoire de votre marque *", name: 'histoire', type: 'textarea', placeholder: "D'où vient votre idée ? Quelle est votre histoire ?", required: true },
     { label: 'Quels sont vos produits ou services ? *', name: 'produits', type: 'textarea', placeholder: 'Décrivez vos produits / services', required: true },
     { label: "Une fois sur votre site, quel est l'objectif de votre visiteur ? *", name: 'objectif', type: 'tags', required: true, options: ['Acheter en ligne', 'Me contacter / demander un devis', 'Prendre rendez-vous', 'Découvrir mes réalisations', 'Autre'] },
