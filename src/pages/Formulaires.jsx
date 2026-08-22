@@ -389,12 +389,18 @@ function CarteReponse({ rep, onToggle, open }) {
     },
     {
       section: 'Contenu & identité',
-      rows: [
-        { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
-        { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
-        { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
-        { icon: Users, label: 'Concurrents qui inspirent', value: rep.concurrents || '—' },
-      ],
+      rows: rep.refonteContenuConserver || rep.refonteIdentiteConserver || (rep.refonteAmeliorations || []).length > 0
+        ? [
+            { icon: Check, label: 'Conserver les contenus actuels', value: rep.refonteContenuConserver || '—' },
+            { icon: Star, label: "Conserver l'identité visuelle", value: rep.refonteIdentiteConserver || '—' },
+            { icon: Star, label: 'Améliorations souhaitées', value: (rep.refonteAmeliorations || []).length ? [...rep.refonteAmeliorations.filter(a => a !== 'Autre'), rep.refonteAmeliorations.includes('Autre') && rep.refonteAmeliorationsAutre ? `Autre : ${rep.refonteAmeliorationsAutre}` : (rep.refonteAmeliorations.includes('Autre') ? 'Autre' : null)].filter(Boolean).join(', ') : '—' },
+          ]
+        : [
+            { icon: Check, label: 'Contenu prêt', value: rep.contenuPret || '—' },
+            { icon: Globe, label: 'Nom de domaine', value: rep.nomDomaine || '—' },
+            { icon: Star, label: 'Charte graphique', value: rep.logoCharte || '—' },
+            { icon: Users, label: 'Concurrents qui inspirent', value: rep.concurrents || '—' },
+          ],
     },
     {
       section: 'Budget & délais',
