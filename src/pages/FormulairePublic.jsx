@@ -77,6 +77,16 @@ const FORM_FIELDS = [
   },
 ]
 
+// Regroupe les étapes consécutives qui partagent la même section (ex : "Votre
+// projet" en 2 pages) pour n'afficher qu'une seule entrée dans le stepper.
+const STEP_GROUPS = FORM_FIELDS.reduce((groups, s, i) => {
+  const last = groups[groups.length - 1]
+  if (last && last.section === s.section) last.indexes.push(i)
+  else groups.push({ section: s.section, mobileTitle: s.mobileTitle, shorts: [s.short], indexes: [i] })
+  if (last && last.section === s.section) last.shorts.push(s.short)
+  return groups
+}, [])
+
 const initialValues = {
   ...Object.fromEntries(FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])),
   moyenContact: '',
@@ -434,14 +444,14 @@ export default function FormulairePublic() {
           </p>
         </div>
 
-        {/* Mobile horizontal stepper */}
-        <div className="grid lg:hidden" style={{ gridTemplateColumns: `repeat(${FORM_FIELDS.length}, 1fr)`, marginBottom: '28px' }}>
-          {FORM_FIELDS.map((s, i) => {
-            const isDone = i < step
-            const isActive = i === step
+        {/* Mobile horizontal stepper — une entrée par groupe de sections (ex: "Projet" sur 2 pages) */}
+        <div className="grid lg:hidden" style={{ gridTemplateColumns: `repeat(${STEP_GROUPS.length}, 1fr)`, marginBottom: '28px' }}>
+          {STEP_GROUPS.map((g, gi) => {
+            const isDone = step > g.indexes[g.indexes.length - 1]
+            const isActive = g.indexes.includes(step)
             return (
-              <div key={s.section} style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                {i < FORM_FIELDS.length - 1 && (
+              <div key={g.section} style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                {gi < STEP_GROUPS.length - 1 && (
                   <div
                     style={{
                       position: 'absolute',
@@ -475,10 +485,10 @@ export default function FormulairePublic() {
                     border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
                   }}
                 >
-                  {isDone ? <CheckCircle2 size={12} /> : i + 1}
+                  {isDone ? <CheckCircle2 size={12} /> : gi + 1}
                 </div>
                 <p style={{ fontSize: '10.5px', fontWeight: 600, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: '6px 0 0', padding: '0 2px', textAlign: 'center', lineHeight: 1.25, transition: 'color .2s ease' }}>
-                  {s.mobileTitle || s.section}
+                  {g.mobileTitle || g.section}
                 </p>
               </div>
             )
@@ -488,11 +498,11 @@ export default function FormulairePublic() {
         <div ref={progressRef} className="lg:flex lg:items-start lg:gap-12" style={{ scrollMarginTop: '16px' }}>
           {/* Desktop step list */}
           <div className="hidden lg:flex" style={{ flexDirection: 'column', width: '230px', flexShrink: 0, paddingTop: '4px' }}>
-            {FORM_FIELDS.map((s, i) => {
-              const isDone = i < step
-              const isActive = i === step
+            {STEP_GROUPS.map((g, gi) => {
+              const isDone = step > g.indexes[g.indexes.length - 1]
+              const isActive = g.indexes.includes(step)
               return (
-                <div key={s.section} style={{ display: 'flex', gap: '14px' }}>
+                <div key={g.section} style={{ display: 'flex', gap: '14px' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <div
                       style={{
@@ -512,17 +522,17 @@ export default function FormulairePublic() {
                         border: isDone || isActive ? 'none' : '1.5px solid #e8e0cc',
                       }}
                     >
-                      {isDone ? <CheckCircle2 size={16} /> : i + 1}
+                      {isDone ? <CheckCircle2 size={16} /> : gi + 1}
                     </div>
-                    {i < FORM_FIELDS.length - 1 && (
+                    {gi < STEP_GROUPS.length - 1 && (
                       <div style={{ width: '1.5px', flex: 1, minHeight: '38px', background: isDone ? '#1b0b09' : '#e8e0cc', transition: 'background .25s ease' }} />
                     )}
                   </div>
                   <div style={{ paddingBottom: '30px' }}>
                     <p style={{ fontSize: '14.5px', fontWeight: 700, color: isActive || isDone ? '#1b0b09' : '#a89b8c', margin: 0, transition: 'color .2s ease' }}>
-                      {s.section}
+                      {g.section}
                     </p>
-                    <p style={{ fontSize: '12.5px', color: '#a89b8c', margin: '2px 0 0' }}>{s.short}</p>
+                    <p style={{ fontSize: '12.5px', color: '#a89b8c', margin: '2px 0 0' }}>{g.shorts.join(' · ')}</p>
                   </div>
                 </div>
               )
@@ -536,7 +546,14 @@ export default function FormulairePublic() {
                 <div style={{ background: '#fff', border: '1px solid #e8e0cc', borderRadius: '18px', padding: '32px', boxShadow: '0 1px 4px rgba(27,11,9,.04)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
                     <p style={{ fontFamily: '"Anton", sans-serif', fontSize: '11px', letterSpacing: '.12em', color: '#b8a508', margin: 0, textTransform: 'uppercase' }}>
-                      Étape {step + 1} / {FORM_FIELDS.length}
+                      {(() => {
+                        const gi = STEP_GROUPS.findIndex(g => g.indexes.includes(step))
+                        const group = STEP_GROUPS[gi]
+                        const pageInGroup = group.indexes.indexOf(step)
+                        return group.indexes.length > 1
+                          ? `Étape ${gi + 1} / ${STEP_GROUPS.length} — page ${pageInGroup + 1}/${group.indexes.length}`
+                          : `Étape ${gi + 1} / ${STEP_GROUPS.length}`
+                      })()}
                     </p>
                     <p className="hidden lg:block" style={{ fontSize: '12.5px', color: '#a89b8c', margin: 0 }}>{section}</p>
                   </div>
