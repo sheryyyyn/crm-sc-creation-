@@ -575,7 +575,7 @@ export default function FormulairePublic() {
     }
     setAnalysisStep(0)
     setAnalyzing(true)
-    const stepDelay = 620
+    const stepDelay = 1100
     ANALYSIS_STEPS.forEach((_, i) => {
       setTimeout(() => setAnalysisStep(i + 1), stepDelay * (i + 1))
     })
@@ -583,7 +583,7 @@ export default function FormulairePublic() {
       setAnalyzing(false)
       setStep(nextKey)
       scrollToProgress()
-    }, stepDelay * ANALYSIS_STEPS.length + 300)
+    }, stepDelay * ANALYSIS_STEPS.length + 400)
   }
 
   const set = (name, value) => {
@@ -878,7 +878,7 @@ export default function FormulairePublic() {
                 <style>{`
                   @keyframes sc-analysis-fill { from { width: 0%; } to { width: 100%; } }
                   @keyframes sc-analysis-pulse { 0%, 100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1); } }
-                  .sc-analysis-bar-fill { animation: sc-analysis-fill ${ANALYSIS_STEPS.length * 620 + 300}ms linear forwards; }
+                  .sc-analysis-bar-fill { animation: sc-analysis-fill ${ANALYSIS_STEPS.length * 1100 + 400}ms linear forwards; }
                   .sc-analysis-dot { animation: sc-analysis-pulse 1s ease-in-out infinite; }
                 `}</style>
                 <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#fcf7cf', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px' }}>
