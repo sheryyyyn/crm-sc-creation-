@@ -937,7 +937,7 @@ export default function FormulairePublic() {
                   return (
                     <div style={{ border: '1.5px solid #1b0b09', borderRadius: '16px', padding: '24px 26px', marginBottom: '26px', background: '#fcf7cf' }}>
                       <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: '#8a7a1f', background: '#fff', border: '1px solid #e8dfa8', borderRadius: '999px', padding: '4px 10px', marginBottom: '14px' }}>
-                        Recommandé pour votre projet
+                        Pour vous
                       </span>
                       <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-3">
                         <h3 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '21px', fontWeight: 700, color: '#1b0b09', margin: 0 }}>{reco.titre}</h3>
