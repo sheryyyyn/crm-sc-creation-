@@ -20,7 +20,12 @@ const FORM_FIELDS = [
         { value: 'Mon projet est en cours de préparation', title: 'Mon projet est en cours de préparation', desc: 'Mon offre est définie et je prépare mon identité, mes contenus ou mes produits.' },
         { value: 'Mon lancement approche', title: 'Mon lancement approche', desc: 'Les éléments principaux sont validés et mon lancement est en préparation.' },
         { value: 'Mon activité est déjà lancée', title: 'Mon activité est déjà lancée', desc: 'Je commercialise déjà mes produits ou mes services.' },
+        { value: 'Autre', title: 'Autre' },
       ],
+    },
+    {
+      label: 'Précisez', name: 'etatProjetAutre', type: 'text', placeholder: 'Décrivez où en est votre projet…',
+      nestUnder: 'etatProjet', nestOptionValue: 'Autre',
     },
   ]},
   { section: 'Votre projet', mobileTitle: 'Projet', short: 'Votre vision', subtitle: 'Parlez-nous de votre projet et de vos objectifs.', fields: [
