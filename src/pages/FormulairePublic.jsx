@@ -19,7 +19,7 @@ const FORM_FIELDS = [
         { value: "Je suis encore au stade de l'idée", title: "Je suis encore au stade de l'idée", desc: "Mon offre et mon positionnement ne sont pas encore définis." },
         { value: 'Mon projet est en cours de préparation', title: 'Mon projet est en cours de préparation', desc: 'Mon offre est définie et je prépare mon identité, mes contenus ou mes produits.' },
         { value: 'Mon lancement approche', title: 'Mon lancement approche', desc: 'Les éléments principaux sont validés et mon lancement est en préparation.' },
-        { value: 'Je suis prêt(e) à commencer le site', title: 'Je suis prêt(e) à commencer le site', desc: 'Mon projet est finalisé et je peux débuter la collaboration.' },
+        { value: 'Je suis prêt(e) à commencer le site', title: 'Je suis prêt(e) à commencer le site', desc: 'Mon projet est finalisé, il ne me manque plus que mon site.' },
         { value: 'Mon activité est déjà lancée', title: 'Mon activité est déjà lancée', desc: 'Je commercialise déjà mes produits ou mes services.' },
       ],
     },
