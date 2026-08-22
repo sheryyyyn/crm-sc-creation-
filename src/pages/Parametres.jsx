@@ -102,8 +102,7 @@ export default function Parametres() {
       )}
 
       <div className="mb-5 rounded-2xl p-5" style={{ background: '#fff', border: '1px solid #e7e5e1' }}>
-        <p className="text-sm font-bold" style={{ color: '#241512' }}>Cet appareil est celui de…</p>
-        <p className="text-xs mt-0.5 mb-3" style={{ color: '#a89b8c' }}>Pour que les rappels (dont les tâches du jour à 12h et 16h) soient envoyés à la bonne personne sur ce téléphone.</p>
+        <p className="text-sm font-bold mb-3" style={{ color: '#241512' }}>Cet appareil est celui de…</p>
         <div className="flex gap-2">
           {['Sheryn', 'Chainez'].map(p => (
             <button key={p} onClick={() => handleChangeProfil(p)}
