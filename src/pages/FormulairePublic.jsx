@@ -288,7 +288,8 @@ const inputBase = {
   border: '1.5px solid #e8e0cc',
   background: '#fdfbf4',
   color: '#1b0b09',
-  fontSize: '14px',
+  // 16px minimum : en dessous, Safari iOS zoome automatiquement la page au focus.
+  fontSize: '16px',
   fontFamily: '"DM Sans", "Helvetica Neue", Helvetica, Arial, sans-serif',
   outline: 'none',
   transition: 'border-color .2s ease, box-shadow .2s ease',

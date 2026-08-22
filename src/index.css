@@ -99,3 +99,12 @@
     @apply text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3;
   }
 }
+
+/* Safari iOS zoome automatiquement la page quand on tape dans un champ dont le
+   texte fait moins de 16px — on force ce minimum sur mobile pour l'empêcher,
+   sans changer la taille affichée sur desktop. */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
