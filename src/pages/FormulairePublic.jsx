@@ -34,8 +34,8 @@ function champsContenuGeneriques(hasSite) {
 
 // ─── Champs "contenu & identité" spécifiques au parcours refonte ────────────
 const CHAMPS_CONTENU_REFONTE = [
-  { label: 'Souhaitez-vous conserver les contenus de votre site actuel ?', name: 'refonteContenuConserver', type: 'tags', options: ['Oui, en grande partie', 'Seulement certains textes ou visuels', 'Non, je souhaite repartir sur de nouveaux contenus', 'Je ne sais pas encore'] },
-  { label: 'Souhaitez-vous conserver votre identité visuelle actuelle ?', name: 'refonteIdentiteConserver', type: 'tags', options: ['Oui, je souhaite la conserver', 'Je souhaite la faire évoluer', 'Je souhaite la changer complètement', "Je n'ai pas de charte graphique définie", 'Je ne sais pas encore'] },
+  { label: 'Souhaitez-vous conserver les contenus de votre site actuel ?', name: 'refonteContenuConserver', type: 'tags', options: ['Oui, en grande partie', 'Seulement certains textes ou visuels', 'Non, je souhaite repartir sur de nouveaux contenus'] },
+  { label: 'Souhaitez-vous conserver votre identité visuelle actuelle ?', name: 'refonteIdentiteConserver', type: 'tags', options: ['Oui, je la conserve', 'Je souhaite la faire évoluer', 'Je souhaite la changer complètement', "Je n'ai pas de charte graphique définie"] },
   { label: 'Que souhaitez-vous principalement améliorer ?', name: 'refonteAmeliorations', type: 'multitags', options: ['Le design', 'La clarté des informations', "L'expérience sur mobile", 'Le parcours utilisateur', 'Les performances', 'Les fonctionnalités', 'Autre'] },
   { label: 'Précisez', name: 'refonteAmeliorationsAutre', type: 'text', placeholder: 'Précisez ce que vous souhaitez améliorer…', showIf: v => (v.refonteAmeliorations || []).includes('Autre') },
 ]
