@@ -55,8 +55,8 @@ const FORM_FIELDS = [
     { label: 'Qui sont vos principaux concurrents qui vous inspirent (direct ou indirect)', name: 'concurrents', type: 'textarea', placeholder: 'Ex : marque A, marque B…' },
   ]},
   {
-    section: 'Votre recommandation',
-    mobileTitle: 'Recommandation',
+    section: 'Analyse',
+    mobileTitle: 'Analyse',
     short: 'La prestation adaptée à votre projet',
     subtitle: 'La prestation adaptée à votre projet',
     title: 'Votre recommandation',
@@ -95,17 +95,6 @@ const initialValues = {
   tarifRecommande: '',
 }
 
-// Tarif e-commerce selon le nombre de produits annoncé — correspondance par
-// valeur (pas par position), sur les valeurs déjà utilisées par le champ
-// "nombreProduits" (voir FORM_FIELDS, étape "Votre objectif").
-const PRIX_ECOMMERCE_PAR_NB_PRODUITS = {
-  '1 à 10': 'À partir de 2 500 € HT',
-  '11 à 30': 'À partir de 2 700 € HT',
-  '31 à 50': 'À partir de 2 900 € HT',
-  'Plus de 50': 'À partir de 3 100 € HT',
-  'Je ne sais pas encore': 'À partir de 2 500 € HT',
-}
-
 // Recommande une prestation à partir de la réponse à "Quel est l'objectif
 // principal de votre projet ?" (et, pour l'e-commerce, du nombre de produits)
 // — remplace le choix manuel de prestation. `key` est stocké dans
@@ -129,17 +118,14 @@ function getRecommandation(objectif, nombreProduits) {
     }
   }
   if (objectif === 'Vendre mes produits en ligne') {
-    const prix = PRIX_ECOMMERCE_PAR_NB_PRODUITS[nombreProduits] || PRIX_ECOMMERCE_PAR_NB_PRODUITS['1 à 10']
-    const precision = nombreProduits === 'Je ne sais pas encore'
-      ? 'Le tarif final dépendra du nombre de produits, de la structure du catalogue et des fonctionnalités nécessaires à votre projet.'
-      : nombreProduits
-        ? `Tarif de départ correspondant à un catalogue de ${nombreProduits} produits. Le montant final dépendra de la structure du catalogue et des fonctionnalités nécessaires à votre projet.`
-        : undefined
+    // Tarif fixe, indépendant du nombre de produits — cette réponse reste
+    // conservée dans les données (values.nombreProduits) et le CRM, mais ne
+    // sert plus au calcul du tarif affiché.
     return {
       key: 'E-commerce Shopify',
       titre: 'Site e-commerce Shopify',
-      prix,
-      precision,
+      prix: 'À partir de 2 500 € HT',
+      precision: 'Le tarif final dépendra du volume du catalogue, du nombre de variantes et des fonctionnalités nécessaires à votre boutique.',
       texte: "Votre projet nécessite une boutique permettant à vos visiteurs de consulter vos produits, de les ajouter au panier et d'effectuer leur paiement directement en ligne.",
     }
   }
@@ -451,7 +437,7 @@ export default function FormulairePublic() {
       document.querySelector('[data-error="true"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
       return
     }
-    if (FORM_FIELDS[step + 1]?.section === 'Votre recommandation') {
+    if (FORM_FIELDS[step + 1]?.section === 'Analyse') {
       runAnalysisThenAdvance()
       return
     }
@@ -720,12 +706,12 @@ export default function FormulairePublic() {
                       <p style={{ fontSize: '13.5px', color: '#8a7a1f', lineHeight: 1.7, margin: 0, fontWeight: 600 }}>{banner}</p>
                     </div>
                   )}
-                  {section === 'Votre recommandation' && (() => {
+                  {section === 'Analyse' && (() => {
                     const reco = getRecommandation(values.objectif, values.nombreProduits)
                     return (
                       <div style={{ border: '1.5px solid #1b0b09', borderRadius: '16px', padding: '24px 26px', marginBottom: '26px', background: '#fcf7cf' }}>
                         <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: '#8a7a1f', background: '#fff', border: '1px solid #e8dfa8', borderRadius: '999px', padding: '4px 10px', marginBottom: '14px' }}>
-                          Recommandé pour votre projet
+                          Prestation correspondant à votre projet
                         </span>
                         <div className="flex flex-col lg:flex-row lg:items-baseline lg:gap-3">
                           <h3 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '21px', fontWeight: 700, color: '#1b0b09', margin: 0 }}>{reco.titre}</h3>
