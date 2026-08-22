@@ -656,12 +656,9 @@ export default function FormulairePublic() {
                     <div style={{ width: '52px', height: '52px', borderRadius: '50%', background: '#fcf7cf', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 22px' }}>
                       <Loader2 size={20} className="animate-spin" style={{ color: '#b8a508' }} />
                     </div>
-                    <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', margin: '0 0 8px' }}>
+                    <h2 style={{ fontFamily: '"Playfair Display", "Times New Roman", serif', fontSize: '22px', fontWeight: 700, color: '#1b0b09', margin: '0 0 30px' }}>
                       Nous analysons vos réponses…
                     </h2>
-                    <p style={{ fontSize: '13.5px', color: '#7e7e7e', margin: '0 0 30px' }}>
-                      Nous identifions la prestation la plus adaptée à vos besoins et à vos objectifs.
-                    </p>
                     <div style={{ maxWidth: '320px', margin: '0 auto', textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                       {ANALYSIS_STEPS.map((label, i) => {
                         const done = analysisStep > i
