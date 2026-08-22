@@ -42,9 +42,10 @@ const FORM_FIELDS = [
       ],
     },
     {
-      label: 'Combien de produits souhaitez-vous vendre au lancement ?', name: 'nombreProduits', type: 'select',
+      label: 'Combien de produits souhaitez-vous vendre au lancement ? *', name: 'nombreProduits', type: 'select',
       options: ['1 à 10', '11 à 30', '31 à 50', 'Plus de 50', 'Je ne sais pas encore'],
       nestUnder: 'objectif', nestOptionValue: 'Vendre mes produits en ligne',
+      required: v => v.objectif === 'Vendre mes produits en ligne',
     },
   ]},
   { section: 'Votre contenu & identité', mobileTitle: 'Contenu & identité', short: 'Contenu & marque', subtitle: 'Votre contenu et votre identité visuelle actuels.', fields: [
@@ -89,13 +90,28 @@ const STEP_GROUPS = FORM_FIELDS.reduce((groups, s, i) => {
 const initialValues = {
   ...Object.fromEntries(FORM_FIELDS.flatMap(s => s.fields).map(f => [f.name, ''])),
   moyenContact: '',
+  // Tarif de départ de la prestation recommandée (recalculé automatiquement,
+  // voir l'effet sur values.objectif / values.nombreProduits plus bas).
+  tarifRecommande: '',
+}
+
+// Tarif e-commerce selon le nombre de produits annoncé — correspondance par
+// valeur (pas par position), sur les valeurs déjà utilisées par le champ
+// "nombreProduits" (voir FORM_FIELDS, étape "Votre objectif").
+const PRIX_ECOMMERCE_PAR_NB_PRODUITS = {
+  '1 à 10': 'À partir de 2 500 € HT',
+  '11 à 30': 'À partir de 2 700 € HT',
+  '31 à 50': 'À partir de 2 900 € HT',
+  'Plus de 50': 'À partir de 3 100 € HT',
+  'Je ne sais pas encore': 'À partir de 2 500 € HT',
 }
 
 // Recommande une prestation à partir de la réponse à "Quel est l'objectif
-// principal de votre projet ?" — remplace le choix manuel de prestation.
-// `key` est stocké dans values.budget, exactement les valeurs déjà attendues
-// par le CRM (voir BUDGET_INDICATIF dans src/pages/Formulaires.jsx).
-function getRecommandation(objectif) {
+// principal de votre projet ?" (et, pour l'e-commerce, du nombre de produits)
+// — remplace le choix manuel de prestation. `key` est stocké dans
+// values.budget, exactement les valeurs déjà attendues par le CRM (voir
+// BUDGET_INDICATIF dans src/pages/Formulaires.jsx).
+function getRecommandation(objectif, nombreProduits) {
   if (objectif === 'Mettre en avant une offre ou un événement précis' || objectif === 'Recueillir des inscriptions avant un lancement') {
     return {
       key: 'Landing page',
@@ -113,10 +129,17 @@ function getRecommandation(objectif) {
     }
   }
   if (objectif === 'Vendre mes produits en ligne') {
+    const prix = PRIX_ECOMMERCE_PAR_NB_PRODUITS[nombreProduits] || PRIX_ECOMMERCE_PAR_NB_PRODUITS['1 à 10']
+    const precision = nombreProduits === 'Je ne sais pas encore'
+      ? 'Le tarif final dépendra du nombre de produits, de la structure du catalogue et des fonctionnalités nécessaires à votre projet.'
+      : nombreProduits
+        ? `Tarif de départ correspondant à un catalogue de ${nombreProduits} produits. Le montant final dépendra de la structure du catalogue et des fonctionnalités nécessaires à votre projet.`
+        : undefined
     return {
       key: 'E-commerce Shopify',
       titre: 'Site e-commerce Shopify',
-      prix: 'À partir de 2 500 € HT',
+      prix,
+      precision,
       texte: "Votre projet nécessite une boutique permettant à vos visiteurs de consulter vos produits, de les ajouter au panier et d'effectuer leur paiement directement en ligne.",
     }
   }
@@ -317,14 +340,17 @@ export default function FormulairePublic() {
 
   const isLastStep = step === FORM_FIELDS.length - 1
 
-  // Recalcule automatiquement la prestation recommandée à chaque changement de
-  // réponse à l'objectif principal (y compris après un retour en arrière), et
-  // l'enregistre dans le même champ `budget` qu'utilisait l'ancien choix manuel.
+  // Recalcule automatiquement la prestation (et, pour l'e-commerce, le tarif)
+  // à chaque changement de l'objectif principal ou du nombre de produits — y
+  // compris après un retour en arrière — et les enregistre dans les mêmes
+  // champs `budget`/`tarifRecommande` qu'utilisait l'ancien choix manuel.
   useEffect(() => {
-    const reco = getRecommandation(values.objectif)
-    setValues(prev => (prev.budget === reco.key ? prev : { ...prev, budget: reco.key }))
+    const reco = getRecommandation(values.objectif, values.nombreProduits)
+    setValues(prev => (prev.budget === reco.key && prev.tarifRecommande === (reco.prix || '')
+      ? prev
+      : { ...prev, budget: reco.key, tarifRecommande: reco.prix || '' }))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values.objectif])
+  }, [values.objectif, values.nombreProduits])
 
   const scrollToProgress = () => {
     progressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
@@ -361,7 +387,8 @@ export default function FormulairePublic() {
   const validateFields = (fields) => {
     const newErrors = {}
     fields.forEach(f => {
-      if (f.required && !values[f.name]?.trim()) newErrors[f.name] = true
+      const required = typeof f.required === 'function' ? f.required(values) : f.required
+      if (required && !values[f.name]?.trim()) newErrors[f.name] = true
     })
     return newErrors
   }
@@ -694,7 +721,7 @@ export default function FormulairePublic() {
                     </div>
                   )}
                   {section === 'Votre recommandation' && (() => {
-                    const reco = getRecommandation(values.objectif)
+                    const reco = getRecommandation(values.objectif, values.nombreProduits)
                     return (
                       <div style={{ border: '1.5px solid #1b0b09', borderRadius: '16px', padding: '24px 26px', marginBottom: '26px', background: '#fcf7cf' }}>
                         <span style={{ display: 'inline-block', fontSize: '11px', fontWeight: 700, letterSpacing: '.04em', textTransform: 'uppercase', color: '#8a7a1f', background: '#fff', border: '1px solid #e8dfa8', borderRadius: '999px', padding: '4px 10px', marginBottom: '14px' }}>
@@ -707,7 +734,7 @@ export default function FormulairePublic() {
                         <p style={{ fontSize: '14px', color: '#5a4a46', lineHeight: 1.7, margin: '12px 0 0' }}>{reco.texte}</p>
                         {reco.prix && (
                           <p style={{ fontSize: '12px', color: '#8a7a1f', margin: '14px 0 0' }}>
-                            Le tarif final sera déterminé selon la structure, les contenus et les fonctionnalités nécessaires à votre projet.
+                            {reco.precision || 'Le tarif final sera déterminé selon la structure, les contenus et les fonctionnalités nécessaires à votre projet.'}
                           </p>
                         )}
                         <button type="button" onClick={handlePrevious} style={{ marginTop: '16px', background: 'none', border: 'none', padding: 0, fontSize: '12.5px', fontWeight: 600, color: '#7e7e7e', textDecoration: 'underline', cursor: 'pointer' }}>

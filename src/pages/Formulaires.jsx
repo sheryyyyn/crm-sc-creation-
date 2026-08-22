@@ -400,6 +400,7 @@ function CarteReponse({ rep, onToggle, open }) {
       section: 'Budget & délais',
       rows: [
         { icon: Euro, label: 'Prestation souhaitée', value: rep.budget || '—' },
+        ...(rep.tarifRecommande ? [{ icon: Euro, label: 'Tarif recommandé', value: rep.tarifRecommande }] : []),
         ...(rep.nombreProduits ? [{ icon: PackageOpen, label: 'Nombre de produits', value: rep.nombreProduits }] : []),
         { icon: Calendar, label: 'Date de lancement souhaitée', value: rep.dateButoir || '—' },
         { icon: MessageSquare, label: 'Demandes spécifiques', value: rep.demandesSpecifiques || '—' },
