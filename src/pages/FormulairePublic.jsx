@@ -17,7 +17,6 @@ const FORM_FIELDS = [
       label: 'Où en est concrètement votre projet aujourd\'hui ? *', name: 'etatProjet', type: 'cards', required: true,
       options: [
         { value: "Je suis encore au stade de l'idée", title: "Je suis encore au stade de l'idée", desc: "Mon offre et mon positionnement ne sont pas encore définis." },
-        { value: 'Je pose les bases de mon projet', title: 'Je pose les bases de mon projet', desc: 'Je travaille encore sur mes produits, mes services, mes fournisseurs ou mes tarifs.' },
         { value: 'Mon projet est en cours de préparation', title: 'Mon projet est en cours de préparation', desc: 'Mon offre est définie et je prépare mon identité, mes contenus ou mes produits.' },
         { value: 'Mon lancement approche', title: 'Mon lancement approche', desc: 'Les éléments principaux sont validés et mon lancement est en préparation.' },
         { value: 'Je suis prêt(e) à commencer le site', title: 'Je suis prêt(e) à commencer le site', desc: 'Mon projet est finalisé et je peux débuter la collaboration.' },
