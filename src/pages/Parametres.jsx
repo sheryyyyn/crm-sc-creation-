@@ -44,15 +44,23 @@ export default function Parametres() {
   const [notifPermission, setNotifPermission] = useState(
     typeof Notification !== 'undefined' ? Notification.permission : 'denied'
   )
+  const [profil, setProfil] = useState(() => localStorage.getItem('sc-crm-profil') || 'Sheryn')
 
   async function handleActiverNotifs() {
     const granted = await requestNotificationPermission()
     setNotifPermission(granted ? 'granted' : 'denied')
     if (granted) {
-      const profil = localStorage.getItem('sc-crm-profil') || 'Sheryn'
       await registerFCMToken(profil)
       notify('🔔 Notifications activées !', 'Vous recevrez des alertes pour vos RDV, formulaires et tâches urgentes.')
     }
+  }
+
+  // Déclare à qui appartient cet appareil, pour que les notifications (dont le
+  // rappel quotidien des tâches) soient envoyées à la bonne personne uniquement.
+  async function handleChangeProfil(p) {
+    setProfil(p)
+    localStorage.setItem('sc-crm-profil', p)
+    if (notifPermission === 'granted') await registerFCMToken(p)
   }
 
   async function handlePurge() {
@@ -92,6 +100,20 @@ export default function Parametres() {
           </div>
         </div>
       )}
+
+      <div className="mb-5 rounded-2xl p-5" style={{ background: '#fff', border: '1px solid #e7e5e1' }}>
+        <p className="text-sm font-bold" style={{ color: '#241512' }}>Cet appareil est celui de…</p>
+        <p className="text-xs mt-0.5 mb-3" style={{ color: '#a89b8c' }}>Pour que les rappels (dont les tâches du jour à 12h et 16h) soient envoyés à la bonne personne sur ce téléphone.</p>
+        <div className="flex gap-2">
+          {['Sheryn', 'Chainez'].map(p => (
+            <button key={p} onClick={() => handleChangeProfil(p)}
+              className="px-4 py-2 rounded-xl text-sm font-semibold transition-colors"
+              style={profil === p ? { background: '#241512', color: '#FDFCF8' } : { background: '#f5f4f1', color: '#241512' }}>
+              {p === 'Chainez' ? 'Chaïnez' : p}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <div className="flex flex-col sm:flex-row gap-5">
         {/* Sidebar tabs */}
