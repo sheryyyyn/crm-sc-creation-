@@ -131,6 +131,13 @@ const useStore = create((set, get) => ({
     const prev = get().taches.find((t) => t.id === id)
     const updated = { ...prev, ...data }
     fsSet('taches', id, updated)
+    if (data.statut === 'termine' && prev?.statut !== 'termine') {
+      const who = prev?.assignee === 'Chainez' ? 'Chaïnez' : prev?.assignee || ''
+      const title = '🎉 Tâche terminée'
+      const body = `"${prev?.titre}"${who ? ` · ${who}` : ''}`
+      notify(title, body)
+      sendPushNotification(title, body, '/taches')
+    }
     if (data.priorite === 'urgente' && prev?.priorite !== 'urgente') {
       notify('🔴 Tâche urgente !', `"${prev?.titre}" est passée en priorité urgente.`)
     }
@@ -146,8 +153,16 @@ const useStore = create((set, get) => ({
   },
   deleteTache: (id) => fsDel('taches', id),
   moveTache: (id, newStatut) => {
-    const updated = { ...get().taches.find((t) => t.id === id), statut: newStatut }
+    const prev = get().taches.find((t) => t.id === id)
+    const updated = { ...prev, statut: newStatut }
     fsSet('taches', id, updated)
+    if (newStatut === 'termine' && prev?.statut !== 'termine') {
+      const who = prev?.assignee === 'Chainez' ? 'Chaïnez' : prev?.assignee || ''
+      const title = '🎉 Tâche terminée'
+      const body = `"${prev?.titre}"${who ? ` · ${who}` : ''}`
+      notify(title, body)
+      sendPushNotification(title, body, '/taches')
+    }
   },
 
   // ─── RDV ────────────────────────────────────────────────────────────────
