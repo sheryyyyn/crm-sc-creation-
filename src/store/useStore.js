@@ -120,6 +120,11 @@ const useStore = create((set, get) => ({
     if (data.assignee && data.assignee !== 'Les deux' && data.assignee === profil) {
       notify('📌 Nouvelle tâche assignée', `"${data.titre}" t'a été assignée.`)
     }
+    // Notifie Chaïnez ET Sheryn sur tous leurs appareils, peu importe qui ajoute.
+    const pushTitle = '✅ Nouvelle tâche dans la to-do'
+    const pushBody = `"${data.titre}"${data.assignee ? ` · ${data.assignee === 'Chainez' ? 'Chaïnez' : data.assignee}` : ''}`
+    notify(pushTitle, pushBody)
+    sendPushNotification(pushTitle, pushBody, '/taches')
     return fsSet('taches', item.id, item)
   },
   updateTache: (id, data) => {
