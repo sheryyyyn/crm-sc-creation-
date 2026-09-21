@@ -1,4 +1,9 @@
 const admin = require('firebase-admin')
+// Helper partagé du CRM : envoie la notification à la fois aux appareils
+// FCM (Chrome desktop/Android) ET aux abonnements Web Push natifs
+// (iPhone/Safari). Sans lui, seuls les appareils FCM reçoivent la notif —
+// c'est ce qui empêchait les notifications d'arriver sur iPhone.
+const { sendPushToAllDevices } = require('./_push-helper')
 
 function initAdmin() {
   if (admin.apps.length) return
@@ -31,26 +36,6 @@ function normaliseReponses(reponses) {
     }
   })
   return out
-}
-
-async function notifyAll(title, body, url) {
-  try {
-    const db = admin.firestore()
-    const tokensSnap = await db.collection('fcmTokens').get()
-    const tokens = tokensSnap.docs.map((d) => d.data().token).filter(Boolean)
-    if (!tokens.length) return
-    await admin.messaging().sendEachForMulticast({
-      tokens,
-      notification: { title, body },
-      webpush: {
-        notification: { icon: '/logo.jpg', badge: '/logo.jpg', vibrate: [200, 100, 200] },
-        fcmOptions: { link: url },
-      },
-    })
-  } catch (err) {
-    // Never let a notification failure block saving the response.
-    console.error('boulangerie-reponses: push notification failed:', err)
-  }
 }
 
 module.exports = async (req, res) => {
@@ -103,7 +88,13 @@ module.exports = async (req, res) => {
 
     const title = '📋 Nouvelle réponse — enquête boulangeries'
     const bodyText = `${item.nomEtablissement || 'Une boulangerie'} a répondu au formulaire.`
-    await notifyAll(title, bodyText, '/saas/boulangerie')
+    try {
+      await sendPushToAllDevices(db, title, bodyText, '/saas/boulangerie')
+    } catch (err) {
+      // Une notification qui échoue ne doit jamais empêcher l'enregistrement
+      // de la réponse, déjà fait à ce stade.
+      console.error('boulangerie-reponses: push notification failed:', err)
+    }
 
     res.status(200).json({ ok: true, id: item.id })
   } catch (err) {
