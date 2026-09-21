@@ -47,6 +47,12 @@ export const SAAS_PRODUITS = {
     titre: 'Boulangerie Manager',
     sousTitre: "L'outil de gestion pour boulangers",
     dotColor: '#c9a06a',
+    // Le vrai questionnaire envoyé aux boulangeries est une page à part,
+    // déployée séparément (Vercel Drop) — pas la page générique de
+    // prospection interne du CRM. Vercel Drop donne une nouvelle URL à
+    // chaque redéploiement : penser à mettre à jour cette ligne si le
+    // formulaire est un jour redéposé sous une nouvelle URL.
+    externalFormUrl: 'https://formulaire-boulangerie-vercel-qjrbbj58j.vercel.app',
     defaults: {
       statut: 'Idée',
       modeleTarifaire: 'Abonnement mensuel',
