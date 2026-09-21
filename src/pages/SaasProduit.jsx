@@ -164,7 +164,10 @@ export default function SaasProduit({ config }) {
   const fonctionnalites = produit.fonctionnalites || []
   const prospects = [...saasProspects.filter(p => p.produitId === config.id)].sort((a, b) => b.horodateur.localeCompare(a.horodateur))
   const newProspectCount = prospects.filter(p => !p.lu).length
-  const formUrl = typeof window !== 'undefined' ? `${window.location.origin}/saas/${config.slug}/prospection` : ''
+  // S'il existe un vrai formulaire externe pour ce produit (ex : le
+  // questionnaire boulangerie déployé à part), on l'utilise à la place de la
+  // page de prospection générique interne au CRM.
+  const formUrl = config.externalFormUrl || (typeof window !== 'undefined' ? `${window.location.origin}/saas/${config.slug}/prospection` : '')
 
   function handleCopyLink() {
     navigator.clipboard.writeText(formUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
@@ -311,7 +314,7 @@ export default function SaasProduit({ config }) {
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <p className="text-xs font-bold uppercase tracking-widest" style={label}>Réponses reçues ({prospects.length})</p>
             <div className="flex items-center gap-2">
-              <a href={`/saas/${config.slug}/prospection`} target="_blank" rel="noreferrer"
+              <a href={formUrl} target="_blank" rel="noreferrer"
                 className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg hover:bg-[#eeece7] transition-colors" style={{ background: '#f5f4f1', color: '#241512' }}>
                 <ExternalLink size={12} />
                 Voir le formulaire
