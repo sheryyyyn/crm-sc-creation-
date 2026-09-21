@@ -10,7 +10,27 @@ function initAdmin() {
 }
 
 function generateId() {
-  return 'br_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8)
+  return 'sp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8)
+}
+
+// Ces champs sont des cases à cocher (plusieurs réponses possibles) dans le
+// formulaire — on force toujours un tableau, même à une seule valeur, sinon
+// le graphique de synthèse de la page "Boulangerie Manager" (qui attend un
+// tableau pour ces champs-là) ne compte pas correctement. Doit rester en
+// phase avec MULTI côté src/data/saasConfig.js (boulangerie.prospectFields).
+const MULTI_FIELDS = ['canal_commande', 'elements_essentiels', 'priorites']
+
+function normaliseReponses(reponses) {
+  const out = {}
+  Object.keys(reponses).forEach((key) => {
+    const val = reponses[key]
+    if (MULTI_FIELDS.includes(key)) {
+      out[key] = Array.isArray(val) ? val : (val === undefined || val === null || val === '' ? [] : [val])
+    } else {
+      out[key] = Array.isArray(val) ? val[0] : val
+    }
+  })
+  return out
 }
 
 async function notifyAll(title, body, url) {
@@ -34,11 +54,11 @@ async function notifyAll(title, body, url) {
 }
 
 module.exports = async (req, res) => {
-  // CORS: the standalone survey form is redeployed via Vercel Drop, which
-  // gives it a new URL each time, so the allowed origin is intentionally
-  // left open ("*") rather than pinned to one hostname. This endpoint only
-  // accepts writes to a single dedicated collection, so the exposure is
-  // limited to that.
+  // CORS: le formulaire autonome est redéployé via Vercel Drop, ce qui lui
+  // donne une nouvelle URL à chaque fois, donc l'origine autorisée est
+  // volontairement laissée ouverte ("*") plutôt que fixée à un seul nom
+  // d'hôte. Cet endpoint n'accepte que des écritures dans saasProspects
+  // avec produitId="boulangerie", donc l'exposition reste limitée.
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
@@ -57,30 +77,33 @@ module.exports = async (req, res) => {
     const db = admin.firestore()
 
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {})
-    const { reponses, resume, nomEtablissement, email, source, dateEnvoi } = body
+    const { reponses, resume, nomEtablissement, email, dateEnvoi } = body
 
     if (!reponses || typeof reponses !== 'object') {
       res.status(400).json({ error: 'Champ "reponses" manquant ou invalide' })
       return
     }
 
+    // Écrit directement dans la collection saasProspects, avec
+    // produitId="boulangerie" — c'est la même collection que lit la page
+    // "Boulangerie Manager" → onglet "Prospection" du CRM, donc les réponses
+    // apparaissent automatiquement là-bas, sans page dédiée.
     const item = {
       id: generateId(),
-      reponses,
+      produitId: 'boulangerie',
+      ...normaliseReponses(reponses),
       resume: resume || '',
-      nomEtablissement: nomEtablissement || '',
-      email: email || '',
-      source: source || 'formulaire-boulangerie',
-      dateEnvoi: dateEnvoi || new Date().toISOString(),
+      nomEtablissement: nomEtablissement || reponses.contact_nom || '',
+      email: email || reponses.contact_email || '',
       lu: false,
-      horodateur: new Date().toISOString(),
+      horodateur: dateEnvoi || new Date().toISOString(),
     }
 
-    await db.collection('boulangerieReponses').doc(item.id).set(item)
+    await db.collection('saasProspects').doc(item.id).set(item)
 
     const title = '📋 Nouvelle réponse — enquête boulangeries'
     const bodyText = `${item.nomEtablissement || 'Une boulangerie'} a répondu au formulaire.`
-    await notifyAll(title, bodyText, '/boulangerie-reponses')
+    await notifyAll(title, bodyText, '/saas/boulangerie')
 
     res.status(200).json({ ok: true, id: item.id })
   } catch (err) {
