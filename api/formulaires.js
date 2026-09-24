@@ -1,10 +1,10 @@
 const admin = require('firebase-admin')
 const { sendPushToAllDevices } = require('./_push-helper')
-
+ 
 function generateId(prefix) {
   return `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 }
-
+ 
 function initFirebase() {
   if (admin.apps.length) return
   const b64 = process.env.FIREBASE_SERVICE_ACCOUNT_B64
@@ -12,123 +12,118 @@ function initFirebase() {
   const serviceAccount = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'))
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) })
 }
-
+ 
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-
+ 
   if (req.method === 'OPTIONS') return res.status(200).end()
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
-
+ 
   try {
     initFirebase()
   } catch (err) {
     return res.status(500).json({ error: 'Firebase init failed', detail: err.message })
   }
-
+ 
   const db = admin.firestore()
-
-  // Champs envoyés depuis le formulaire du site sccreation.fr
+ 
+  // Champs envoyés depuis le questionnaire de satisfaction (sccreation.fr/avis)
   const {
-    nomEntreprise = '',
+    note = null,
+    noteJustif = '',
+    marquant = [],
+    autre = '',
+    communication = '',
+    communicationJustif = '',
+    resultat = '',
+    resultatJustif = '',
+    libre = '',
+    progres = '',
+    nps = null,
+    npsJustif = '',
+    temoignage = '',
     email = '',
-    telephone = '',
-    secteurActivite = '',
-    siteActuel = '',
-    histoire = '',
-    produits = '',
-    objectif = '',
-    concurrents = '',
-    contenuPret = '',
-    formulaireContact = '',
-    cible = '',
-    nomDomaine = '',
-    logoCharte = '',
-    sitesInspirants = '',
-    reseauContact = '',
-    pseudoReseau = '',
-    budget = '',
-    dateButoir = '',
-    demandesSpecifiques = '',
-    remarques = '',
-    _honeypot = '',
+    nomClient = '',
   } = req.body || {}
-
-  // Anti-spam honeypot
-  if (_honeypot) return res.status(200).json({ result: 'success' })
-  if (!email) return res.status(400).json({ error: 'Email requis' })
-
+ 
+  if (typeof note !== 'number' || typeof nps !== 'number') {
+    return res.status(400).json({ error: 'Note et NPS requis' })
+  }
+ 
   try {
-    const id = generateId('fr')
+    const id = generateId('sat')
     const now = new Date()
-
+ 
     const reponse = {
       id,
       horodateur: now.toISOString(),
       lu: false,
-      source: 'site_sccreation',
-
-      nomEntreprise: nomEntreprise || 'Inconnu',
+      source: 'questionnaire_satisfaction',
+ 
+      note,
+      noteJustif,
+      marquant,
+      autre,
+      communication,
+      communicationJustif,
+      resultat,
+      resultatJustif,
+      libre,
+      progres,
+      nps,
+      npsJustif,
+      temoignage,
       email,
-      telephone,
-      secteurActivite,
-      siteActuel,
-      histoire,
-      produits,
-      objectif,
-      concurrents,
-      contenuPret,
-      formulaireContact,
-      cible,
-      nomDomaine,
-      logoCharte,
-      sitesInspirants,
-      reseauContact,
-      pseudoReseau,
-      budget,
-      dateButoir,
-      demandesSpecifiques,
-      remarques,
+      nomClient,
     }
-
-    await db.collection('formReponses').doc(id).set(reponse)
-
-    // Créer une tâche automatique
-    const tache = {
-      id: generateId('t'),
-      titre: `Répondre au formulaire de ${reponse.nomEntreprise}`,
-      description: `Formulaire reçu le ${now.toLocaleDateString('fr-FR')} — Budget : ${budget || '—'}`,
-      assignee: 'Chainez',
-      priorite: 'haute',
-      statut: 'a_faire',
-      clientId: '',
-      projetId: '',
-      deadline: '',
-      notes: '',
-      checklist: [],
-      createdAt: now.toISOString(),
-      formReponseId: id,
+ 
+    await db.collection('satisfactionReponses').doc(id).set(reponse)
+ 
+    // Tâche de suivi automatique uniquement si le retour est actionnable
+    // (note basse ou détracteur NPS) — pour ne pas noyer le CRM de tâches
+    // sur des retours déjà positifs.
+    const estActionnable = note <= 3 || nps <= 6
+    if (estActionnable) {
+      const tache = {
+        id: generateId('t'),
+        titre: nomClient
+          ? `Suivi satisfaction — ${nomClient} (note ${note}/5, NPS ${nps}/10)`
+          : `Suivi satisfaction — retour à améliorer (note ${note}/5, NPS ${nps}/10)`,
+        description: [noteJustif, resultatJustif, npsJustif, libre, progres]
+          .filter(Boolean)
+          .join(' — ') || 'Voir le détail dans les réponses de satisfaction.',
+        assignee: 'Chainez',
+        priorite: 'haute',
+        statut: 'a_faire',
+        clientId: '',
+        projetId: '',
+        deadline: '',
+        notes: '',
+        checklist: [],
+        createdAt: now.toISOString(),
+        satisfactionReponseId: id,
+      }
+      await db.collection('taches').doc(tache.id).set(tache)
     }
-
-    await db.collection('taches').doc(tache.id).set(tache)
-
+ 
     // Notification push vers tous les appareils enregistrés (Sheryn + Chaïnez).
-    // Ne doit jamais faire échouer la réponse au webhook si l'envoi échoue.
+    // Ne doit jamais faire échouer la réponse si l'envoi échoue.
     try {
       await sendPushToAllDevices(
         db,
-        '📋 Nouveau formulaire reçu !',
-        `${reponse.nomEntreprise} vient de remplir le formulaire de contact.`,
-        '/formulaires'
+        estActionnable ? '⚠️ Retour satisfaction à surveiller' : '⭐ Nouveau retour satisfaction !',
+        nomClient ? `${nomClient} — Note ${note}/5 — NPS ${nps}/10` : `Note ${note}/5 — NPS ${nps}/10`,
+        '/satisfaction'
       )
     } catch (pushErr) {
-      console.error('Formulaire webhook: push notification failed:', pushErr.message)
+      console.error('Satisfaction webhook: push notification failed:', pushErr.message)
     }
-
+ 
     return res.status(200).json({ result: 'success', id })
   } catch (err) {
-    console.error('Formulaire webhook error:', err)
+    console.error('Satisfaction webhook error:', err)
     return res.status(500).json({ error: err.message })
   }
 }
