@@ -47,6 +47,7 @@ module.exports = async function handler(req, res) {
     npsJustif = '',
     temoignage = '',
     email = '',
+    nomClient = '',
   } = req.body || {}
  
   if (typeof note !== 'number' || typeof nps !== 'number') {
@@ -77,6 +78,7 @@ module.exports = async function handler(req, res) {
       npsJustif,
       temoignage,
       email,
+      nomClient,
     }
  
     await db.collection('satisfactionReponses').doc(id).set(reponse)
@@ -88,7 +90,9 @@ module.exports = async function handler(req, res) {
     if (estActionnable) {
       const tache = {
         id: generateId('t'),
-        titre: `Suivi satisfaction — retour à améliorer (note ${note}/5, NPS ${nps}/10)`,
+        titre: nomClient
+          ? `Suivi satisfaction — ${nomClient} (note ${note}/5, NPS ${nps}/10)`
+          : `Suivi satisfaction — retour à améliorer (note ${note}/5, NPS ${nps}/10)`,
         description: [noteJustif, resultatJustif, npsJustif, libre, progres]
           .filter(Boolean)
           .join(' — ') || 'Voir le détail dans les réponses de satisfaction.',
@@ -112,7 +116,7 @@ module.exports = async function handler(req, res) {
       await sendPushToAllDevices(
         db,
         estActionnable ? '⚠️ Retour satisfaction à surveiller' : '⭐ Nouveau retour satisfaction !',
-        `Note ${note}/5 — NPS ${nps}/10`,
+        nomClient ? `${nomClient} — Note ${note}/5 — NPS ${nps}/10` : `Note ${note}/5 — NPS ${nps}/10`,
         '/satisfaction'
       )
     } catch (pushErr) {
