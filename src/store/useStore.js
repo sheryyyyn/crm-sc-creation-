@@ -26,7 +26,7 @@ const generateId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString
 const fsSet = (col, id, data) => setDoc(doc(db, col, id), data)
 const fsDel = (col, id) => deleteDoc(doc(db, col, id))
 
-const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems', 'saasProduits', 'saasProspects']
+const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems', 'saasProduits', 'saasProspects', 'satisfactionReponses']
 
 const mockSaasProduits = Object.values(SAAS_PRODUITS).map(({ id, defaults }) => ({ id, ...defaults }))
 
@@ -46,6 +46,7 @@ const SEED_MAP = {
   partenaireItems: [],
   saasProduits: mockSaasProduits,
   saasProspects: [],
+  satisfactionReponses: [],
 }
 
 async function seedIfEmpty() {
@@ -78,6 +79,7 @@ const useStore = create((set, get) => ({
   partenaireItems: [],
   saasProduits: [],
   saasProspects: [],
+  satisfactionReponses: [],
   loading: true,
 
   // ─── Init Firestore listeners ────────────────────────────────────────────
@@ -348,48 +350,4 @@ const useStore = create((set, get) => ({
   },
   deleteSaasProspect: (id) => fsDel('saasProspects', id),
 
-  // ─── Notifications ──────────────────────────────────────────────────────
-  markNotifRead: (id) => {
-    const updated = { ...get().notifications.find((n) => n.id === id), lu: true }
-    fsSet('notifications', id, updated)
-  },
-  markAllNotifRead: () => {
-    get().notifications.forEach((n) => fsSet('notifications', n.id, { ...n, lu: true }))
-  },
-  addNotification: (data) => {
-    const item = { ...data, id: generateId('n'), lu: false, createdAt: new Date().toISOString() }
-    fsSet('notifications', item.id, item)
-  },
-
-  // ─── Purge données de démo ──────────────────────────────────────────────
-  purgeDemoData: async () => {
-    for (const col of DEMO_COLLECTIONS) {
-      const snap = await getDocs(collection(db, col))
-      const batch = writeBatch(db)
-      snap.docs.forEach((d) => batch.delete(d.ref))
-      if (!snap.empty) await batch.commit()
-    }
-  },
-
-  // ─── Médias ─────────────────────────────────────────────────────────────
-  addMedia: (data) => {
-    const item = { ...data, id: generateId('med'), createdAt: new Date().toISOString() }
-    fsSet('medias', item.id, item)
-  },
-  updateMedia: (id, data) => {
-    const updated = { ...get().medias.find((m) => m.id === id), ...data }
-    fsSet('medias', id, updated)
-  },
-  deleteMedia: (id) => fsDel('medias', id),
-
-  // ─── Computed helpers ───────────────────────────────────────────────────
-  getClientById: (id) => get().clients.find((c) => c.id === id),
-  getProjetById: (id) => get().projets.find((p) => p.id === id),
-  getTachesByClient: (clientId) => get().taches.filter((t) => t.clientId === clientId),
-  getTachesByProjet: (projetId) => get().taches.filter((t) => t.projetId === projetId),
-  getRDVsByClient: (clientId) => get().rdvs.filter((r) => r.clientId === clientId),
-  getDocumentsByClient: (clientId) => get().documents.filter((d) => d.clientId === clientId),
-  getUnreadCount: () => get().notifications.filter((n) => !n.lu).length,
-}))
-
-export default useStore
+  // ───
