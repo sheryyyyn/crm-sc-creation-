@@ -127,6 +127,7 @@ function DistributionCard({ title, data, barColor, total }) {
 
 function ReponseDetailModal({ reponse, onClose }) {
   const rows = [
+    { k: 'Nom', v: reponse.nomClient },
     { k: 'Satisfaction globale', v: reponse.note != null ? `${NOTE_LABELS[reponse.note] || reponse.note} (${reponse.note}/5)` : null },
     { k: "Ce qui empêchait une note excellente", v: reponse.noteJustif },
     { k: 'Ce qui a marqué', v: (reponse.marquant || []).join(', ') },
@@ -266,7 +267,7 @@ export default function Satisfaction() {
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-bold truncate" style={dark}>
-                        {r.email || 'Réponse anonyme'}
+                        {r.nomClient || r.email || 'Réponse anonyme'}
                         {r.note != null && <span className="font-normal" style={label}> · {NOTE_LABELS[r.note] || r.note}</span>}
                         {r.nps != null && <span className="font-normal" style={label}> · NPS {r.nps}/10</span>}
                       </p>
