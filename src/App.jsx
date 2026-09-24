@@ -26,6 +26,7 @@ import CalendrierEditorial from './pages/CalendrierEditorial'
 import Mediatheque from './pages/Mediatheque'
 import MotDePasse from './pages/MotDePasse'
 import EspacePartenaire from './pages/EspacePartenaire'
+import Satisfaction from './pages/Satisfaction'
 
 export default function App() {
   const initListeners = useStore((s) => s.initListeners)
@@ -63,6 +64,7 @@ export default function App() {
               <Route path="/finances" element={<Finances />} />
               <Route path="/depenses" element={<Depenses />} />
               <Route path="/formulaires" element={<Formulaires />} />
+              <Route path="/satisfaction" element={<Satisfaction />} />
               <Route path="/saas/cake-design" element={<SaasProduit config={SAAS_PRODUITS['cake-design']} />} />
               <Route path="/saas/boulangerie" element={<SaasProduit config={SAAS_PRODUITS['boulangerie']} />} />
               <Route path="/calendrier-editorial" element={<CalendrierEditorial />} />
