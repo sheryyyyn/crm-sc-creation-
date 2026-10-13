@@ -25,7 +25,31 @@ export const SAAS_PRODUITS = {
         { id: 'f5', label: 'Galerie de créations', statut: 'idee' },
       ],
     },
+    // Nouveau questionnaire : page autonome servie depuis public/, affichée en iframe
+    // par SaasProspectionForm. Les `name` et `options` ci-dessous doivent rester
+    // identiques aux name/value du fichier HTML (`source` = name côté HTML s'il diffère).
+    formulaireHtml: '/formulaire-cake-design.html',
     prospectFields: [
+      { name: 'volume_mois', label: 'Combien de commandes réalises-tu en moyenne par semaine ?', type: 'single', options: ['Entre 1 et 10', 'Entre 10 et 20', 'Entre 20 et 30', 'Plus de 30'] },
+      { name: 'organisation', label: 'Comment travailles-tu au quotidien ?', type: 'single', options: ['Je travaille seule', "Je travaille seule, avec de l'aide ponctuelle", 'Je travaille en duo avec une associée ou un associé', 'Je travaille avec une équipe', 'Autre'] },
+      { name: 'acompte', label: 'Un acompte est-il généralement demandé à la commande ?', type: 'single', options: ['Oui toujours', "À partir d'un certain montant seulement", 'Non jamais'] },
+      { name: 'canaux', label: 'Par quels canaux reçois-tu tes demandes de commandes ?', type: 'multi', options: ['Instagram', 'WhatsApp', 'TikTok', 'Téléphone ou SMS', 'Un formulaire en ligne', 'Mon site internet', 'En personne', 'Autre'] },
+      { name: 'outils', label: 'Quels outils utilises-tu pour gérer tes commandes et ton planning ?', type: 'multi', options: ['Un carnet ou un agenda papier', 'Les notes de mon téléphone', 'Un calendrier numérique', 'Excel ou Google Sheets', 'Notion', 'Mes conversations Instagram ou WhatsApp', 'Autre'] },
+      { name: 'taches', label: "Quelles tâches te prennent le plus de temps dans l'organisation de ton activité ?", type: 'multi', options: ['Traité et récupérer les informations des commandes', 'Retranscrire les commandes sur mon planning/outil', 'Calculer les quantités totales de préparations nécessaires pour chaque journée', 'Vérifier les ingrédients nécessaires et préparer ma liste de courses', 'Préparer les récapitulatifs et les étiquettes pour chaque gâteau', 'Faire le point sur mes commandes, mes paiements et mes chiffres', 'Autre'] },
+      { name: 'difficultes', label: "Quelles difficultés rencontres-tu dans l'organisation de ton activité ?", type: 'multi', options: ["Recevoir des demandes incomplètes qui nécessitent beaucoup d'allers-retours avec les clientes", 'Visualiser rapidement ma charge de travail et mes disponibilités', 'Savoir quelles préparations réaliser et en quelles quantités pour chaque journée', "Prévoir les bonnes quantités d'ingrédients à acheter sans oubli ni surplus", "Avoir une vue claire de mes commandes en cours et de l'avancement de mon activité", 'Aucune difficulté particulière', 'Autre'] },
+      { name: 'frequence', label: 'À quelle fréquence rencontres-tu ces difficultés ?', type: 'single', options: ['Plusieurs fois par semaine', 'Environ une fois par semaine', 'Quelques fois par mois', 'Plus rarement'] },
+      { name: 'consequences', label: 'Quelles conséquences ont-elles sur ton activité ?', type: 'multi', options: ['Du temps perdu', 'Du stress ou une surcharge mentale', 'Des achats inutiles ou du gaspillage', 'Des préparations à corriger ou à refaire', 'Des retards sur les commandes', 'Aucune conséquence importante', 'Autre'] },
+      { name: 'manque', label: "Qu'est-ce qui te manque dans tes outils actuels ?", type: 'multi', options: ['Tout retrouver au même endroit', 'Automatiser les tâches répétitives', 'Anticiper ma production et mes achats', 'Mieux visualiser mon planning', 'Suivre mes chiffres et ma rentabilité', 'Rien, mes outils me conviennent', 'Autre'] },
+      { name: 'fonctionnalite_unique', label: "Si tu ne devais choisir qu'une seule fonctionnalité pour te faciliter le quotidien de cake designer, laquelle choisirais-tu ?", type: 'single', options: ['Un calendrier de commandes', 'Un suivi de production', 'Une liste de courses automatique', "Une vue d'ensemble sur mes statistique et chiffre", 'Un formulaire de commande intelligent', 'Des rappels automatiques aux clientes', 'Un calculateur de coûts et de marges', 'Autre'] },
+      { name: 'repond_besoins', label: "D'après cette description, est-ce que ça répond à tes besoins ?", type: 'single', options: ['Oui, totalement', 'Plutôt oui', 'Pas vraiment', 'Il manque des choses importantes'] },
+      { name: 'autre_ajout', label: 'Autre chose à ajouter ? Une idée, une frustration, un détail important...', type: 'textarea' },
+      { name: 'fonctionnalites_manquantes', label: 'Quelles autres fonctionnalités, non évoquées ici, te sembleraient intéressantes voire indispensables ?', type: 'textarea' },
+      { name: 'interesse_test', label: 'Es-tu intéressée par ce type de logiciel et souhaites-tu être recontactée pour tester la première version gratuitement ?', type: 'single', options: ['Oui', 'Non'] },
+      { name: 'email', source: 'contact_email', label: 'Email', type: 'email' },
+      { name: 'telephone', source: 'contact_telephone', label: 'Téléphone', type: 'text' },
+    ],
+    // Questions de l'ancien formulaire — conservées pour pouvoir relire les réponses déjà reçues
+    anciensChamps: [
       { name: 'role', label: 'Quel est votre rôle ?', type: 'single', options: ['Cake designer', 'Assistant(e) / apprenti(e)', "Gérant(e) d'atelier"] },
       { name: 'appareils', label: 'Sur quels appareils travaillez-vous au quotidien ?', type: 'multi', options: ['Téléphone', 'Tablette', 'Ordinateur'] },
       { name: 'receptionCommandes', label: 'Comment recevez-vous vos commandes aujourd\'hui ?', type: 'multi', options: ['En atelier', 'Téléphone', 'SMS / WhatsApp', 'Réseaux sociaux', 'Site web / formulaire'] },
@@ -37,7 +61,6 @@ export const SAAS_PRODUITS = {
       { name: 'infosEssentielles', label: 'Quelles infos sont indispensables sur une commande ?', type: 'multi', options: ['Nom / contact client', 'Date & heure de retrait', 'Détails du gâteau (forme, parts, saveurs)', 'Prix / acompte', 'Allergies', 'Photo de référence'] },
       { name: 'fonctionnalitesPrioritaires', label: 'Quelles fonctionnalités seraient prioritaires pour vous ? (max 3)', type: 'multi', options: ['Devis automatisé', 'Planning de production visuel', 'Galerie de créations', 'Rappels automatiques', 'Suivi client / historique', 'Autre'] },
       { name: 'nomEtablissement', label: 'Nom de votre atelier / marque', type: 'text', placeholder: 'Ex : Sucre & Sentiments' },
-      { name: 'email', label: 'Email pour être recontacté(e)', type: 'email', placeholder: 'contact@votreatelier.fr' },
       { name: 'remarques', label: 'Une remarque à ajouter ?', type: 'textarea', placeholder: 'Tout élément utile…' },
     ],
   },

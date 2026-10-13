@@ -72,7 +72,7 @@ function EditModal({ produit, onClose, onSave }) {
 // ─── Modal réponse de prospection (détail) ────────────────────────────────
 function ProspectDetailModal({ prospect, fields, onClose }) {
   return (
-    <Modal isOpen onClose={onClose} title={prospect.nomEtablissement || 'Réponse'} size="md">
+    <Modal isOpen onClose={onClose} title={prospect.nomEtablissement || prospect.email || 'Réponse'} size="md">
       <div className="px-6 py-5 space-y-4">
         {fields.map(f => {
           const v = prospect[f.name]
@@ -84,7 +84,7 @@ function ProspectDetailModal({ prospect, fields, onClose }) {
             </div>
           )
         })}
-        {prospect.email && (
+        {prospect.email && !fields.some(f => f.name === 'email') && (
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide mb-1" style={label}>Email</p>
             <p className="text-sm" style={dark}>{prospect.email}</p>
@@ -102,9 +102,11 @@ function ResumeQuestionnaire({ fields, prospects, barColor }) {
     <div className="space-y-4">
       {fields.map(f => {
         if (f.type === 'single' || f.type === 'multi') {
+          // "Autre : précision" compte pour l'option "Autre"
+          const estOption = (v, o) => v === o || (o === 'Autre' && typeof v === 'string' && v.startsWith('Autre :'))
           const counts = f.options.map(o => ({
             option: o,
-            count: prospects.filter(p => f.type === 'multi' ? (p[f.name] || []).includes(o) : p[f.name] === o).length,
+            count: prospects.filter(p => [].concat(p[f.name] || []).some(v => estOption(v, o))).length,
           }))
           const max = Math.max(1, ...counts.map(c => c.count))
           return (
@@ -112,12 +114,14 @@ function ResumeQuestionnaire({ fields, prospects, barColor }) {
               <p className="text-sm font-bold mb-4" style={dark}>{f.label}</p>
               <div className="space-y-2.5">
                 {counts.map(({ option, count }) => (
-                  <div key={option} className="flex items-center gap-3">
-                    <span className="text-xs w-40 flex-shrink-0 truncate" style={label}>{option}</span>
-                    <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: '#f5f4f1' }}>
-                      <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, background: barColor }} />
+                  <div key={option}>
+                    <p className="text-xs mb-1" style={label}>{option}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-1 h-5 rounded-full overflow-hidden" style={{ background: '#f5f4f1' }}>
+                        <div className="h-full rounded-full transition-all" style={{ width: `${(count / max) * 100}%`, background: barColor }} />
+                      </div>
+                      <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={dark}>{count}</span>
                     </div>
-                    <span className="text-xs font-bold w-6 text-right flex-shrink-0" style={dark}>{count}</span>
                   </div>
                 ))}
               </div>
@@ -196,7 +200,7 @@ export default function SaasProduit({ config }) {
       {openProspectId && (
         <ProspectDetailModal
           prospect={prospects.find(p => p.id === openProspectId)}
-          fields={config.prospectFields}
+          fields={[...config.prospectFields, ...(config.anciensChamps || [])]}
           onClose={() => setOpenProspectId(null)}
         />
       )}

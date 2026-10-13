@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { CheckCircle2, Loader2 } from 'lucide-react'
 import useStore from '../store/useStore'
 
@@ -56,7 +56,37 @@ const inputBase = {
 }
 const textareaBase = { ...inputBase, borderRadius: '20px' }
 
+// Formulaire autonome (fichier HTML de public/) affiché en plein écran dans une iframe.
+// À l'envoi, la page HTML poste ses réponses ; on les range au format prospectFields.
+function FormulaireIntegre({ config }) {
+  const { addSaasProspect } = useStore()
+
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (e.origin !== window.location.origin) return
+      if (e.data?.type !== 'sc-saas-prospect' || e.data.produitId !== config.id) return
+      const answers = e.data.answers || {}
+      const values = Object.fromEntries(config.prospectFields.map(f => {
+        const v = answers[f.source || f.name] || []
+        return [f.name, f.type === 'multi' ? v : (v[0] || '')]
+      }))
+      addSaasProspect(config.id, values)
+    }
+    window.addEventListener('message', onMessage)
+    return () => window.removeEventListener('message', onMessage)
+  }, [config])
+
+  return (
+    <iframe src={config.formulaireHtml} title={config.titre}
+      style={{ position: 'fixed', inset: 0, width: '100%', height: '100%', border: 'none', background: '#fdfbf4' }} />
+  )
+}
+
 export default function SaasProspectionForm({ config }) {
+  return config.formulaireHtml ? <FormulaireIntegre config={config} /> : <FormulaireClassique config={config} />
+}
+
+function FormulaireClassique({ config }) {
   const { addSaasProspect } = useStore()
   const initial = Object.fromEntries(config.prospectFields.map(f => [f.name, f.type === 'multi' ? [] : '']))
   const [values, setValues] = useState(initial)

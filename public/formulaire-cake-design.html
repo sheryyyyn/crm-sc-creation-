@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Questionnaire Cake Designer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Questionnaire pour cake designers.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Ctext y=%27.9em%27 font-size=%2790%27%3E%F0%9F%8E%82%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --color-bg-page: #fcf7cf;
+    --color-surface: #ffffff;
+    --color-surface-soft: #f7e9a0;
+    --color-border: #ecdfa0;
+    --color-text-primary: #371f1b;
+    --color-text-secondary: #6e4a3c;
+    --color-text-muted: #8a746a;
+    --color-accent: #c9982a;
+    --color-button-primary: #371f1b;
+    --color-button-primary-hover: #200f0c;
+    --color-button-primary-active: #150a08;
+    --color-button-text: #ffffff;
+    --color-focus: #c58a2a;
+
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    --shadow-card: 0 12px 40px rgba(55,31,27,0.10);
+    --shadow-soft: 0 6px 18px rgba(55,31,27,0.06);
+    --shadow-button: 0 8px 24px rgba(55,31,27,0.20);
+    --shadow-focus: 0 0 0 4px rgba(197,138,42,0.22);
+
+    --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+    --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+    --bg: var(--color-bg-page);
+    --card: var(--color-surface);
+    --ink: var(--color-text-primary);
+    --ink-soft: var(--color-text-secondary);
+    --line: var(--color-border);
+    --accent: var(--color-button-primary);
+    --accent-dark: var(--color-button-primary-hover);
+    --accent-soft: var(--color-surface-soft);
+    --gold: var(--color-accent);
+    --ok: #71843f;
+    --radius: var(--radius-xl);
+    --shadow: var(--shadow-card);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--ink);
+    line-height:1.5;
+    padding: 24px 16px 60px;
+  }
+  .wrap{ max-width: 760px; margin: 0 auto; }
+  header.top{ text-align:center; margin-bottom: 26px; }
+  header.top .eyebrow{
+    text-transform:uppercase; letter-spacing:.14em; font-size:13px;
+    color: var(--ink); font-weight:600; margin-bottom:8px;
+  }
+  header.top h1{
+    font-family: var(--font-serif); font-weight:700; font-size: 24px;
+    margin: 0 0 10px; color: var(--ink);
+  }
+  .progress-wrap{ margin: 22px 0 8px; }
+  .progress-track{ height:8px; background: var(--line); border-radius: 999px; overflow:hidden; }
+  .progress-fill{
+    height:100%; background: var(--accent); width: 25%;
+    transition: width .35s ease; border-radius: 999px;
+  }
+  .progress-label{
+    display:flex; justify-content:space-between; font-size:12.5px;
+    color: var(--ink-soft); margin-top:6px;
+  }
+  .step-quick{ text-align:center; font-size:11.5px; color: var(--color-text-muted); margin-top:4px; }
+
+  .interstitial-card{ text-align:center; padding: 48px 32px; animation: fade .5s ease; }
+  .interstitial-icon{
+    width:64px; height:64px; border-radius:50%; background: var(--color-surface-soft);
+    display:flex; align-items:center; justify-content:center; font-size:28px; margin: 0 auto 20px;
+  }
+  .interstitial-title{
+    font-family: var(--font-serif); font-weight:700; font-size:24px;
+    margin: 0 0 10px; color: var(--ink);
+  }
+  .interstitial-sub{
+    color: var(--ink-soft); font-size:14px; line-height:1.5; max-width:360px; margin: 0 auto;
+  }
+  .interstitial-dots{ display:flex; justify-content:center; align-items:center; gap:8px; margin-top:26px; }
+  .interstitial-dots .dot{ width:7px; height:7px; border-radius:50%; background: var(--line); transition: all .2s ease; }
+  .interstitial-dots .dot.active{ background: var(--accent); width:20px; border-radius:999px; }
+  .interstitial-skip{ margin-top:22px; }
+
+  .card{
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    box-shadow: var(--shadow); padding: 26px 24px;
+  }
+  .step{ display:none; }
+  .step.active{ display:block; animation: fade .25s ease; }
+  @keyframes fade{ from{opacity:0; transform: translateY(4px);} to{opacity:1; transform:none;} }
+  .step h2{
+    font-family: var(--font-serif); font-weight:700; font-size: 20px;
+    margin: 0 0 18px; color: var(--ink);
+  }
+  .step h2 + .step-sub{ margin-top: -14px; }
+  .step .step-sub{ color: var(--ink-soft); font-size: 13.5px; margin: 0 0 18px; }
+  .field{ margin-bottom: 18px; }
+  .field:last-child{ margin-bottom: 0; }
+  .error-msg{ color:#a13c2f; font-size:12.5px; margin-top:8px; display:none; }
+  .field.invalid .error-msg{ display:block; }
+  .field.invalid input{ border-color:#a13c2f; }
+
+  input[type="text"], input[type="email"], input[type="tel"], textarea{
+    width:100%; border:1px solid var(--line); border-radius: 10px; padding: 11px 13px;
+    font-size: 14.5px; font-family:inherit; color: var(--ink); background:#fffdf3;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input:focus, textarea:focus{
+    outline:none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(55,31,27,0.14);
+  }
+  textarea{ resize: vertical; min-height: 60px; }
+
+  .choice-group{ display:flex; flex-direction:column; gap:8px; }
+  .choice-group.grid2{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .choice-group.grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+  .choice{
+    display:flex; align-items:center; gap:10px; border:1px solid var(--line);
+    border-radius: 10px; padding: 10px 13px; cursor:pointer; font-size:14px;
+    background:#fffdf3; transition: all .15s ease;
+  }
+  .choice:hover{ border-color: var(--accent); }
+  .choice input{ accent-color: var(--accent); width:16px; height:16px; flex-shrink:0; }
+  .choice.checked{ border-color: var(--accent); background: var(--accent-soft); }
+  .choice.disabled{ opacity: .4; pointer-events:none; }
+
+  .yesno{ display:flex; gap:10px; }
+  .yesno .choice{ flex:1; justify-content:center; text-align:center; font-weight:600; }
+
+  .limit-note{ font-size:12px; color: var(--ink-soft); margin-top: 6px; }
+  .limit-note.at-limit{ color: var(--accent-dark); font-weight:600; }
+
+  .other-input{ margin-top:10px; display:none; }
+  .other-input.show{ display:block; animation: fade .2s ease; }
+
+  .contact-reveal{
+    margin-top:16px; padding-top:16px; border-top:1px solid var(--line);
+  }
+  .contact-reveal-title{
+    font-family: var(--font-serif); font-weight:700; font-size:14.5px;
+    color: var(--ink); margin: 0 0 12px;
+  }
+
+  .nav-row{ display:flex; justify-content:space-between; align-items:center; margin-top: 24px; gap: 10px; }
+  button{
+    font-family:inherit; font-size:14.5px; font-weight:600; border-radius: 10px;
+    padding: 11px 20px; cursor:pointer; border:1px solid transparent; transition: all .15s ease;
+  }
+  .btn-primary{ background: var(--accent); color:#fff; border-color: var(--accent); box-shadow: var(--shadow-button); }
+  .btn-primary:hover{ background: var(--accent-dark); }
+  .btn-ghost{ background: transparent; color: var(--ink-soft); border-color: var(--line); }
+  .btn-ghost:hover{ background: var(--accent-soft); color: var(--ink); }
+  .btn-ghost:disabled{ opacity:0; pointer-events:none; }
+
+  #screen-final .card{ text-align:left; }
+  #screen-final h2{ font-family: var(--font-serif); font-weight:700; font-size: 22px; color: var(--ink); margin: 0 0 8px; }
+  .success-icon{
+    width:56px; height:56px; border-radius:50%; background: var(--ok); color:#fff;
+    display:flex; align-items:center; justify-content:center; font-size: 26px; margin: 0 auto 14px;
+  }
+  footer.foot{ text-align:center; color: var(--ink-soft); font-size:12px; margin-top: 28px; }
+
+  .intro-card{ text-align:center; padding: 56px 48px; position:relative; overflow:hidden; }
+  .hero-badge{
+    width:88px; height:88px; border-radius:50%; background: var(--color-surface-soft); color: var(--ink-soft);
+    display:flex; align-items:center; justify-content:center; margin: 0 auto 24px;
+  }
+  .hero-badge svg{ width:40px; height:40px; }
+  .survey-eyebrow{
+    text-transform:uppercase; letter-spacing:.14em; font-size:13px; font-weight:600;
+    color: var(--ink); margin: 0 0 16px;
+  }
+  .survey-title{
+    font-family: var(--font-serif); font-weight:700; font-size: 38px; line-height:1.15;
+    letter-spacing:-.01em; color: var(--ink); margin: 0 auto 20px; max-width: 560px;
+  }
+  .survey-divider{ display:flex; align-items:center; justify-content:center; gap:10px; margin: 0 auto 20px; color: var(--gold); }
+  .survey-divider svg{ width:16px; height:16px; }
+  .survey-divider .divider-line{ width:44px; height:1px; background: var(--line); }
+  .context-label{
+    text-transform:uppercase; letter-spacing:.1em; font-size:11.5px; font-weight:700;
+    color: var(--gold); margin: 0 0 8px;
+  }
+  .survey-description{
+    color: var(--ink-soft); font-size: 15.5px; line-height:1.6; max-width: 520px; margin: 0 auto 32px;
+  }
+  .survey-features{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 0 0 32px; text-align:left; }
+  .feature-card{
+    display:flex; align-items:center; gap: 12px; padding: 14px 14px; border: 1px solid var(--line);
+    border-radius: var(--radius-md); background: #fffdf3; box-shadow: var(--shadow-soft);
+  }
+  .feature-icon{
+    flex-shrink:0; width: 38px; height:38px; border-radius:50%; background: var(--color-surface-soft);
+    color: var(--ink-soft); display:flex; align-items:center; justify-content:center;
+  }
+  .feature-icon svg{ width:18px; height:18px; }
+  .feature-card strong{ display:block; font-size:13.5px; color: var(--ink); }
+  .feature-card .sub{ display:block; font-size:12px; color: var(--ink-soft); }
+  .survey-cta{
+    width:100%; padding: 18px 24px; font-size:16.5px; font-weight:700; border-radius: var(--radius-lg);
+    background: var(--color-button-primary); color: var(--color-button-text); border: none;
+    box-shadow: var(--shadow-button); transition: all .15s ease;
+  }
+  .survey-cta:hover{ background: var(--color-button-primary-hover); transform: translateY(-1px); }
+  .survey-cta:active{ background: var(--color-button-primary-active); transform: translateY(0); }
+  .survey-cta:focus-visible{ outline:none; box-shadow: var(--shadow-focus); }
+  .survey-reassurance{
+    display:inline-flex; align-items:center; gap: 8px; margin: 18px auto 0;
+    color: var(--color-text-muted); font-size: 13.5px;
+  }
+  .survey-reassurance svg{ width:16px; height:16px; flex-shrink:0; color: var(--gold); }
+
+  /* Présentation du concept en plein milieu du parcours : une fonctionnalité
+     par écran, avec un repère "Fonctionnalité X / 4" en haut. */
+  .concept-eyebrow{
+    display:inline-block; text-transform:uppercase; letter-spacing:.1em; font-size:11px;
+    font-weight:700; color: var(--accent-dark); background: var(--accent-soft);
+    padding: 3px 10px; border-radius:999px; margin: 0 0 12px;
+  }
+  /* Carrousel : une seule carte visible à la fois. On bascule simplement
+     laquelle est affichée (display none/block) — la hauteur suit toujours
+     le contenu réellement visible, sans calcul JS ni glissement horizontal
+     qui pouvaient se désynchroniser (police pas encore chargée, etc.). */
+  .concept-track .concept-row{
+    display:none; box-sizing:border-box;
+    border:1px solid var(--line); border-radius: var(--radius-md); padding: 20px; background: var(--card);
+  }
+  .concept-track .concept-row.active{ display:block; animation: fade .3s ease; }
+  .concept-body{ display:flex; flex-wrap:wrap; align-items:flex-start; gap:20px; }
+  .concept-dots{ display:flex; justify-content:center; align-items:center; gap:8px; margin: 18px 0 4px; }
+  .concept-dots .dot{ width:7px; height:7px; border-radius:50%; background: var(--line); transition: all .2s ease; }
+  .concept-dots .dot.active{ background: var(--accent); width:20px; border-radius:999px; }
+  .concept-unlock-btn{
+    display:block; width:100%; text-align:center;
+    margin-top:10px; padding: 13px 20px; font-size:14.5px; font-weight:700;
+    background: var(--color-button-primary); color: var(--color-button-text); border: none;
+    box-shadow: var(--shadow-button);
+    border-radius: var(--radius-md); cursor:pointer; transition: all .15s ease;
+  }
+  .concept-unlock-btn:hover{ background: var(--color-button-primary-hover); }
+  .concept-row .concept-num{
+    flex-shrink:0; width:36px; height:36px; border-radius:50%; background: var(--color-surface-soft);
+    color: var(--color-text-secondary); display:flex; align-items:center; justify-content:center;
+    font-family: var(--font-serif); font-weight:700; font-size:14px;
+  }
+  .concept-row .concept-text{ flex: 1 1 220px; min-width:180px; }
+  .concept-row .concept-text strong{ display:block; font-size:16px; color:var(--ink); margin-bottom:6px; }
+  .concept-row .concept-text p{ margin:0; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+  .concept-row .concept-visual{
+    flex: 1 1 260px; min-width:200px; border:1px solid var(--line); border-radius:14px;
+    padding:14px; background:#fffdf3; font-size:12px;
+  }
+  .feature-preview{
+    background: var(--color-surface-soft); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; font-size:12.5px; color: var(--ink-soft);
+  }
+  .feature-preview .fp-head{
+    display:flex; justify-content:space-between; align-items:center; font-weight:600; color: var(--ink);
+    margin-bottom:10px; font-size:12.5px;
+  }
+  .feature-preview .fp-pill{
+    background: var(--card); border:1px solid var(--line); border-radius:999px; padding:3px 10px; font-size:11px;
+  }
+  .feature-preview .fp-row{
+    display:flex; justify-content:space-between; padding:6px 0; border-top:1px dashed var(--line);
+  }
+  .feature-preview .fp-row:first-of-type{ border-top:none; }
+  .feature-preview .fp-tag{ font-size:11px; font-weight:600; padding:2px 9px; border-radius:999px; background: var(--card); border:1px solid var(--line); color: var(--ink-soft); }
+  .feature-preview .fp-tag.ok{ background:#e2ecd4; border-color:#cddcb4; color:#4c6a2c; }
+  .feature-preview .fp-tag.warn{ background:#fbeec2; border-color:#f2dfa0; color:#8a6a12; }
+  .feature-preview .fp-tag.info{ background:#dbe7ee; border-color:#c3d8e2; color:#33637a; }
+  .feature-preview .fp-pill.positive{ background:#e2ecd4; border-color:#cddcb4; color:#4c6a2c; font-weight:700; }
+  .feature-preview .fp-stats{ display:flex; gap:10px; }
+  .feature-preview .fp-stat{
+    flex:1; background: var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 8px; text-align:center;
+  }
+  .feature-preview .fp-stat b{ display:block; font-family: var(--font-serif); font-size:17px; color: var(--ink); }
+  .feature-preview .fp-stat.c-ok b{ color:#4c6a2c; }
+  .feature-preview .fp-stat.c-warn b{ color:#8a6a12; }
+  .feature-preview .fp-stat.c-info b{ color:#33637a; }
+  .intro-list{ list-style:none; margin:0 0 20px; padding:0; display:flex; flex-direction:column; gap:14px; }
+  .intro-list li{ display:flex; align-items:flex-start; gap:12px; }
+  .intro-list .ico{
+    flex-shrink:0; width:32px; height:32px; border-radius:50%; background: var(--color-surface-soft);
+    color: var(--ink-soft); display:flex; align-items:center; justify-content:center; font-size:15px;
+  }
+  .intro-list strong{ display:block; font-size:14px; color:var(--ink); margin-bottom:2px; }
+  .intro-list .sub{ display:block; font-size:12.5px; color:var(--ink-soft); line-height:1.4; }
+
+  @media (max-width:767px), (max-height:600px){
+    body{ padding:0; }
+    .wrap{ display:flex; flex-direction:column; min-height:100dvh; max-width:100%; margin:0; }
+    header.top{ flex:0 0 auto; padding: 20px 20px 0; margin-bottom: 10px; }
+    header.top .eyebrow{ font-size: 10px; margin-bottom: 4px; }
+    header.top h1{ font-size: 15px; margin: 0; }
+    .progress-wrap{ flex:0 0 auto; padding: 0 20px; margin: 0 0 6px; }
+    .progress-track{ height: 5px; }
+    .progress-label{ font-size: 10.5px; margin-top: 4px; }
+    .step-quick{ font-size: 10.5px; margin-top: 3px; }
+    .card{
+      flex:1 1 auto; display:flex; flex-direction:column; min-height:0; width:100%; max-width:100%;
+      margin:0; padding: 22px 20px; border-radius:0; border:none; box-shadow:none;
+    }
+    .intro-card, .interstitial-card{ justify-content:center; }
+    #formCard form{ display:flex; flex-direction:column; flex:1; min-height:0; }
+    .nav-row{ margin-top:auto; padding-top: 16px; padding-bottom: max(20px, env(safe-area-inset-bottom)); }
+    .hero-badge{ width:52px; height:52px; margin: 0 auto 12px; }
+    .hero-badge svg{ width:26px; height:26px; }
+    .survey-eyebrow{ font-size: 10px; margin: 0 0 8px; }
+    .survey-title{ font-size: 22px; margin: 0 auto 10px; }
+    .survey-divider{ margin: 0 auto 10px; }
+    .survey-description{ font-size: 13px; margin: 0 auto 16px; line-height:1.5; }
+    .survey-features{ grid-template-columns: 1fr; text-align:left; gap:8px; margin: 0 0 16px; }
+    .feature-card{ padding: 10px 12px; gap:10px; }
+    .feature-icon{ width:28px; height:28px; }
+    .feature-icon svg{ width:14px; height:14px; }
+    .feature-card strong{ font-size:12.5px; }
+    .feature-card .sub{ display:none; }
+    .survey-cta{ padding: 14px 20px; font-size: 15px; }
+    .survey-reassurance{ font-size: 11.5px; margin: 12px auto 0; }
+    .interstitial-icon{ width:56px; height:56px; font-size:24px; margin-bottom:16px; }
+    .interstitial-title{ font-size:20px; }
+    .interstitial-sub{ font-size:13px; }
+    .interstitial-dots{ margin-top:20px; }
+    .step h2{ font-size: 19px; margin: 0 0 4px; }
+    .step h2 + .step-sub{ margin-top: 0; }
+    .step .step-sub{ font-size: 12.5px; margin: 0 0 14px; }
+    .field{ margin-bottom: 10px; }
+    .choice-group{ gap: 9px; }
+    .choice-group.grid2, .choice-group.grid3{ display:flex; flex-direction:column; }
+    .choice{ padding: 12px 14px; font-size: 14px; gap: 10px; }
+    input[type="text"], input[type="email"], input[type="tel"], textarea{ padding: 11px 13px; font-size: 14px; }
+    textarea{ min-height: 72px; }
+    .limit-note{ font-size: 11px; margin-top: 6px; }
+    .other-input{ margin-top: 8px; }
+    .intro-list{ margin-bottom: 4px; gap: 12px; }
+    .intro-list li{ gap: 10px; }
+    .intro-list .ico{ width: 26px; height: 26px; font-size: 13px; }
+    .intro-list strong{ font-size: 13.5px; }
+    .intro-list .sub{ font-size: 12px; }
+
+    /* Carrousel "Ce qu'on imagine" : carte compacte, empilée verticalement */
+    .concept-track .concept-row{ padding: 16px; }
+    .concept-body{ flex-direction:column; gap:12px; }
+    .concept-eyebrow{ font-size: 10px; padding: 3px 9px; }
+    .concept-text strong{ font-size: 14.5px; }
+    .concept-text p{ font-size: 12.5px; }
+    .concept-row .concept-visual{ flex:0 0 auto; width:100%; min-width:0; padding:12px; }
+    .concept-row .concept-text{ flex:0 0 auto; width:100%; }
+    .feature-preview .fp-stats{ flex-wrap:wrap; }
+    .concept-unlock-btn{
+      padding: 12px 16px; font-size: 14px; margin-top: 14px;
+      margin-bottom: max(20px, env(safe-area-inset-bottom));
+    }
+
+    body.in-steps footer.foot{ display:none; }
+    footer.foot{ flex:0 0 auto; font-size: 11px; padding: 0 20px 16px; margin-top: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="top" id="pageHeader" style="display:none;">
+    <div class="eyebrow">Questionnaire · Cake designer</div>
+    <h1>La gestion de ton activité au quotidien</h1>
+  </header>
+
+  <!-- INTRO -->
+  <div class="card intro-card" id="screen-intro">
+    <div class="hero-badge" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M24 6v5"/>
+        <path d="M24 6c1.4 0 2.2 1 1.4 2.4-.5.9-1.4 1.4-1.4 1.4s-.9-.5-1.4-1.4C21.8 7 22.6 6 24 6z" fill="currentColor"/>
+        <path d="M17 15h14a3 3 0 0 1 3 3v3H14v-3a3 3 0 0 1 3-3z"/>
+        <path d="M12 25h24a3 3 0 0 1 3 3v6H9v-6a3 3 0 0 1 3-3z"/>
+        <path d="M9 34h30v5a2 2 0 0 1-2 2H11a2 2 0 0 1-2-2z"/>
+        <path d="M14 21c1.6 1.6 3.4 1.6 5 0s3.4-1.6 5 0 3.4 1.6 5 0 3.4-1.6 5 0"/>
+        <path d="M9 30c2 1.8 4.2 1.8 6.2 0s4.2-1.8 6.2 0 4.2 1.8 6.2 0 4.2-1.8 6.2 0"/>
+      </svg>
+    </div>
+    <p class="survey-eyebrow">Étude terrain · Cake designers</p>
+    <h1 class="survey-title">Merci de participer à notre étude</h1>
+    <p class="context-label">Contexte</p>
+    <p class="survey-description">Nous développons une plateforme pour simplifier la gestion de ton activité de cake designer : commandes, planning, production et achats au même endroit. Tes réponses nous aident à construire les fonctionnalités qui te seront vraiment utiles.</p>
+
+    <div class="survey-features">
+      <article class="feature-card">
+        <span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+        <div><strong>4-5 minutes</strong><span class="sub">environ</span></div>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 10h12v8a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 10V8a3 3 0 0 1 6 0v2"/><path d="M12 6V4"/></svg></span>
+        <div><strong>Une question à la fois</strong><span class="sub">simple et rapide</span></div>
+      </article>
+      <article class="feature-card">
+        <span class="feature-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
+        <div><strong>Réponses confidentielles</strong><span class="sub">utilisées pour cette étude</span></div>
+      </article>
+    </div>
+
+    <button type="button" class="survey-cta" id="btnStart">Commencer le questionnaire →</button>
+    <p class="survey-reassurance">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+      Il n'y a pas de bonne ou de mauvaise réponse.
+    </p>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap" style="display:none;">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-label">
+      <span id="progressText">Étape 1 · Ton activité</span>
+      <span id="progressPct">0%</span>
+    </div>
+    <div class="step-quick" id="stepQuick"></div>
+  </div>
+
+  <div class="card" id="formCard" style="display:none;">
+    <form id="surveyForm" novalidate>
+
+      <!-- Q1 -->
+      <section class="step active" data-step="1">
+        <h2>Combien de commandes réalises-tu en moyenne par semaine ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="volume_mois">
+            <label class="choice"><input type="radio" name="volume_mois" value="Entre 1 et 10"> Entre 1 et 10</label>
+            <label class="choice"><input type="radio" name="volume_mois" value="Entre 10 et 20"> Entre 10 et 20</label>
+            <label class="choice"><input type="radio" name="volume_mois" value="Entre 20 et 30"> Entre 20 et 30</label>
+            <label class="choice"><input type="radio" name="volume_mois" value="Plus de 30"> Plus de 30</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q2 -->
+      <section class="step" data-step="2">
+        <h2>Comment travailles-tu au quotidien ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="organisation">
+            <label class="choice"><input type="radio" name="organisation" value="Je travaille seule"> Je travaille seule</label>
+            <label class="choice"><input type="radio" name="organisation" value="Je travaille seule, avec de l'aide ponctuelle"> Je travaille seule, avec de l'aide ponctuelle</label>
+            <label class="choice"><input type="radio" name="organisation" value="Je travaille en duo avec une associée ou un associé"> Je travaille en duo avec une associée ou un associé</label>
+            <label class="choice"><input type="radio" name="organisation" value="Je travaille avec une équipe"> Je travaille avec une équipe</label>
+            <label class="choice"><input type="radio" name="organisation" value="__other__"> Autre</label>
+          </div>
+          <div class="other-input" data-other-for="organisation"><input type="text" name="organisation_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q2 bis : acompte -->
+      <section class="step" data-step="17">
+        <h2>Un acompte est-il généralement demandé à la commande ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="acompte">
+            <label class="choice"><input type="radio" name="acompte" value="Oui toujours"> Oui toujours</label>
+            <label class="choice"><input type="radio" name="acompte" value="À partir d'un certain montant seulement"> À partir d'un certain montant seulement</label>
+            <label class="choice"><input type="radio" name="acompte" value="Non jamais"> Non jamais</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q3 -->
+      <section class="step" data-step="3">
+        <h2>Par quels canaux reçois-tu tes demandes de commandes ?</h2>
+        <p class="step-sub">Plusieurs réponses possibles.</p>
+        <div class="field">
+          <div class="choice-group" data-name="canaux" data-multi="true">
+            <label class="choice"><input type="checkbox" name="canaux" value="Instagram"> Instagram</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="WhatsApp"> WhatsApp</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="TikTok"> TikTok</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="Téléphone ou SMS"> Téléphone ou SMS</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="Un formulaire en ligne"> Un formulaire en ligne</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="Mon site internet"> Mon site internet</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="En personne"> En personne</label>
+            <label class="choice"><input type="checkbox" name="canaux" value="__other__"> Autre</label>
+          </div>
+          <div class="other-input" data-other-for="canaux"><input type="text" name="canaux_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q4 -->
+      <section class="step" data-step="4">
+        <h2>Quels outils utilises-tu pour gérer tes commandes et ton planning ?</h2>
+        <p class="step-sub">Plusieurs réponses possibles.</p>
+        <div class="field">
+          <div class="choice-group" data-name="outils" data-multi="true">
+            <label class="choice"><input type="checkbox" name="outils" value="Un carnet ou un agenda papier"> Un carnet ou un agenda papier</label>
+            <label class="choice"><input type="checkbox" name="outils" value="Les notes de mon téléphone"> Les notes de mon téléphone</label>
+            <label class="choice"><input type="checkbox" name="outils" value="Un calendrier numérique"> Un calendrier numérique</label>
+            <label class="choice"><input type="checkbox" name="outils" value="Excel ou Google Sheets"> Excel ou Google Sheets</label>
+            <label class="choice"><input type="checkbox" name="outils" value="Notion"> Notion</label>
+            <label class="choice"><input type="checkbox" name="outils" value="Mes conversations Instagram ou WhatsApp"> Mes conversations Instagram ou WhatsApp</label>
+            <label class="choice"><input type="checkbox" name="outils" value="__other__"> Autre</label>
+          </div>
+          <div class="other-input" data-other-for="outils"><input type="text" name="outils_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q5 -->
+      <section class="step" data-step="5">
+        <h2>Quelles tâches te prennent le plus de temps dans l'organisation de ton activité ?</h2>
+        <p class="step-sub">3 réponses maximum.</p>
+        <div class="field">
+          <div class="choice-group" data-name="taches" data-multi="true" data-max="3">
+            <label class="choice"><input type="checkbox" name="taches" value="Traité et récupérer les informations des commandes"> Traité et récupérer les informations des commandes</label>
+            <label class="choice"><input type="checkbox" name="taches" value="Retranscrire les commandes sur mon planning/outil"> Retranscrire les commandes sur mon planning/outil</label>
+            <label class="choice"><input type="checkbox" name="taches" value="Calculer les quantités totales de préparations nécessaires pour chaque journée"> Calculer les quantités totales de préparations nécessaires pour chaque journée</label>
+            <label class="choice"><input type="checkbox" name="taches" value="Vérifier les ingrédients nécessaires et préparer ma liste de courses"> Vérifier les ingrédients nécessaires et préparer ma liste de courses</label>
+            <label class="choice"><input type="checkbox" name="taches" value="Préparer les récapitulatifs et les étiquettes pour chaque gâteau"> Préparer les récapitulatifs et les étiquettes pour chaque gâteau</label>
+            <label class="choice"><input type="checkbox" name="taches" value="Faire le point sur mes commandes, mes paiements et mes chiffres"> Faire le point sur mes commandes, mes paiements et mes chiffres</label>
+            <label class="choice"><input type="checkbox" name="taches" value="__other__"> Autre</label>
+          </div>
+          <div class="limit-note">3 réponses maximum</div>
+          <div class="other-input" data-other-for="taches"><input type="text" name="taches_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q6 -->
+      <section class="step" data-step="6">
+        <h2>Quelles difficultés rencontres-tu dans l'organisation de ton activité ?</h2>
+        <p class="step-sub">3 réponses maximum.</p>
+        <div class="field">
+          <div class="choice-group" data-name="difficultes" data-multi="true" data-max="3">
+            <label class="choice"><input type="checkbox" name="difficultes" value="Recevoir des demandes incomplètes qui nécessitent beaucoup d'allers-retours avec les clientes"> Recevoir des demandes incomplètes qui nécessitent beaucoup d'allers-retours avec les clientes</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="Visualiser rapidement ma charge de travail et mes disponibilités"> Visualiser rapidement ma charge de travail et mes disponibilités</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="Savoir quelles préparations réaliser et en quelles quantités pour chaque journée"> Savoir quelles préparations réaliser et en quelles quantités pour chaque journée</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="Prévoir les bonnes quantités d'ingrédients à acheter sans oubli ni surplus"> Prévoir les bonnes quantités d'ingrédients à acheter sans oubli ni surplus</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="Avoir une vue claire de mes commandes en cours et de l'avancement de mon activité"> Avoir une vue claire de mes commandes en cours et de l'avancement de mon activité</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="Aucune difficulté particulière" data-exclusive="true"> Aucune difficulté particulière</label>
+            <label class="choice"><input type="checkbox" name="difficultes" value="__other__"> Autre</label>
+          </div>
+          <div class="limit-note">3 réponses maximum</div>
+          <div class="other-input" data-other-for="difficultes"><input type="text" name="difficultes_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q7 -->
+      <section class="step" data-step="7">
+        <h2>À quelle fréquence rencontres-tu ces difficultés ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="frequence">
+            <label class="choice"><input type="radio" name="frequence" value="Plusieurs fois par semaine"> Plusieurs fois par semaine</label>
+            <label class="choice"><input type="radio" name="frequence" value="Environ une fois par semaine"> Environ une fois par semaine</label>
+            <label class="choice"><input type="radio" name="frequence" value="Quelques fois par mois"> Quelques fois par mois</label>
+            <label class="choice"><input type="radio" name="frequence" value="Plus rarement"> Plus rarement</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q8 -->
+      <section class="step" data-step="8">
+        <h2>Quelles conséquences ont-elles sur ton activité ?</h2>
+        <p class="step-sub">2 réponses maximum.</p>
+        <div class="field">
+          <div class="choice-group" data-name="consequences" data-multi="true" data-max="2">
+            <label class="choice"><input type="checkbox" name="consequences" value="Du temps perdu"> Du temps perdu</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="Du stress ou une surcharge mentale"> Du stress ou une surcharge mentale</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="Des achats inutiles ou du gaspillage"> Des achats inutiles ou du gaspillage</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="Des préparations à corriger ou à refaire"> Des préparations à corriger ou à refaire</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="Des retards sur les commandes"> Des retards sur les commandes</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="Aucune conséquence importante" data-exclusive="true"> Aucune conséquence importante</label>
+            <label class="choice"><input type="checkbox" name="consequences" value="__other__"> Autre</label>
+          </div>
+          <div class="limit-note">2 réponses maximum</div>
+          <div class="other-input" data-other-for="consequences"><input type="text" name="consequences_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q9 -->
+      <section class="step" data-step="9">
+        <h2>Qu'est-ce qui te manque dans tes outils actuels ?</h2>
+        <p class="step-sub">3 réponses maximum.</p>
+        <div class="field">
+          <div class="choice-group" data-name="manque" data-multi="true" data-max="3">
+            <label class="choice"><input type="checkbox" name="manque" value="Tout retrouver au même endroit"> Tout retrouver au même endroit</label>
+            <label class="choice"><input type="checkbox" name="manque" value="Automatiser les tâches répétitives"> Automatiser les tâches répétitives</label>
+            <label class="choice"><input type="checkbox" name="manque" value="Anticiper ma production et mes achats"> Anticiper ma production et mes achats</label>
+            <label class="choice"><input type="checkbox" name="manque" value="Mieux visualiser mon planning"> Mieux visualiser mon planning</label>
+            <label class="choice"><input type="checkbox" name="manque" value="Suivre mes chiffres et ma rentabilité"> Suivre mes chiffres et ma rentabilité</label>
+            <label class="choice"><input type="checkbox" name="manque" value="Rien, mes outils me conviennent" data-exclusive="true"> Rien, mes outils me conviennent</label>
+            <label class="choice"><input type="checkbox" name="manque" value="__other__"> Autre</label>
+          </div>
+          <div class="limit-note">3 réponses maximum</div>
+          <div class="other-input" data-other-for="manque"><input type="text" name="manque_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Q10 -->
+      <section class="step" data-step="10">
+        <h2>Si tu ne devais choisir qu'une seule fonctionnalité pour te faciliter le quotidien de cake designer, laquelle choisirais-tu ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="fonctionnalite_unique">
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Un calendrier de commandes"> Un calendrier de commandes</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Un suivi de production"> Un suivi de production</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Une liste de courses automatique"> Une liste de courses automatique</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Une vue d'ensemble sur mes statistique et chiffre"> Une vue d'ensemble sur mes statistique et chiffre</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Un formulaire de commande intelligent"> Un formulaire de commande intelligent</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Des rappels automatiques aux clientes"> Des rappels automatiques aux clientes</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="Un calculateur de coûts et de marges"> Un calculateur de coûts et de marges</label>
+            <label class="choice"><input type="radio" name="fonctionnalite_unique" value="__other__"> Autre</label>
+          </div>
+          <div class="other-input" data-other-for="fonctionnalite_unique"><input type="text" name="fonctionnalite_unique_autre" placeholder="Précise (facultatif)..."></div>
+        </div>
+      </section>
+
+      <!-- Ce qu'on imagine : présentation du concept, une fonctionnalité à la
+           fois dans un carrousel — la carte glisse vers la gauche et la
+           suivante entre par la droite, sur la même page. -->
+      <section class="step" data-step="18">
+        <h2>Ce qu'on imagine</h2>
+
+        <div class="concept-viewport">
+          <div class="concept-track" id="conceptTrack">
+            <div class="concept-row">
+              <p class="concept-eyebrow">Fonctionnalité 1 / 4</p>
+              <div class="concept-body">
+                <div class="concept-text">
+                  <strong>Calendrier centralisé</strong>
+                  <p>Toutes tes commandes et tes retraits réunis dans un seul calendrier pour visualiser rapidement ton planning.</p>
+                </div>
+                <div class="concept-visual feature-preview" aria-hidden="true">
+                  <div class="fp-head"><span>Commandes du week-end</span><span class="fp-pill">8 commandes</span></div>
+                  <div class="fp-row"><span>Sam. 10:00 · Bento cake Lina</span><span class="fp-tag ok">Confirmée</span></div>
+                  <div class="fp-row"><span>Sam. 14:30 · Layer cake Inès</span><span class="fp-tag warn">À préparer</span></div>
+                  <div class="fp-row"><span>Dim. 12:00 · Pièce montée Sarah</span><span class="fp-tag info">À venir</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="concept-row">
+              <p class="concept-eyebrow">Fonctionnalité 2 / 4</p>
+              <div class="concept-body">
+                <div class="concept-text">
+                  <strong>Liste de courses intelligente</strong>
+                  <p>Les ingrédients et les quantités nécessaires sont automatiquement calculés à partir des commandes enregistrées.</p>
+                </div>
+                <div class="concept-visual feature-preview" aria-hidden="true">
+                  <div class="fp-head"><span>Courses à prévoir</span><span class="fp-pill">12 ingrédients</span></div>
+                  <div class="fp-row"><span>Mascarpone</span><span>3 kg</span></div>
+                  <div class="fp-row"><span>Crème liquide</span><span>5 L</span></div>
+                  <div class="fp-row"><span>Framboises</span><span>1,5 kg</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="concept-row">
+              <p class="concept-eyebrow">Fonctionnalité 3 / 4</p>
+              <div class="concept-body">
+                <div class="concept-text">
+                  <strong>Formulaire de commande intelligent</strong>
+                  <p>Envoie un formulaire de prise de commande en un clic à tes clientes pour recevoir une demande complète dès le départ.</p>
+                </div>
+                <div class="concept-visual feature-preview" aria-hidden="true">
+                  <div class="fp-head"><span>Nouvelle demande</span><span class="fp-pill">Étape 2 / 4</span></div>
+                  <div class="fp-row"><span>Type de gâteau</span><span>Layer cake</span></div>
+                  <div class="fp-row"><span>Nombre de parts</span><span>10</span></div>
+                  <div class="fp-row"><span>Saveur</span><span>Vanille, framboise, chocolat blanc</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="concept-row">
+              <p class="concept-eyebrow">Fonctionnalité 4 / 4</p>
+              <div class="concept-body">
+                <div class="concept-text">
+                  <strong>Suivi des statistiques de l'activité</strong>
+                  <p>Une vue claire sur tes commandes, ton chiffre d'affaires et l'évolution de ton activité.</p>
+                </div>
+                <div class="concept-visual feature-preview" aria-hidden="true">
+                  <div class="fp-head"><span>Vue d'ensemble · Ce mois-ci</span><span class="fp-pill positive">+18 %</span></div>
+                  <div class="fp-stats">
+                    <div class="fp-stat c-info"><b>24</b>commandes</div>
+                    <div class="fp-stat c-ok"><b>1 860 €</b>chiffre d'affaires</div>
+                    <div class="fp-stat c-warn"><b>78 €</b>panier moyen</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="concept-dots" id="conceptDots" aria-hidden="true"></div>
+        <button type="button" class="concept-unlock-btn" id="btnConceptNext">Voir la prochaine fonctionnalité</button>
+      </section>
+
+      <!-- Q19 -->
+      <section class="step" data-step="19">
+        <h2>D'après cette description, est-ce que ça répond à tes besoins ?</h2>
+        <p class="step-sub">Une seule réponse.</p>
+        <div class="field">
+          <div class="choice-group" data-name="repond_besoins">
+            <label class="choice"><input type="radio" name="repond_besoins" value="Oui, totalement"> Oui, totalement</label>
+            <label class="choice"><input type="radio" name="repond_besoins" value="Plutôt oui"> Plutôt oui</label>
+            <label class="choice"><input type="radio" name="repond_besoins" value="Pas vraiment"> Pas vraiment</label>
+            <label class="choice"><input type="radio" name="repond_besoins" value="Il manque des choses importantes"> Il manque des choses importantes</label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q21 -->
+      <section class="step" data-step="21">
+        <h2>Autre chose à ajouter ? Une idée, une frustration, un détail important...</h2>
+        <p class="step-sub">Réponse libre, facultative.</p>
+        <div class="field">
+          <textarea name="autre_ajout" placeholder="Dis-nous tout ce qui te semble important..."></textarea>
+        </div>
+      </section>
+
+      <!-- Q22 -->
+      <section class="step" data-step="22">
+        <h2>Quelles autres fonctionnalités, non évoquées ici, te sembleraient intéressantes voire indispensables ?</h2>
+        <p class="step-sub">Réponse libre, facultative.</p>
+        <div class="field">
+          <textarea name="fonctionnalites_manquantes" placeholder="Dis-nous ce qui te serait utile..."></textarea>
+        </div>
+      </section>
+
+      <!-- Coordonnées (facultatif, conditionnelles à l'intérêt) -->
+      <section class="step" data-step="16">
+        <h2>Es-tu intéressée par ce type de logiciel et souhaites-tu être recontactée pour tester la première version gratuitement ?</h2>
+        <p class="step-sub">Facultatif.</p>
+        <div class="field">
+          <div class="choice-group yesno" data-name="interesse_test">
+            <label class="choice"><input type="radio" name="interesse_test" value="Oui"> Oui</label>
+            <label class="choice"><input type="radio" name="interesse_test" value="Non"> Non</label>
+          </div>
+        </div>
+        <div class="other-input contact-reveal" data-other-for="interesse_test" data-reveal-value="Oui" id="contactReveal">
+          <p class="contact-reveal-title">Tes informations</p>
+          <div class="field">
+            <input type="email" name="contact_email" placeholder="Email">
+            <div class="error-msg">L'adresse email ne semble pas valide.</div>
+          </div>
+          <div class="field">
+            <input type="tel" name="contact_telephone" placeholder="Numéro de téléphone">
+          </div>
+        </div>
+      </section>
+
+      <div class="nav-row" id="navRow">
+        <button type="button" class="btn-ghost" id="btnBack">← Précédent</button>
+        <button type="button" class="btn-primary" id="btnNext">Suivant →</button>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="card interstitial-card" id="interstitialCard" style="display:none;">
+    <div class="interstitial-icon" id="interstitialIcon" aria-hidden="true">🙌</div>
+    <h2 class="interstitial-title" id="interstitialTitle">Belle progression !</h2>
+    <p class="interstitial-sub" id="interstitialSub"></p>
+    <div class="interstitial-dots" id="interstitialDots"></div>
+    <button type="button" class="btn-primary interstitial-skip" id="btnInterstitialSkip">Voir les fonctionnalités →</button>
+  </div>
+
+  <div class="card" id="screen-final" style="display:none;">
+    <div class="success-icon">✓</div>
+    <h2 style="text-align:center;">Merci beaucoup !</h2>
+    <p class="step-sub" style="text-align:center;">Tes réponses ont bien été prises en compte.</p>
+  </div>
+
+  <footer class="foot">Merci beaucoup pour ton aide, ça compte vraiment !</footer>
+</div>
+
+<script>
+(function(){
+  // Ouvert directement (hors CRM), le formulaire ne pourrait pas enregistrer
+  // les réponses : on renvoie vers la page du CRM qui l'intègre.
+  if(window.parent === window){ window.location.replace('/saas/cake-design/prospection'); return; }
+
+  const LAST_STEP = 16;
+  let currentStep = 1;
+  const history = [];
+
+  const form = document.getElementById('surveyForm');
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  const navRow = document.getElementById('navRow');
+  const progressFill = document.getElementById('progressFill');
+  const progressText = document.getElementById('progressText');
+  const progressPct = document.getElementById('progressPct');
+  const stepQuick = document.getElementById('stepQuick');
+  const screenIntro = document.getElementById('screen-intro');
+  const btnStart = document.getElementById('btnStart');
+  const progressWrap = document.getElementById('progressWrap');
+  const formCard = document.getElementById('formCard');
+  const pageHeader = document.getElementById('pageHeader');
+  const interstitialCard = document.getElementById('interstitialCard');
+  const interstitialIcon = document.getElementById('interstitialIcon');
+  const interstitialTitle = document.getElementById('interstitialTitle');
+  const interstitialSub = document.getElementById('interstitialSub');
+  const interstitialDots = document.getElementById('interstitialDots');
+  const btnInterstitialSkip = document.getElementById('btnInterstitialSkip');
+  let interstitialResolve = null;
+
+  // Carrousel de l'étape "Ce qu'on imagine" : une seule carte affichée à la
+  // fois (display none/block), sur la même page. Le Précédent / Suivant du
+  // bas est masqué pendant cette étape (voir showStep) ; une fois la
+  // dernière fonctionnalité affichée, ce même bouton fait avancer le
+  // questionnaire vers la question suivante.
+  const conceptSlides = document.querySelectorAll('#conceptTrack .concept-row');
+  const btnConceptNext = document.getElementById('btnConceptNext');
+  const conceptDots = document.getElementById('conceptDots');
+  let conceptIndex = 0;
+
+  // Un point par fonctionnalité, pour voir combien il y en a et où on en est.
+  if(conceptDots){
+    conceptSlides.forEach(function(){
+      const dot = document.createElement('span');
+      dot.className = 'dot';
+      conceptDots.appendChild(dot);
+    });
+  }
+
+  function updateConceptTrack(){
+    conceptSlides.forEach(function(slide, i){
+      slide.classList.toggle('active', i === conceptIndex);
+    });
+    const isLast = conceptIndex >= conceptSlides.length - 1;
+    btnConceptNext.textContent = isLast ? 'Continuer →' : 'Voir la prochaine fonctionnalité';
+    if(conceptDots){
+      conceptDots.querySelectorAll('.dot').forEach(function(d, i){
+        d.classList.toggle('active', i === conceptIndex);
+      });
+    }
+  }
+  updateConceptTrack();
+
+  if(btnConceptNext){
+    btnConceptNext.addEventListener('click', function(){
+      const isLast = conceptIndex >= conceptSlides.length - 1;
+      if(isLast){ goNext(); return; }
+      conceptIndex++;
+      updateConceptTrack();
+    });
+  }
+
+  const sections = [
+    { name: "Ton activité", steps: [1, 2, 17] },
+    { name: "Ton organisation actuelle", steps: [3, 4, 5] },
+    { name: "Tes difficultés", steps: [6, 7, 8] },
+    { name: "Tes besoins", steps: [9, 10] },
+    { name: "Le concept", steps: [18, 19, 21, 22] },
+    { name: "L'utilisation d'un nouvel outil", steps: [16] }
+  ];
+  function sectionIndex(n){
+    for(let i=0;i<sections.length;i++){ if(sections[i].steps.indexOf(n)!==-1) return i; }
+    return 0;
+  }
+
+  // Pas de pause entre les sections : transition directe d'une question à l'autre.
+  const encourage = {
+    18: {
+      icon: "✨",
+      title: "Les solutions que nous construisons",
+      sub: "Avant de continuer, voici quelques fonctionnalités que nous avons imaginées pour vous aider au quotidien."
+    }
+  };
+
+  // ---- valeurs ----
+  const NO_CMD  = "Je n'ai pas encore de commandes";
+  const NO_DIFF = "Aucune difficulté particulière";
+  const NO_FEAT = "Aucune de ces fonctionnalités";
+
+  function radioVal(name){
+    const el = form.querySelector('input[name="'+name+'"]:checked');
+    return el ? el.value : '';
+  }
+  function checkboxHas(name, value){
+    return Array.from(form.querySelectorAll('input[name="'+name+'"]:checked')).some(function(i){ return i.value === value; });
+  }
+
+  // ---- logique de branchement ----
+  function computeNext(n){
+    if(n === 2) return 17;
+    if(n === 17) return 3;
+    if(n === 6) return checkboxHas('difficultes', NO_DIFF) ? 9 : 7;
+    if(n === 10) return 18;
+    if(n === 18) return 19;
+    if(n === 19) return 21;
+    if(n === 21) return 22;
+    if(n === 22) return 16;
+    if(n >= LAST_STEP) return null;
+    return n + 1;
+  }
+  function plannedPath(){
+    const path = []; let n = 1; let guard = 0;
+    while(n !== null && guard++ < 100){ path.push(n); n = computeNext(n); }
+    return path;
+  }
+
+  function renderDots(activeIdx){
+    interstitialDots.innerHTML = '';
+    sections.forEach(function(s, i){
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === activeIdx ? ' active' : '');
+      interstitialDots.appendChild(dot);
+    });
+  }
+
+  function showInterstitial(n, then){
+    const msg = encourage[n];
+    if(!msg){ then(); return; }
+    pageHeader.style.display = 'none';
+    progressWrap.style.display = 'none';
+    formCard.style.display = 'none';
+    interstitialIcon.textContent = msg.icon;
+    interstitialTitle.textContent = msg.title;
+    interstitialSub.textContent = msg.sub;
+    renderDots(sectionIndex(n));
+    interstitialCard.style.display = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+    function finishInterstitial(){
+      interstitialResolve = null;
+      interstitialCard.style.display = 'none';
+      pageHeader.style.display = 'block';
+      progressWrap.style.display = 'block';
+      formCard.style.display = '';
+      then();
+    }
+    interstitialResolve = finishInterstitial;
+  }
+
+  if(btnInterstitialSkip){
+    btnInterstitialSkip.addEventListener('click', function(){
+      if(interstitialResolve) interstitialResolve();
+    });
+  }
+
+  btnStart.addEventListener('click', function(){
+    screenIntro.style.display = 'none';
+    pageHeader.style.display = 'block';
+    progressWrap.style.display = 'block';
+    formCard.style.display = '';
+    document.body.classList.add('in-steps');
+    showStep(1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  function syncGroup(name){
+    const group = form.querySelector('.choice-group[data-name="'+name+'"]');
+    if(!group) return;
+    group.querySelectorAll('.choice').forEach(function(c){
+      const i = c.querySelector('input');
+      c.classList.toggle('checked', i.checked);
+    });
+    const otherBox = form.querySelector('.other-input[data-other-for="'+name+'"]');
+    if(otherBox){
+      const revealValue = otherBox.dataset.revealValue || '__other__';
+      const on = Array.from(form.querySelectorAll('input[name="'+name+'"][value="'+revealValue+'"]')).some(function(i){ return i.checked; });
+      otherBox.classList.toggle('show', on);
+      if(!on){ const f = otherBox.querySelector('input, textarea'); if(f) f.value = ''; }
+    }
+    const max = parseInt(group.dataset.max || '0', 10);
+    if(max){
+      const checked = form.querySelectorAll('input[name="'+name+'"]:checked');
+      const atLimit = checked.length >= max;
+      form.querySelectorAll('input[name="'+name+'"]').forEach(function(i){
+        if(!i.checked){ i.disabled = atLimit; i.closest('.choice').classList.toggle('disabled', atLimit); }
+      });
+      const note = group.parentElement.querySelector('.limit-note');
+      if(note){
+        note.classList.toggle('at-limit', atLimit);
+        const base = max + ' réponse' + (max > 1 ? 's' : '') + ' maximum';
+        note.textContent = checked.length ? (checked.length + ' / ' + max + ' sélectionné' + (checked.length > 1 ? 's' : '')) : base;
+      }
+    }
+  }
+
+  function updateNextLabel(){
+    btnNext.textContent = (computeNext(currentStep) === null) ? 'Envoyer mes réponses →' : 'Suivant →';
+  }
+
+  form.addEventListener('input', function(e){
+    if(e.target.name === 'contact_email'){
+      const field = e.target.closest('.field');
+      if(field) field.classList.remove('invalid');
+    }
+  });
+
+  form.addEventListener('change', function(e){
+    const t = e.target;
+    if(t.type !== 'radio' && t.type !== 'checkbox') return;
+    const name = t.name;
+
+    if(t.type === 'checkbox' && t.checked){
+      const inputs = Array.from(form.querySelectorAll('input[name="'+name+'"]'));
+      if(t.dataset.exclusive){
+        inputs.forEach(function(i){ if(i !== t){ i.checked = false; i.disabled = false; } });
+      } else {
+        inputs.forEach(function(i){ if(i.dataset.exclusive) i.checked = false; });
+      }
+    }
+
+    syncGroup(name);
+    updateNextLabel();
+  });
+
+  function showStep(n){
+    document.querySelectorAll('.step').forEach(function(s){
+      s.classList.toggle('active', parseInt(s.dataset.step) === n);
+    });
+    // Sur la présentation du concept, la navigation se fait uniquement via
+    // le bouton du carrousel : on masque le Précédent / Suivant du bas.
+    navRow.style.display = (n === 18) ? 'none' : '';
+    btnBack.disabled = (history.length === 0);
+    updateNextLabel();
+
+    const path = plannedPath();
+    const idx = path.indexOf(n);
+    const pos = idx === -1 ? 1 : idx + 1;
+    const total = path.length;
+    const pct = Math.round(pos / total * 100);
+    progressFill.style.width = pct + '%';
+    progressText.textContent = 'Étape ' + pos + ' / ' + total + ' · ' + sections[sectionIndex(n)].name;
+    progressPct.textContent = pct + '%';
+    const remaining = total - pos;
+    stepQuick.textContent = remaining <= 0 ? 'Dernière étape !' : ('Encore ' + remaining + (remaining > 1 ? ' étapes' : ' étape'));
+
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function validateStep(n){
+    if(n === 16){
+      const email = (form.contact_email.value || '').trim();
+      if(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        form.contact_email.closest('.field').classList.add('invalid');
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function goNext(){
+    if(!validateStep(currentStep)) return;
+    const nxt = computeNext(currentStep);
+    if(nxt === null){ finishForm(); return; }
+    history.push(currentStep);
+    currentStep = nxt;
+    showInterstitial(currentStep, function(){ showStep(currentStep); });
+  }
+
+  btnNext.addEventListener('click', goNext);
+
+  btnBack.addEventListener('click', function(){
+    if(history.length){
+      currentStep = history.pop();
+      showStep(currentStep);
+    }
+  });
+
+  const LABELS = {
+    volume_mois: "Commandes par semaine",
+    acompte: "Acompte demandé à la commande",
+    organisation: "Organisation de travail",
+    canaux: "Canaux de demandes",
+    outils: "Outils utilisés",
+    taches: "Tâches les plus chronophages",
+    difficultes: "Difficultés rencontrées",
+    frequence: "Fréquence des difficultés",
+    consequences: "Conséquences sur l'activité",
+    manque: "Ce qui manque dans les outils actuels",
+    fonctionnalite_unique: "LA fonctionnalité n°1",
+    attente: "Attente principale de cette fonctionnalité",
+    repond_besoins: "La solution imaginée répond-elle aux besoins",
+    autre_ajout: "Autre chose à ajouter",
+    fonctionnalites_manquantes: "Autres fonctionnalités souhaitées",
+    budget: "Budget mensuel envisageable",
+    interesse_test: "Intéressée et souhaite être recontactée",
+    contact_email: "Email",
+    contact_telephone: "Téléphone"
+  };
+
+  function collectAnswers(){
+    const data = new FormData(form);
+    const grouped = {};
+    for(const [key, value] of data.entries()){
+      if(key.endsWith('_autre')) continue;
+      if(!value) continue;
+      (grouped[key] = grouped[key] || []).push(value);
+    }
+    form.querySelectorAll('[data-other-for]').forEach(function(box){
+      const base = box.dataset.otherFor;
+      const av = data.get(base + '_autre');
+      if(grouped[base]){
+        grouped[base] = grouped[base].map(function(v){
+          return v === '__other__' ? ('Autre : ' + (av || '—')) : v;
+        });
+      }
+    });
+    // ne garder que les questions réellement affichées
+    const path = plannedPath();
+    const nameStep = {};
+    form.querySelectorAll('.step').forEach(function(s){
+      const n = parseInt(s.dataset.step);
+      s.querySelectorAll('[name]').forEach(function(el){
+        if(!el.name.endsWith('_autre')) nameStep[el.name] = n;
+      });
+    });
+    Object.keys(grouped).forEach(function(k){
+      if(nameStep[k] && path.indexOf(nameStep[k]) === -1) delete grouped[k];
+    });
+    return grouped;
+  }
+
+  function buildSummaryText(){
+    const grouped = collectAnswers();
+    const order = ['volume_mois','organisation','acompte','canaux','outils','taches','difficultes','frequence','consequences','manque','fonctionnalite_unique','attente','repond_besoins','autre_ajout','fonctionnalites_manquantes','budget','interesse_test','contact_email','contact_telephone'];
+    const lines = [];
+    lines.push('QUESTIONNAIRE CAKE DESIGNER — RÉPONSES');
+    lines.push('Date : ' + new Date().toLocaleDateString('fr-FR'));
+    lines.push('');
+    order.forEach(function(key){
+      if(grouped[key] && grouped[key].length){
+        lines.push((LABELS[key] || key) + ' : ' + grouped[key].join(' | '));
+      }
+    });
+    return lines.join('\n');
+  }
+
+  function finishForm(){
+    // Intégration CRM : le formulaire est affiché dans une iframe par la page
+    // /saas/cake-design/prospection du CRM, qui enregistre les réponses reçues
+    // (voir SaasProspectionForm.jsx).
+    window.parent.postMessage({ type: 'sc-saas-prospect', produitId: 'cake-design', answers: collectAnswers() }, window.location.origin);
+    formCard.style.display = 'none';
+    progressWrap.style.display = 'none';
+    document.body.classList.remove('in-steps');
+    document.getElementById('screen-final').style.display = '';
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+})();
+</script>
+</body>
+</html>
