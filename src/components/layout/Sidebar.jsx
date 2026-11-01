@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, CheckSquare, CalendarClock, ClipboardList, Calendar,
-  FolderOpen, CalendarDays, Handshake, Lock, X, AppWindow, ChevronDown, ChevronUp, Settings, Star,
+  FolderOpen, CalendarDays, Handshake, Lock, X, AppWindow, ChevronDown, ChevronUp, Settings, Star, Landmark,
 } from 'lucide-react'
 import useStore from '../../store/useStore'
+import { getEtatEcheance, todayLocalStr } from '../../utils/echeancesFiscales'
 
 // Entrée seule, sans groupe
 const topItem = { label: 'Dashboard', icon: LayoutDashboard, to: '/' }
@@ -15,6 +16,7 @@ const navCategories = [
     items: [
       { label: 'To-do', icon: CheckSquare, to: '/taches' },
       { label: 'Échéances', icon: CalendarClock, to: '/echeances' },
+      { label: 'Échéances fiscales', icon: Landmark, to: '/echeances-fiscales' },
     ],
   },
   {
@@ -79,11 +81,13 @@ function NavItem({ label, icon: Icon, to, isActive, onClose, badge }) {
 
 export default function Sidebar({ isOpen, onClose }) {
   const location = useLocation()
-  const { taches, formReponses, partenaireItems, satisfactionReponses } = useStore()
+  const { taches, formReponses, partenaireItems, satisfactionReponses, echeancesFiscales } = useStore()
   const urgentCount = taches.filter(t => t.statut === 'urgent' || t.priorite === 'urgente').length
   const newFormCount = formReponses.filter(r => !r.lu).length
   const newPartnerCount = partenaireItems.filter(p => !p.lu).length
   const newSatisfactionCount = satisfactionReponses.filter(r => !r.lu).length
+  // Échéances fiscales à J-7 ou moins (ou en retard)
+  const fiscalUrgentCount = echeancesFiscales.filter(e => ['j7', 'j3', 'jour_j', 'retard'].includes(getEtatEcheance(e, todayLocalStr()).niveau)).length
   const isPathActive = (to) => to === '/' ? location.pathname === '/' : location.pathname.startsWith(to)
   const saasActive = saasSection.items.some(i => isPathActive(i.to))
   const [saasOpen, setSaasOpen] = useState(saasActive)
@@ -133,7 +137,7 @@ export default function Sidebar({ isOpen, onClose }) {
                 {items.map(({ label, icon: Icon, to }) => (
                   <NavItem key={label} label={label} icon={Icon} to={to} onClose={onClose}
                     isActive={isPathActive(to)}
-                    badge={label === 'To-do' ? urgentCount : label === 'Formulaires' ? newFormCount : label === 'Satisfaction' ? newSatisfactionCount : 0}
+                    badge={label === 'To-do' ? urgentCount : label === 'Formulaires' ? newFormCount : label === 'Satisfaction' ? newSatisfactionCount : label === 'Échéances fiscales' ? fiscalUrgentCount : 0}
                   />
                 ))}
               </div>

@@ -11,6 +11,7 @@ import { taskInputCls, taskInputStyle, TaskField } from '../components/ui/TaskFi
 import { STATUTS_TACHE } from '../data/tacheOptions'
 import { statutBadge } from '../components/ui/Badge'
 import { getJoursRestants } from '../utils/joursRestants'
+import { RappelsFiscaux, EcheancesFiscalesCard } from '../components/fiscal/EcheancesFiscalesWidgets'
 
 // ─── Ajout rapide de tâche depuis le Dashboard ────────────────────────────────
 // Réutilise exactement le même store.addTache() et les mêmes valeurs que la page
@@ -344,6 +345,9 @@ export default function Dashboard() {
         <p className="capitalize mt-1" style={{ color: '#a89b8c', fontFamily: 'Inter, sans-serif', fontSize: '16px' }}>{dateLabelCap}</p>
       </div>
 
+      {/* Rappels fiscaux (TVA…) — mobile */}
+      <RappelsFiscaux className="lg:hidden mb-4" />
+
       {/* Notifications — au-dessus de la to-do sur mobile, formulaires puis partenaire, en puce discrète */}
       {(newFormCount > 0 || newPartnerCount > 0) && (
         <div className="lg:hidden flex flex-col gap-2.5 mb-4">
@@ -406,6 +410,9 @@ export default function Dashboard() {
         <p className="text-[13px]" style={{ color: '#a89b8c' }}>{allUpcomingRDVs.length} à venir</p>
       </button>
     </div>
+
+    {/* Prochaines échéances fiscales (mobile) */}
+    <EcheancesFiscalesCard className="flex lg:hidden mb-5" />
 
     {/* Prochains posts de la semaine (mobile) */}
     <div className="lg:hidden bg-white rounded-2xl p-5 mb-5" style={{ border: '1px solid #e7e5e1' }}>
@@ -471,6 +478,9 @@ export default function Dashboard() {
           <h1 className="font-display text-2xl sm:text-[1.7rem] font-bold" style={{ color: '#241512' }}>Dashboard</h1>
           <p className="text-sm capitalize" style={{ color: '#a89b8c' }}>{dateLabelCap}</p>
         </div>
+
+        {/* Rappels fiscaux (TVA…) — desktop */}
+        <RappelsFiscaux className="hidden lg:flex" />
 
         {/* Notifications — desktop uniquement, en haut de la colonne gauche */}
         {(newPartnerCount > 0 || newFormCount > 0) && (
@@ -544,6 +554,9 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+
+        {/* Prochaines échéances fiscales — desktop */}
+        <EcheancesFiscalesCard className="hidden lg:flex" />
 
         {/* Prochains rendez-vous — desktop uniquement (raccourci équivalent sur mobile) */}
         <div className="hidden lg:flex bg-white rounded-2xl overflow-hidden flex-col" style={{ border: '1px solid #e7e5e1' }}>

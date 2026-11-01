@@ -20,13 +20,14 @@ import {
   mockFormReponses,
 } from '../data/mockData'
 import { SAAS_PRODUITS } from '../data/saasConfig'
+import { TYPES_ECHEANCE } from '../data/fiscalConfig'
 
 const generateId = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`
 
 const fsSet = (col, id, data) => setDoc(doc(db, col, id), data)
 const fsDel = (col, id) => deleteDoc(doc(db, col, id))
 
-const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems', 'saasProduits', 'saasProspects', 'satisfactionReponses']
+const COLLECTIONS = ['clients', 'projets', 'taches', 'rdvs', 'documents', 'leads', 'contenus', 'depenses', 'motsDePasse', 'formReponses', 'notifications', 'medias', 'partenaireItems', 'saasProduits', 'saasProspects', 'satisfactionReponses', 'echeancesFiscales']
 
 const mockSaasProduits = Object.values(SAAS_PRODUITS).map(({ id, defaults }) => ({ id, ...defaults }))
 
@@ -47,6 +48,7 @@ const SEED_MAP = {
   saasProduits: mockSaasProduits,
   saasProspects: [],
   satisfactionReponses: [],
+  echeancesFiscales: [],
 }
 
 async function seedIfEmpty() {
@@ -80,6 +82,7 @@ const useStore = create((set, get) => ({
   saasProduits: [],
   saasProspects: [],
   satisfactionReponses: [],
+  echeancesFiscales: [],
   loading: true,
 
   // ─── Init Firestore listeners ────────────────────────────────────────────
@@ -360,6 +363,32 @@ const useStore = create((set, get) => ({
     fsSet('satisfactionReponses', id, updated)
   },
   deleteSatisfactionReponse: (id) => fsDel('satisfactionReponses', id),
+
+  // ─── Échéances fiscales (TVA, puis IS / CFE…) ───────────────────────────
+  // Id déterministe type_annee_periode : régénérer une année ne crée pas de doublon.
+  genererEcheancesFiscales: (type, annee) => {
+    const config = TYPES_ECHEANCE[type]
+    if (!config) return Promise.resolve()
+    const existants = new Set(get().echeancesFiscales.map((e) => e.id))
+    const batch = writeBatch(db)
+    config.periodes.forEach((p) => {
+      const id = `${type}_${annee}_${p.id}`
+      if (existants.has(id)) return
+      batch.set(doc(db, 'echeancesFiscales', id), {
+        id, type, annee: Number(annee), periode: p.id,
+        dateDeclaration: '', datePaiement: '', datesVerifiees: false,
+        declaree: false, declareeLe: '', payee: false, payeeLe: '',
+        montant: '', notes: '', justificatifs: [],
+        createdAt: new Date().toISOString(),
+      })
+    })
+    return batch.commit()
+  },
+  updateEcheanceFiscale: (id, data) => {
+    const updated = { ...get().echeancesFiscales.find((e) => e.id === id), ...data }
+    return fsSet('echeancesFiscales', id, updated)
+  },
+  deleteEcheanceFiscale: (id) => fsDel('echeancesFiscales', id),
 
   // ─── Notifications ──────────────────────────────────────────────────────
   markNotifRead: (id) => {

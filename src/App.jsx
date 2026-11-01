@@ -12,6 +12,7 @@ import ProjetDetail from './pages/ProjetDetail'
 import BaseClient from './pages/BaseClient'
 import Taches from './pages/Taches'
 import Echeances from './pages/Echeances'
+import EcheancesFiscales from './pages/EcheancesFiscales'
 import RDV from './pages/RDV'
 import Documents from './pages/Documents'
 import Finances from './pages/Finances'
@@ -59,6 +60,7 @@ export default function App() {
               <Route path="/base-client" element={<BaseClient />} />
               <Route path="/taches" element={<Taches />} />
               <Route path="/echeances" element={<Echeances />} />
+              <Route path="/echeances-fiscales" element={<EcheancesFiscales />} />
               <Route path="/rdv" element={<RDV />} />
               <Route path="/documents" element={<Documents />} />
               <Route path="/finances" element={<Finances />} />
